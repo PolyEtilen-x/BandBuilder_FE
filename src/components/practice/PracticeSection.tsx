@@ -6,6 +6,7 @@ const PracticeCard = lazy(() => import("./PracticeCard"))
 
 export default function PracticeSection({
   title,
+  skill,
   count,
   exercises
 }: any){
@@ -19,7 +20,8 @@ export default function PracticeSection({
         background:"#f6f6f6",
         padding:30,
         borderRadius:20,
-        marginBottom:30
+        marginBottom:30,
+        border:`1px solid ${theme.colors.third}`,
       }}
     >
 
@@ -69,7 +71,8 @@ export default function PracticeSection({
             {exercises.map((ex:any)=>(
 
               <PracticeCard
-                key={ex.name}
+                key={ex.id}
+                id={ex.id}
                 title={ex.name}
                 questions={ex.questions}
                 participants={ex.participants}

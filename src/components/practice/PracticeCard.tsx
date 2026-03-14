@@ -1,6 +1,8 @@
 import theme from "@/theme"
+import { useNavigate, useParams } from "react-router-dom"
 
 type Props = {
+  id: string
   title: string
   questions: number
   participants: number
@@ -8,20 +10,33 @@ type Props = {
 }
 
 export default function PracticeCard({
+  id,
   title,
   questions,
   participants,
-  progress
+  progress,
 }: Props){
+
+  const navigate = useNavigate()
+  const { skill } = useParams()
+
+  function openTest(e: React.MouseEvent){
+    e.stopPropagation
+
+    navigate(`/practice/${skill}/test/${id}`)
+  }
 
   return (
 
     <article
+      onClick={openTest}
       style={{
         background: theme.colors.third,
         borderRadius: 20,
         padding: 20,
-        color: "#fff"
+        color: "#fff",
+        cursor: "pointer",
+        transition: "0.2s"
       }}
     >
 

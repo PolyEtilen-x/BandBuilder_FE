@@ -1,4 +1,5 @@
 import theme from "@/theme"
+import { useNavigate } from "react-router-dom"
 
 const tabs = [
   "All Skills",
@@ -8,21 +9,22 @@ const tabs = [
   "Speaking"
 ]
 
-export default function PracticeTabs({skill,setSkill}:any){
+export default function PracticeTabs({skill}:any){
+  
+  const navigate = useNavigate()
 
   return (
-
     <div style={{display:"flex",gap:16,marginBottom:20}}>
 
       {tabs.map(tab=>{
 
-        const active = tab===skill
+        const value = tab.toLowerCase()
+        const active = value === skill
 
         return(
-
           <button
             key={tab}
-            onClick={()=>setSkill(tab)}
+            onClick={()=>navigate(`/practice/${value}`)}
             style={{
               padding:"10px 18px",
               borderRadius:30,
@@ -32,7 +34,6 @@ export default function PracticeTabs({skill,setSkill}:any){
             }}
           >
             {tab}
-
           </button>
 
         )

@@ -1,5 +1,6 @@
 export type Exercise = {
-  name: string
+  title: string
+  id: string
   questions: number
   participants: number
   progress: number

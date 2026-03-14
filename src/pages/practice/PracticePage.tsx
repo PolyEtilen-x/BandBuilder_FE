@@ -1,16 +1,16 @@
-import { useSearchParams } from "react-router-dom"
+import { useSearchParams, useParams } from "react-router-dom"
 import theme from "@/theme"
 import PracticeTabs from "@/components/practice/PracticeTabs"
 import PracticeSection from "@/components/practice/PracticeSection"
 import SearchBar from "@/components/components/SearchBar"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
-import { practiceData } from "@/data/practiceData"
+import { practiceData } from "@/data/practice.data"
 
 export default function PracticePage() {
 
     const [params,setParams] = useSearchParams()
 
-    const skill = params.get("skill") || "fulltest"
+    const { skill = "reading" } = useParams()
     const search = params.get("search") || ""
     const sort = params.get("sort") || ""
     
@@ -20,7 +20,6 @@ export default function PracticePage() {
     
     function updateQuery(newParams:any){
         setParams({
-        skill,
         search,
         sort,
         ...newParams
@@ -50,7 +49,6 @@ export default function PracticePage() {
                 {/* skill tabs */}
                 <PracticeTabs
                     skill={skill}
-                    setSkill={(s:string)=>updateQuery({skill:s})}
                 />
 
                 {/* search + sort */}
@@ -62,16 +60,13 @@ export default function PracticePage() {
 
                 {/* sections */}
                 {skillData?.sections.map(section => (
-
                     <PracticeSection
                         key={section.name_practice}
                         title={section.name_practice}
                         count={section.total}
                         exercises={section.exercises}
                     />
-
                 ))}
-
             </main>
         </MainLayout>
     )
