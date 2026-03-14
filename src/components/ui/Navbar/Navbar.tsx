@@ -1,6 +1,7 @@
 import {useState} from "react"
 import menu from "./menu"
 import theme from "@/theme"
+import { Link } from "react-router-dom"
 
 export default function Navbar() {
     const [active, setActive] = useState<number | null>(null)
@@ -17,7 +18,7 @@ export default function Navbar() {
             }}
         >
             <div style={{display:"flex", alignItems:"center", gap: "8px"}}>
-                <img src="@/assets/logo" style = {{width: "40px"}} />
+                <img src="@/assets/logo_GoIelts.png" style = {{width: "40px"}} />
             </div>
             
             <div
@@ -52,15 +53,19 @@ export default function Navbar() {
                                 }}
                             >
                                 {item.dropdown.map((d,i) => (
-                                    <div
-                                        key = {i}
+                                    <Link
+                                        key={i}
+                                        to={d.path}
                                         style={{
-                                            fontSize: theme.typography.fontSize.sm,
-                                            padding: "6px 0",
+                                        display: "block",
+                                        fontSize: theme.typography.fontSize.sm,
+                                        padding: "6px 0",
+                                        textDecoration: "none",
+                                        color: theme.colors.text.primary
                                         }}
                                     >
-                                        {d}
-                                    </div>
+                                        {d.label}
+                                    </Link>
                                 ))}
                             </div>
                         }
