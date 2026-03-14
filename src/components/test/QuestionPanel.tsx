@@ -11,7 +11,8 @@ export default function QuestionPanel({
     <aside
       style={{
         padding:"30px",
-        overflowY:"auto"
+        overflowY:"auto",
+        color: "#000"
       }}
     >
 

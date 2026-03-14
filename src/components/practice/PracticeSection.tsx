@@ -73,12 +73,11 @@ export default function PracticeSection({
               <PracticeCard
                 key={ex.id}
                 id={ex.id}
-                title={ex.name}
+                title={ex.title}
                 questions={ex.questions}
                 participants={ex.participants}
                 progress={ex.progress}
               />
-
             ))}
 
           </div>

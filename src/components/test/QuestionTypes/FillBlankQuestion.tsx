@@ -16,7 +16,7 @@ export default function FillBlankQuestion({
 
     <div
       id={`question-${question.id}`}
-      style={{marginBottom:30,lineHeight:1.8}}
+      style={{marginBottom:30,lineHeight:1.8,color:"#000"}}
     >
 
       <span>{parts[0]}</span>

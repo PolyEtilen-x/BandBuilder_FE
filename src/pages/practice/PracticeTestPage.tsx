@@ -22,11 +22,12 @@ export default function PracticeTestPage() {
 
     return (
         <main
-        style={{
-            height:"100vh",
-            display:"grid",
-            gridTemplateRows:"1fr 110px"
-        }}
+            style={{
+                height:"100vh",
+                display:"grid",
+                gridTemplateRows:"1fr 110px",
+                background: "#fff"
+            }}
         >
 
         {/* PASSAGE + QUESTIONS */}
