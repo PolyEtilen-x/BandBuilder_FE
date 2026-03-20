@@ -1,5 +1,5 @@
 import { useSearchParams, useParams } from "react-router-dom"
-import theme from "@/theme"
+import theme from "@/styles/theme"
 import PracticeTabs from "@/components/practice/PracticeTabs"
 import PracticeSection from "@/components/practice/PracticeSection"
 import SearchBar from "@/components/components/SearchBar"
@@ -30,7 +30,8 @@ export default function PracticePage() {
         <MainLayout>
             <main
                 style={{
-                    maxWidth:1200,
+                    width: "100%",   
+                    maxWidth: "75rem",  
                     margin:"0 auto",
                     padding:"40px 20px"
                 }}

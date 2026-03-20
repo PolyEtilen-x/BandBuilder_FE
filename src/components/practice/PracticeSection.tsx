@@ -1,6 +1,6 @@
 import { useState, lazy, Suspense } from "react"
 import { ChevronLeft, ChevronDown } from "lucide-react"
-import theme from "@/theme"
+import theme from "@/styles/theme"
 
 const PracticeCard = lazy(() => import("./PracticeCard"))
 
@@ -61,9 +61,9 @@ export default function PracticeSection({
 
           <div
             style={{
-              marginTop:20,
+              marginTop: "1.25 rem",
               display:"grid",
-              gridTemplateColumns:"repeat(3,1fr)",
+              gridTemplateColumns:"repeat(auto-fit, minmax(16rem, 1fr))",
               gap:20
             }}
           >

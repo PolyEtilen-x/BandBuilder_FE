@@ -1,4 +1,4 @@
-import theme from "@/theme"
+import theme from "@/styles/theme"
 import { useNavigate, useParams } from "react-router-dom"
 
 type Props = {
@@ -21,7 +21,7 @@ export default function PracticeCard({
   const { skill } = useParams()
 
   function openTest(e: React.MouseEvent){
-    e.stopPropagation
+    e.stopPropagation()
 
     navigate(`/practice/${skill}/test/${id}`)
   }
@@ -32,32 +32,45 @@ export default function PracticeCard({
       onClick={openTest}
       style={{
         background: theme.colors.third,
-        borderRadius: 20,
-        padding: 20,
+        borderRadius: "1.25rem",
+        padding: "1.25rem",
         color: "#fff",
         cursor: "pointer",
-        transition: "0.2s"
+        transition: "all 0.2s ease",
+        marginTop: "1.25rem",
       }}
     >
 
-      <h3>{title}</h3>
+      <h3
+        style={{
+          fontSize: "clamp(1rem, 2.5vw, 1.2rem)",
+          marginBottom: "0.5rem"
+        }}
+      >
+        {title}
+      </h3>
 
       <div
         style={{
           background: "#fff",
           color: theme.colors.third,
-          borderRadius: 20,
-          padding: "4px 12px",
+          borderRadius: "1.25rem",
+          padding: "0.25rem 0.75rem",
           display: "inline-block",
-          marginTop: 6,
-          marginBottom: 8
+          marginBottom: "0.5rem",
+          fontSize: "0.85rem"
         }}
       >
         {progress}% completed
       </div>
 
-      <p>{questions} questions</p>
-      <p>{participants} participants</p>
+      <p style={{ fontSize: "0.9rem", margin: "0.2rem 0" }}>
+        {questions} questions
+      </p>
+
+      <p style={{ fontSize: "0.9rem", margin: "0.2rem 0" }}>
+        {participants} participants
+      </p>
 
     </article>
 

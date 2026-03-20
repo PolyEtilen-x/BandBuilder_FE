@@ -1,4 +1,4 @@
-import colors from "@/theme/colors";
+import colors from "@/styles/theme/colors";
 
 export default function PassagePanel({passage}:{passage:string}){
 
