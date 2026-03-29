@@ -1,15 +1,15 @@
+import { SkillType } from "@/data/practices/common.types"
 import theme from "@/styles/theme"
 import { useNavigate } from "react-router-dom"
 
-const tabs = [
-  "All Skills",
+const tabs: SkillType[] = [
   "Reading",
   "Listening",
   "Writing",
   "Speaking"
 ]
 
-export default function PracticeTabs({skill}:any){
+export default function PracticeTabs({skill}:{skill:string}){
   
   const navigate = useNavigate()
 
@@ -27,7 +27,6 @@ export default function PracticeTabs({skill}:any){
     >
 
       {tabs.map(tab=>{
-
         const value = tab.toLowerCase()
         const active = value === skill
 

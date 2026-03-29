@@ -1,30 +1,16 @@
 import { useEffect } from "react"
-import { useNavigate, useSearchParams } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 
 export default function LoginSuccess() {
-  const [params] = useSearchParams()
   const navigate = useNavigate()
 
   useEffect(() => {
-    const token = params.get("token")
-    const name = params.get("name")
-    const avatar = params.get("avatar")
+    const redirectPath =
+      localStorage.getItem("redirectAfterLogin") || "/"
 
-    if (token) {
-      // 🔥 lưu vào localStorage (tạm thời)
-      localStorage.setItem("token", token)
+    localStorage.removeItem("redirectAfterLogin")
 
-      if (name) localStorage.setItem("name", name)
-      if (avatar) localStorage.setItem("avatar", avatar)
-
-      // 👉 báo cho trang chính biết login thành công
-      if (window.opener) {
-        window.opener.postMessage("LOGIN_SUCCESS", "*")
-      }
-    } else {
-      // fail → về home
-      navigate("/")
-    }
+    navigate(redirectPath)
   }, [])
 
   return <p>Logging in...</p>

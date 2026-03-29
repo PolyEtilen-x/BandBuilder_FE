@@ -12,13 +12,11 @@ export default function MCQQuestion({
     >
 
       <p>
-        ({question.id}) {question.question}
+        ({question.number}) {question.text}
       </p>
 
       <div style={{marginTop:10}}>
-
         {question.options.map((op:string)=>(
-          
           <label
             key={op}
             style={{
@@ -26,7 +24,6 @@ export default function MCQQuestion({
               marginBottom:5
             }}
           >
-
             <input
               type="radio"
               checked={value===op}

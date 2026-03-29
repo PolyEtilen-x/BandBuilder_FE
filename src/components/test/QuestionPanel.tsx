@@ -1,13 +1,17 @@
 import QuestionRenderer from "./QuestionRenderer"
 
 export default function QuestionPanel({
-  questions,
+  questionBlocks = [],
   answers,
   updateAnswer
 }:any){
 
-  return (
+  if (!questionBlocks.length) {
+    return <p>No questions</p>
+  }
 
+  return (
+    
     <aside
       style={{
         padding:"30px",
@@ -15,20 +19,34 @@ export default function QuestionPanel({
         color: "#000"
       }}
     >
+      {questionBlocks.map((block:any, index:number)=>(
+        <div key={index} style={{marginBottom:40}}>
 
-      {questions.map((q:any)=>(
-        
-        <QuestionRenderer
-          key={q.id}
-          question={q}
-          value={answers[q.id]}
-          onChange={updateAnswer}
-        />
+          <h3>{block.instruction}</h3>
 
+          {block.question_type === "selecting_factors" && (
+            <QuestionRenderer
+              question={{ id: block.questions_range }}
+              type={block.question_type}
+              value={answers[block.questions_range]}
+              onChange={updateAnswer}
+              extra={block}
+            />
+          )}
+          
+          {block.questions?.map((q:any)=>(
+
+            <QuestionRenderer
+              key={q.id}
+              question={q}
+              type={block.question_type}  
+              value={answers[q.id]}
+              onChange={updateAnswer}
+              extra={block}            
+            />
+          ))}
+        </div>
       ))}
-
     </aside>
-
   )
-
 }

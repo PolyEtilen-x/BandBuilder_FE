@@ -1,13 +1,18 @@
-import { useState } from "react"
+import { use, useEffect, useState } from "react"
 import menu from "./menu"
 import theme from "@/styles/theme"
 import { Link } from "react-router-dom"
 import logo from "@/assets/logo.png"
-import { loginWithGoogle } from "@/services/SignUpWithGoogle"
+import { fetchUser, loginWithGoogle } from "@/services/SignUpWithGoogle"
 
 export default function Navbar() {
     const [active, setActive] = useState<number | null>(null)
     const [open, setOpen] = useState(false)
+    const [user, setUser] = useState<any>(null)
+
+    useEffect(() => {
+        fetchUser().then(setUser)
+    }, [])
 
     return (
         <nav
@@ -91,20 +96,27 @@ export default function Navbar() {
                 </div>
 
                 {/* DESKTOP BUTTON */}
-                <button className="desktop-btn"
-                    style={{
-                        background: theme.colors.danger,
-                        color: theme.colors.text.secondary,
-                        padding: "0.5rem 1.25rem",
-                        borderRadius: "1.25rem",
-                        border: "none",
-                        fontWeight: 600,
-                        cursor: "pointer"
-                    }}
-                    onClick={() => loginWithGoogle()}
-                >
-                    Register
-                </button>
+                {user ? (
+                    <div style={{ display: "flex", gap: 10 }}>
+                        <img src={user.avatar} style={{ width: 30, borderRadius: "50%" }} />
+                        <span>Hello {user.name}</span>
+                    </div>
+                    ) : (
+                    <button className="desktop-btn"
+                        style={{
+                            background: theme.colors.danger,
+                            color: theme.colors.text.secondary,
+                            padding: "0.5rem 1.25rem",
+                            borderRadius: "1.25rem",
+                            border: "none",
+                            fontWeight: 600,
+                            cursor: "pointer"
+                        }}
+                        onClick={() => loginWithGoogle()}
+                    >
+                        Register
+                    </button>
+                )}
 
                 {/* HAMBURGER */}
                 <div

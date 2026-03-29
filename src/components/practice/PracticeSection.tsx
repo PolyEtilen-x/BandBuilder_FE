@@ -1,20 +1,31 @@
 import { useState, lazy, Suspense } from "react"
 import { ChevronLeft, ChevronDown } from "lucide-react"
 import theme from "@/styles/theme"
+import { PracticeTest } from "@/data/practices/practiceTest.model"
 
 const PracticeCard = lazy(() => import("./PracticeCard"))
 
+type Props = {
+  title: string
+  skill?: string
+  count: number
+  numberOfVisits: number
+  exercises: PracticeTest[]
+  skillContentId: string
+}
 export default function PracticeSection({
   title,
   skill,
   count,
-  exercises
-}: any){
+  numberOfVisits,
+  exercises,
+  skillContentId
+}: Props){
 
   const [open,setOpen] = useState(false)
-
+  
   return (
-
+    
     <section
       style={{
         background:"#f6f6f6",
@@ -61,22 +72,20 @@ export default function PracticeSection({
 
           <div
             style={{
-              marginTop: "1.25 rem",
+              marginTop: "1.25rem",
               display:"grid",
               gridTemplateColumns:"repeat(auto-fit, minmax(16rem, 1fr))",
               gap:20
             }}
-          >
-
-            {exercises.map((ex:any)=>(
-
+          >            
+            {exercises.map((ex) => (
               <PracticeCard
-                key={ex.id}
-                id={ex.id}
+                key={ex.practiceTestId}
+                id={skillContentId}
                 title={ex.title}
-                questions={ex.questions}
-                participants={ex.participants}
-                progress={ex.progress}
+                questions={0}
+                numberOfVisits={numberOfVisits}
+                progress={0}
               />
             ))}
 

@@ -1,34 +1,24 @@
-export function loginWithGoogle(onSuccess?: () => void) {
-    const popup = window.open(
-        "https://aidsense.online/auth/google",
-        "Google Login",
-        "width=500,height=600"
-    )
+export function loginWithGoogle() {
+  const currentPath = window.location.pathname + window.location.search
 
-    if (!popup) {
-        alert("Popup bị chặn!")
-        return
-    }
+  localStorage.setItem("redirectAfterLogin", currentPath)
 
-    function handleMessage(event: MessageEvent) {
-        if (event.data === "LOGIN_SUCCESS") {
-            
-        onSuccess && onSuccess()
-
-        window.removeEventListener("message", handleMessage)
-        }
-    }
-
-    window.addEventListener("message", handleMessage)
+  window.location.href = "https://aidsense.online/auth/google"
 }
 
-async function fetchUser() {
+export async function fetchUser() {
+  try {
     const res = await fetch("https://aidsense.online/auth/me", {
-        method: "GET",
-        credentials: "include"
-    });
+      method: "GET",
+      credentials: "include"
+    })
 
-    const user = await res.json();
+    if (!res.ok) return null
 
-    console.log(user);
+    const user = await res.json()
+    return user
+  } catch (err) {
+    console.error("Fetch user error:", err)
+    return null
+  }
 }

@@ -1,11 +1,13 @@
 export default function QuestionNavigator({
-  questions,
-  answers,
-  groups
+  questionBlocks = [],
+  answers
 }:any){
 
-  function goToQuestion(id:number){
+  const flatQuestions = questionBlocks.flatMap(
+    (block:any)=> block.questions || []
+  )
 
+  function goToQuestion(id:string){
     const el = document.getElementById(`question-${id}`)
 
     if(el){
@@ -14,85 +16,43 @@ export default function QuestionNavigator({
         block:"center"
       })
     }
-
   }
-
   return(
-
     <nav
       style={{
         borderTop:"1px solid #eee",
         padding:"10px 20px",
         display:"flex",
-        gap:"40px",
+        gap:"20px",
         overflowX:"auto"
       }}
     >
-
-      {groups.map((group:any)=>{
-
-        const nums = questions.filter(
-          (q:any)=>q.id>=group.start && q.id<=group.end
-        )
-
+      {flatQuestions.map((q:any)=>{
+        const answered = answers[q.id]
         return(
+          <button
+            key={q.id}
+            onClick={()=>goToQuestion(q.id)}
+            style={{
+              width:38,
+              height:38,
+              borderRadius:"50%",
+              border:"none",
+              cursor:"pointer",
 
-          <div key={group.label}>
+              background:answered
+                ? "#3b82f6"
+                : "#dbeafe",
 
-            <p style={{fontSize:14}}>
-              {group.label}
-            </p>
-
-            <div
-              style={{
-                display:"flex",
-                gap:"8px",
-                marginTop:"5px"
-              }}
-            >
-
-              {nums.map((q:any)=>{
-
-                const answered = answers[q.id]
-
-                return(
-
-                  <button
-                    key={q.id}
-                    onClick={()=>goToQuestion(q.id)}
-                    style={{
-                      width:38,
-                      height:38,
-                      borderRadius:"50%",
-                      border:"none",
-                      cursor:"pointer",
-
-                      background:answered
-                        ? "#3b82f6"
-                        : "#dbeafe",
-
-                      color:answered
-                        ? "#fff"
-                        : "#1e3a8a"
-                    }}
-                  >
-                    {q.id}
-                  </button>
-
-                )
-
-              })}
-
-            </div>
-
-          </div>
-
+              color:answered
+                ? "#fff"
+                : "#1e3a8a"
+            }}
+          >
+            {q.number}
+          </button>
         )
-
       })}
-
     </nav>
-
   )
-
 }

@@ -14,7 +14,7 @@ export default function TrueFalseQuestion({
     >
 
       <p>
-        ({question.id}) {question.question}
+        ({question.number}) {question.text}
       </p>
 
       <div style={{marginTop:10}}>

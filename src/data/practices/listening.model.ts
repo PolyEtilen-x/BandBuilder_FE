@@ -1,0 +1,64 @@
+import type { ListeningContext, ListeningQuestionType, QuestionsRange } from './common.types';
+
+// 1. Shared leaf types
+export interface ListeningQuestion {
+  id: string;          
+  number: number;      
+  text: string;      
+  options?: string[];   
+  note?: string;
+}
+
+// 2. Question block variants (discriminated union)
+interface QuestionBlockBase {
+  question_type: ListeningQuestionType;
+  questions_range: QuestionsRange;
+  instruction: string;
+}
+
+// ── 2a. multiple_choice ───────────────────────
+export interface MultipleChoiceBlock extends QuestionBlockBase {
+  question_type: 'multiple_choice';
+  questions: ListeningQuestion[];
+}
+
+// ── 2b. form_completion ───────────────────────
+export interface FormCompletionBlock extends QuestionBlockBase {
+  question_type: 'form_completion';
+  form_title?: string;
+  questions: ListeningQuestion[];
+}
+
+// ── 2c. note_completion ───────────────────────
+export interface NoteCompletionBlock extends QuestionBlockBase {
+  question_type: 'note_completion';
+  questions: ListeningQuestion[];
+}
+
+// ── 2d. matching ──────────────────────────────
+export interface MatchingBlock extends QuestionBlockBase {
+  question_type: 'matching';
+  options: string[];       
+  answers?: string[];       
+}
+
+// ── Union ─────────────────────────────────────
+export type ListeningQuestionBlock =
+  | MultipleChoiceBlock
+  | FormCompletionBlock
+  | NoteCompletionBlock
+  | MatchingBlock;
+
+// 3. Section
+export interface ListeningSection {
+  section: number;                    
+  context: ListeningContext;
+  speakers: string[];                  
+  description: string;
+  question_blocks: ListeningQuestionBlock[];
+}
+
+// 4. Top-level content
+export interface ListeningContent {
+  sections: ListeningSection[];
+}

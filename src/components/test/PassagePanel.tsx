@@ -1,6 +1,6 @@
 import colors from "@/styles/theme/colors";
 
-export default function PassagePanel({passage}:{passage:string}){
+export default function PassagePanel({passage}:any){
 
   return (
 
@@ -12,10 +12,12 @@ export default function PassagePanel({passage}:{passage:string}){
       }}
     >
 
-      <h1 style={{color: "#000"}}>READING PASSAGE 1</h1>
+      <h1 style={{color: "#000"}}>
+        {passage?.title || "PASSAGE"}
+      </h1>
 
       <p style={{lineHeight:1.7, color: colors.text.primary}}>
-        {passage}
+        {passage?.topic || passage?.text  || "No passage"}
       </p>
 
     </article>

@@ -5,7 +5,7 @@ type Props = {
   id: string
   title: string
   questions: number
-  participants: number
+  numberOfVisits: number
   progress: number
 }
 
@@ -13,7 +13,7 @@ export default function PracticeCard({
   id,
   title,
   questions,
-  participants,
+  numberOfVisits,
   progress,
 }: Props){
 
@@ -69,7 +69,7 @@ export default function PracticeCard({
       </p>
 
       <p style={{ fontSize: "0.9rem", margin: "0.2rem 0" }}>
-        {participants} participants
+        {numberOfVisits} participants
       </p>
 
     </article>
