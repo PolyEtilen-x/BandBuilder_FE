@@ -16,8 +16,19 @@ export default function PassagePanel({passage}:any){
         {passage?.title || "PASSAGE"}
       </h1>
 
-      <p style={{lineHeight:1.7, color: colors.text.primary}}>
+      <h3 style={{lineHeight:1.7, color: colors.text.primary}}>
         {passage?.topic || passage?.text  || "No passage"}
+      </h3>
+
+      <p
+        style={{
+          lineHeight: 1.8,
+          color: colors.text.primary,
+          fontSize: "16px",
+          whiteSpace: "pre-line"
+        }}
+      >
+        {passage?.content || "No passage"}
       </p>
 
     </article>

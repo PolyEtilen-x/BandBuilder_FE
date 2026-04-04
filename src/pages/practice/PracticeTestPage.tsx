@@ -1,12 +1,14 @@
-import PassagePanel from "@/components/test/PassagePanel"
+import PassagePanel from "@/components/test/ReadingPanel"
 import QuestionPanel from "@/components/test/QuestionPanel"
 import QuestionNavigator from "@/components/test/QuestionNavigator"
+import ListeningPanel from "@/components/test/ListeningPanel"
 
 import { useEffect } from "react"
 import { practiceApi } from "@/api/practice.api"
 
 import { useState } from "react"
 import { useParams } from "react-router-dom"
+import { useSearchParams } from "react-router-dom"
 
 export default function PracticeTestPage() {
 
@@ -15,6 +17,10 @@ export default function PracticeTestPage() {
 
     const { skill, id } = useParams()
     console.log("test id",skill, id)
+
+    const [searchParams] = useSearchParams()
+    const passageNumber = Number(searchParams.get("unit") || 1)    
+
     const [answers,setAnswers] = useState<Record<string,string>>({})
     
     useEffect(() => {
@@ -39,7 +45,28 @@ export default function PracticeTestPage() {
     
     console.log("id =", id)
 
-    const passage = test?.content?.passages?.[0]
+    const isReading = !!test?.content?.passages
+    const isListening = !!test?.content?.sections
+
+    const unitNumber = Number(searchParams.get("unit") || 1)
+
+    let currentUnit = null
+
+    if (isReading) {
+    const passages = test.content.passages
+    currentUnit =
+        passages.find((p:any)=>p.passage_number === unitNumber)
+        || passages[0]
+    }
+
+    if (isListening) {
+    const sections = test.content.sections
+    currentUnit =
+        sections.find((s:any)=>s.section === unitNumber)
+        || sections[0]
+    }
+
+    if (!currentUnit) return <div>No passage found</div>
 
     function updateAnswer(id:string,value:string){
         setAnswers(prev => ({
@@ -47,7 +74,7 @@ export default function PracticeTestPage() {
             [id]:value
         }))
     }
-    console.log("passage", passage)
+    console.log("passage", currentUnit)
 
     return (
         <main
@@ -62,16 +89,18 @@ export default function PracticeTestPage() {
             {/* PASSAGE + QUESTIONS */}
             <section
                 style={{
-                display:"grid",
-                gridTemplateColumns:"2fr 1fr",
-                overflow:"hidden"
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr",
+                    overflow: "hidden"
                 }}
+                className="test-layout"
             >
 
-                <PassagePanel passage={passage} />
+                {isReading && <PassagePanel passage={currentUnit} />}
+                {isListening && <ListeningPanel section={currentUnit} />}
 
                 <QuestionPanel
-                    questionBlocks={passage?.question_blocks || []}
+                    questionBlocks={currentUnit?.question_blocks || []}
                     answers={answers}
                     updateAnswer={updateAnswer}
                 />
@@ -81,7 +110,7 @@ export default function PracticeTestPage() {
 
             {/* QUESTION NAVIGATOR */}
             <QuestionNavigator
-                questionBlocks={passage?.question_blocks || []}
+                questionBlocks={currentUnit?.question_blocks || []}
                 answers={answers}
             />
         </main>

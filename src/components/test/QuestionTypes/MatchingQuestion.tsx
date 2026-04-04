@@ -6,9 +6,8 @@ export default function MatchingFeaturesQuestion({
 }:any){
 
   return(
-    <div style={{marginBottom:30}}>
-
-      <p>({question.number}) {question.text}</p>
+    <div id={`question-${question.id}`} style={{marginBottom:30}}>
+      ({question.number}) {question.text || "Choose the correct answer"}
 
       <select
         value={value || ""}

@@ -1,31 +1,42 @@
-import { useState, lazy, Suspense } from "react"
+import { useState, lazy, Suspense, useEffect } from "react"
 import { ChevronLeft, ChevronDown } from "lucide-react"
 import theme from "@/styles/theme"
 import { PracticeTest } from "@/data/practices/practiceTest.model"
+import { practiceApi } from "@/api/practice.api"
+import { normalizeTestUnits } from "@/utils/normalizeTestUnits.utils"
 
 const PracticeCard = lazy(() => import("./PracticeCard"))
 
-type Props = {
-  title: string
-  skill?: string
-  count: number
-  numberOfVisits: number
-  exercises: PracticeTest[]
-  skillContentId: string
-}
 export default function PracticeSection({
   title,
-  skill,
   count,
   numberOfVisits,
-  exercises,
   skillContentId
-}: Props){
+}: any) {
 
   const [open,setOpen] = useState(false)
+  const [units,setUnits] = useState<any[]>([])
+  const [loaded,setLoaded] = useState(false)
+
+  useEffect(()=>{
+    if(!open || loaded) return
+
+    const fetchPreview = async()=>{
+      try{
+        const res = await practiceApi.getSkillPreview(skillContentId)
+        const normalized = normalizeTestUnits(res.data)
+
+        setUnits(normalized)
+        setLoaded(true)
+      }catch(err){
+        console.error(err)
+      }
+    }
+
+    fetchPreview()
+  },[open, skillContentId, loaded])
   
   return (
-    
     <section
       style={{
         background:"#f6f6f6",
@@ -67,9 +78,7 @@ export default function PracticeSection({
       </div>
 
       {open && (
-
         <Suspense fallback={<p>Loading...</p>}>
-
           <div
             style={{
               marginTop: "1.25rem",
@@ -78,17 +87,22 @@ export default function PracticeSection({
               gap:20
             }}
           >            
-            {exercises.map((ex) => (
-              <PracticeCard
-                key={ex.practiceTestId}
-                id={skillContentId}
-                title={ex.title}
-                questions={0}
-                numberOfVisits={numberOfVisits}
-                progress={0}
-              />
-            ))}
-
+            {units.map((u:any) => {
+              const totalQuestions = u.questionBlocks
+                ?.flatMap((b:any)=>b.questions || [])
+                .length
+                return (
+                  <PracticeCard
+                    key={u.id}
+                    id={skillContentId}
+                    title={u.title}
+                    questions={totalQuestions}
+                    numberOfVisits={numberOfVisits}
+                    progress={0}
+                    unitId={u.id}
+                  />
+                )})
+            }
           </div>
 
         </Suspense>

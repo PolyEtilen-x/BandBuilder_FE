@@ -6,7 +6,8 @@ type Props = {
   title: string
   questions: number
   numberOfVisits: number
-  progress: number
+  progress: number,
+  unitId: string,
 }
 
 export default function PracticeCard({
@@ -15,6 +16,7 @@ export default function PracticeCard({
   questions,
   numberOfVisits,
   progress,
+  unitId
 }: Props){
 
   const navigate = useNavigate()
@@ -23,7 +25,7 @@ export default function PracticeCard({
   function openTest(e: React.MouseEvent){
     e.stopPropagation()
 
-    navigate(`/practice/${skill}/test/${id}`)
+    navigate(`/practice/${skill}/test/${id}?unit=${unitId}`)
   }
 
   return (

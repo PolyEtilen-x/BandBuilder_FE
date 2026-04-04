@@ -14,15 +14,25 @@ export default function QuestionPanel({
     
     <aside
       style={{
-        padding:"30px",
-        overflowY:"auto",
-        color: "#000"
+        padding: "24px",
+        overflowY: "auto",
+        color: "#000",
+        fontSize: "15px",
+        lineHeight: 1.6
       }}
     >
       {questionBlocks.map((block:any, index:number)=>(
-        <div key={index} style={{marginBottom:40}}>
+        <div key={index} style={{marginBottom:32}}>
 
-          <h3>{block.instruction}</h3>
+          <h3 
+            style={{
+              fontSize: "16px",
+              fontWeight: 600,
+              marginBottom: "12px"
+            }}
+          >
+            {block.instruction}
+          </h3>
 
           {block.question_type === "selecting_factors" && (
             <QuestionRenderer
@@ -33,17 +43,26 @@ export default function QuestionPanel({
               extra={block}
             />
           )}
-          
-          {block.questions?.map((q:any)=>(
-
+          {!block.questions && (
             <QuestionRenderer
-              key={q.id}
-              question={q}
-              type={block.question_type}  
-              value={answers[q.id]}
+              question={{ id: block.questions_range }}
+              type={block.question_type}
+              value={answers[block.questions_range]}
               onChange={updateAnswer}
-              extra={block}            
+              extra={block}
             />
+          )}
+
+          {block.questions?.map((q:any)=>(
+            <div id={`question-${q.id}`} key={q.id}>
+              <QuestionRenderer
+                question={q}
+                type={block.question_type}
+                value={answers[q.id]}
+                onChange={updateAnswer}
+                extra={block}
+              />
+            </div>
           ))}
         </div>
       ))}

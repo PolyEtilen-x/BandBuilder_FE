@@ -83,6 +83,7 @@ export interface ReadingPassage {
   passage_number: number;
   title: string;
   topic: string;
+  content: string;
   time_suggested_minutes?: number;
   question_blocks: ReadingQuestionBlock[];
 }

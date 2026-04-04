@@ -2,11 +2,14 @@ import type { ListeningContext, ListeningQuestionType, QuestionsRange } from './
 
 // 1. Shared leaf types
 export interface ListeningQuestion {
-  id: string;          
-  number: number;      
-  text: string;      
-  options?: string[];   
+  id: string;
+  number: number;
+  text: string;
+
+  options?: string[];
+
   note?: string;
+  imgUrl?: string;
 }
 
 // 2. Question block variants (discriminated union)
@@ -36,9 +39,15 @@ export interface NoteCompletionBlock extends QuestionBlockBase {
 }
 
 // ── 2d. matching ──────────────────────────────
+export interface MatchingQuestion {
+  id: string;
+  number: number;
+}
+
 export interface MatchingBlock extends QuestionBlockBase {
   question_type: 'matching';
   options: string[];       
+  questions: MatchingQuestion[]; 
   answers?: string[];       
 }
 
@@ -55,6 +64,8 @@ export interface ListeningSection {
   context: ListeningContext;
   speakers: string[];                  
   description: string;
+  audioUrl?: string; 
+  imgUrl?: string;
   question_blocks: ListeningQuestionBlock[];
 }
 

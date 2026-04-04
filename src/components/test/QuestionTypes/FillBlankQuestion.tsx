@@ -1,7 +1,7 @@
 type Props = {
   question: any
   value: string
-  onChange: (id:number,value:string)=>void
+  onChange: (id:string,value:string)=>void
 }
 
 export default function FillBlankQuestion({
@@ -10,7 +10,9 @@ export default function FillBlankQuestion({
   onChange
 }:Props){
 
-  const parts = question.text.split("_____")
+  const parts = question.text?.includes("_____")
+    ? question.text.split("_____")
+    : [question.text || "", ""]
 
   return (
 

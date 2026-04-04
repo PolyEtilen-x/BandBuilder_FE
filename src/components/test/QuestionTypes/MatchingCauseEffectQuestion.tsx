@@ -6,7 +6,7 @@ export default function MatchingCauseEffectQuestion({
 }:any){
 
   return(
-    <div style={{marginBottom:30}}>
+    <div id={`question-${question.id}`} style={{marginBottom:30}}>
 
       <p>({question.number}) {question.cause}</p>
 

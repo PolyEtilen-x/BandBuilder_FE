@@ -75,6 +75,26 @@ export default function QuestionRenderer({
           onChange={onChange}
         />
       )}
+
+      {/* form_completion */}
+      {type==="form_completion" && (
+        <FillBlank question={question} value={value} onChange={onChange}/>
+      )}
+
+      {/* note_completion */}
+      {type==="note_completion" && (
+        <FillBlank question={question} value={value} onChange={onChange}/>
+      )}
+
+      {/* matching (listening) */}
+      {type==="matching" && (
+        <MatchingFeatures
+          question={question}
+          options={extra?.options || []}
+          value={value}
+          onChange={onChange}
+        />
+      )}
     </Suspense>
   )
 }

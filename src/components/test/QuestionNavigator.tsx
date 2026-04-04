@@ -3,9 +3,10 @@ export default function QuestionNavigator({
   answers
 }:any){
 
-  const flatQuestions = questionBlocks.flatMap(
-    (block:any)=> block.questions || []
-  )
+  const flatQuestions = questionBlocks.flatMap((block:any) => {
+    if (block.questions) return block.questions
+    return []
+  })
 
   function goToQuestion(id:string){
     const el = document.getElementById(`question-${id}`)
