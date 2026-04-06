@@ -2,7 +2,7 @@ import type { ReadingQuestionType, QuestionsRange } from './common.types';
 
 // 1. Shared leaf types
 export interface ReadingQuestion {
-  id: string;       
+  id: string;
   number: number;
   text: string;
   options?: string[];
@@ -42,16 +42,17 @@ export interface MultipleChoiceBlock extends QuestionBlockBase {
 }
 
 // ── 2e. selecting_factors ────────────────────
+// No questions[] — user picks `select_count` items from `options` directly.
 export interface SelectingFactorsBlock extends QuestionBlockBase {
   question_type: 'selecting_factors';
-  options: string[];     
-  select_count?: number;       
+  options: string[];
+  select_count: number; // always required — drives "Which THREE factors" instruction
 }
 
 // ── 2f. table_completion ─────────────────────
 export interface TableCompletionBlock extends QuestionBlockBase {
   question_type: 'table_completion';
-  table_headers: string[];      // column headers
+  table_headers: string[];
   questions: ReadingQuestion[];
 }
 

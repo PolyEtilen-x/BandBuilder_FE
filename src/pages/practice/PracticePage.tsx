@@ -1,97 +1,176 @@
-import { useSearchParams, useParams } from "react-router-dom"
-import theme from "@/styles/theme"
-import PracticeTabs from "@/components/practice/PracticeTabs"
-import PracticeSection from "@/components/practice/PracticeSection"
-import SearchBar from "@/components/components/SearchBar"
-import MainLayout from "@/components/layout/MainLayout/MainLayout"
-import { practiceApi } from "@/api/practice.api"
 import { useEffect, useState } from "react"
+import { useNavigate, useParams } from "react-router-dom"
+import MainLayout from "@/components/layout/MainLayout/MainLayout"
+import PracticeSidebar, { SidebarState } from "@/components/practice/PracticeSidebar"
+import PracticeCard from "@/components/practice/PracticeCard"
+import { practiceApi } from "@/api/practice.api"
+import { normalizeTestUnits, TestUnit } from "@/utils/normalizeTestUnits.utils"
 import { PracticeSkill } from "@/data/practices/practiceSkill.model"
+import { SkillContentPreview } from "@/data/practices/skillContent.model"
+
+type EnrichedSkill = PracticeSkill & {
+  preview?: SkillContentPreview
+  units: TestUnit[]
+}
 
 export default function PracticePage() {
+  const { skill: skillParam } = useParams<{ skill: string }>()
+  const navigate = useNavigate()
 
-    const [params,setParams] = useSearchParams()
-    const { skill = "reading" } = useParams()
+  const [skills, setSkills] = useState<EnrichedSkill[]>([])
+  const [loading, setLoading] = useState(true)
 
-    const [skills, setSkills] = useState<PracticeSkill[]>([])
-    const [loading, isLoading] = useState(true)
+  const [sidebar, setSidebar] = useState<SidebarState>({
+    skill: (skillParam as SidebarState["skill"]) ?? "listening",
+    mode: "single",
+    subSection: 1,
+  })
 
-    const search = params.get("search") || ""
-    const sort = params.get("sort") || ""
-    
-    useEffect(() => {
-        const fetchSkills = async() => {
+  // Sync URL param → sidebar skill
+  useEffect(() => {
+    if (skillParam && skillParam !== sidebar.skill) {
+      setSidebar((prev) => ({
+        ...prev,
+        skill: skillParam as SidebarState["skill"],
+        subSection: prev.mode === "single" ? 1 : null,
+      }))
+    }
+  }, [skillParam])
+
+  // Fetch tất cả skills + preview song song
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true)
+        const res = await practiceApi.getSkills()
+        const list: PracticeSkill[] = res.data.data
+
+        const enriched: EnrichedSkill[] = await Promise.all(
+          list.map(async (s) => {
             try {
-                const res = await practiceApi.getSkills()
-                setSkills(res.data.data)
-            } catch (err) {
-                console.log("API error: ",err)
-            } finally {
-                isLoading(false)
+              const previewRes = await practiceApi.getSkillPreview(s.skillContentId)
+              const preview: SkillContentPreview = previewRes.data
+              return { ...s, preview, units: normalizeTestUnits(preview) }
+            } catch {
+              return { ...s, units: [] }
             }
-        }
+          })
+        )
+        setSkills(enriched)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
 
-        fetchSkills()
-    }, [])
+  function handleSidebarChange(next: SidebarState) {
+    setSidebar(next)
+    if (next.skill !== skillParam) {
+      navigate(`/practice/${next.skill}`)
+    }
+  }
 
-    //filter skill
-    const skillData = skills.filter(
-        (s) => s.skillType.toLowerCase() === skill.toLowerCase()
-    )
-    
-    function updateQuery(newParams:any){
-        setParams({
-        search,
-        sort,
-        ...newParams
-        })
+  const activeSkills = skills.filter(
+    (s) => s.skillType.toLowerCase() === sidebar.skill
+  )
+
+  const cards = activeSkills.flatMap((skillItem) => {
+    if (sidebar.mode === "full") {
+      // Full test
+      const totalQ = skillItem.units
+        .flatMap((u) => u.questionBlocks?.flatMap((b: any) => b.questions ?? []) ?? [])
+        .length
+
+      return [{
+        key: skillItem.skillContentId,
+        id: skillItem.skillContentId,
+        title: skillItem.preview?.source ?? skillItem.title,
+        questions: totalQ,
+        numberOfVisits: skillItem.numberOfVisits,
+        unitId: "full",
+      }]
     }
 
-    return (
-        <MainLayout>
-            <main
-                style={{
-                    width: "100%",   
-                    maxWidth: "75rem",  
-                    margin:"0 auto",
-                    padding:"40px 20px"
-                }}
-                >
+    // Bài lẻ → filter đúng passage / section / task / part
+    return skillItem.units
+      .filter((u) => u.id === sidebar.subSection)
+      .map((u) => ({
+        key: `${skillItem.skillContentId}-${u.id}`,
+        id: skillItem.skillContentId,
+        title: u.title,
+        questions: u.questionBlocks
+          ?.flatMap((b: any) => b.questions ?? [])
+          .length ?? 0,
+        numberOfVisits: skillItem.numberOfVisits,
+        unitId: String(u.id),
+      }))
+  })
 
-                <h1
-                    style={{
-                    fontSize:42,
-                    color:theme.colors.third,
-                    marginBottom:30
-                    }}
-                >
-                    IELTS PRACTICE
-                </h1>
+  const pageTitle =
+    sidebar.mode === "full"
+      ? "Full test"
+      : getSubSectionLabel(sidebar.skill, sidebar.subSection)
 
-                {/* skill tabs */}
-                <PracticeTabs
-                    skill={skill}
+  return (
+    <MainLayout>
+      <div
+        style={{
+          display: "flex",
+          gap: 30,
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "30px 20px",
+          alignItems: "flex-start",
+        }}
+      >
+        <PracticeSidebar state={sidebar} onChange={handleSidebarChange} />
+
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <h2 style={{ marginBottom: 24, fontSize: 20, fontWeight: 700 }}>
+            {sidebar.skill.charAt(0).toUpperCase() + sidebar.skill.slice(1)} — {pageTitle}
+          </h2>
+
+          {loading ? (
+            <p style={{ color: "#888" }}>Đang tải...</p>
+          ) : cards.length === 0 ? (
+            <p style={{ color: "#aaa", fontSize: 14 }}>Chưa có bài tập nào.</p>
+          ) : (
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(15rem, 1fr))",
+                gap: 20,
+              }}
+            >
+              {cards.map((c) => (
+                <PracticeCard
+                  key={c.key}
+                  id={c.id}
+                  title={c.title}
+                  questions={c.questions}
+                  numberOfVisits={c.numberOfVisits}
+                  progress={0}
+                  unitId={c.unitId}
                 />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+    </MainLayout>
+  )
+}
 
-                {/* search + sort */}
-                <SearchBar
-                    search={search}
-                    sort={sort}
-                    updateQuery={updateQuery}
-                />
-
-                {/* sections */}
-                {skillData.map((item) => (
-                    <PracticeSection
-                        skillContentId={item.skillContentId}
-                        key={item.skillContentId}
-                        title={item.practiceTests[0]?.title || item.skillType}
-                        count={item.practiceTests.length}
-                        exercises={item.practiceTests}
-                        numberOfVisits={item.numberOfVisits}
-                    />
-                ))}
-            </main>
-        </MainLayout>
-    )
+function getSubSectionLabel(skill: string, sub: number | null): string {
+  if (sub == null) return ""
+  switch (skill) {
+    case "reading":   return `Passage ${sub}`
+    case "listening": return `Section ${sub}`
+    case "writing":   return `Task ${sub}`
+    case "speaking":  return `Part ${sub}`
+    default:          return String(sub)
+  }
 }
