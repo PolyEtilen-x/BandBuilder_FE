@@ -1,0 +1,30 @@
+.dict-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 220px;
+  background: #fff;
+  border-top: 2px solid #ff5a2c;
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+  z-index: 9999;
+  padding: 16px;
+}
+
+.dict-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dict-meaning {
+  color: green;
+  font-weight: 600;
+  margin-top: 8px;
+}
+
+.dict-example {
+  margin-top: 6px;
+  font-size: 13px;
+  color: #666;
+}

@@ -1,13 +1,35 @@
 import theme from "@/styles/theme"
 
+type ToolType = "highlight" | "note" | "dict"
+
 type Props = {
-    section: any
+  section: any
+  activeTool?: ToolType   
 }
 
-export default function ListeningPanel({ section }: Props) {
+export default function ListeningPanel({ section, activeTool }: Props) {
 
     if (!section) return <div>No section</div>
 
+    const handleMouseUp = () => {
+        const selection = window.getSelection()?.toString().trim()
+        if (!selection) return
+
+        if (activeTool === "highlight") {
+            console.log("🟡 highlight:", selection)
+        }
+
+        if (activeTool === "note") {
+            const note = prompt("Add note:")
+            console.log("📝", selection, note)
+        }
+
+        if (activeTool === "dict") {
+            window.open(
+                `https://dictionary.cambridge.org/dictionary/english/${selection}`
+            )
+        }
+    }
     return (
         <div
         style={{

@@ -26,9 +26,45 @@
 
 /* MAIN */
 .practice-main {
-  flex: 1;
   display: flex;
-  overflow: hidden;
+  flex: 1;
+}
+
+/* TOOLBAR */
+.practice-toolbar {
+  width: 120px;
+  border-right: 1px solid #eee;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.toolbar-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #666;
+  margin-bottom: 8px;
+}
+
+/* BUTTON */
+.tool-btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 13px;
+  text-align: left;
+}
+
+.tool-btn small {
+  color: #888;
+}
+
+.tool-btn.active {
+  border-color: #1b4b99;
+  background: #ecfdf5;
 }
 
 /* LEFT RIGHT */
@@ -75,7 +111,7 @@
   }
 
   .practice-tabs button.active {
-    border-bottom: 2px solid #16a34a;
+    border-bottom: 2px solid #1b4b99;
   }
 
   .practice-mobile-content {
