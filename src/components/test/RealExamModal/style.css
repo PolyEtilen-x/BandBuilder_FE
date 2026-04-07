@@ -1,0 +1,114 @@
+/* CONTAINER */
+.exam-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* HEADER */
+.exam-header {
+  height: 60px;
+  border-bottom: 1px solid #ddd;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  font-weight: 600;
+}
+
+/* MAIN */
+.exam-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* LEFT */
+.exam-left {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* RIGHT */
+.exam-right {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* DIVIDER */
+.exam-divider {
+  width: 6px;
+  background: #ddd;
+  cursor: col-resize;
+}
+
+/* FOOTER */
+.exam-footer {
+  height: 90px;
+  border-top: 1px solid #ddd;
+  background: #fff;
+}
+
+/* TAB BAR */
+.exam-tabs {
+  display: flex;
+  flex-shrink: 0;
+  border-bottom: 1px solid #ddd;
+  background: #fff;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+/* TAB BUTTON */
+.exam-tabs button {
+  flex: 1;
+  padding: 14px 0;
+  background: none;
+  border: none;
+  font-weight: 600;
+  font-size: 15px;
+  cursor: pointer;
+  color: #666;
+  position: relative;
+}
+
+/* ACTIVE TAB */
+.exam-tabs button.active {
+  color: #000;
+}
+
+/* UNDERLINE */
+.exam-tabs button.active::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 25%;
+  width: 50%;
+  height: 3px;
+  background: #1B4B99;
+  border-radius: 2px;
+}
+
+.exam-mobile-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+@media (max-width: 768px) {
+  .exam-main {
+    display: flex;
+    flex-direction: column; 
+  }
+
+  .exam-divider {
+    display: none;
+  }
+
+  .exam-left,
+  .exam-right {
+    width: 100% !important;
+  }
+}

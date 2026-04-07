@@ -1,72 +1,94 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { X } from "lucide-react"
+import "./ModeSelectModal.css"
 
 type Props = {
-    open: boolean
-    onClose: () => void
-    onStart: (mode: "practice" | "exam") => void
+  open: boolean
+  onClose: () => void
+  onStart: (mode: string) => void
 }
 
+const MODES = [
+  {
+    id: "exam",
+    label: "Real Exam Interface",
+    description:
+      "Simulates the computer-based test environment so you're fully prepared on exam day",
+    badge: "100% Identical",
+  },
+  {
+    id: "practice",
+    label: "Practice Interface",
+    description:
+      "Vocabulary lookup, writing hints, and more — perfect for daily practice",
+    badge: null,
+  },
+]
+
 export default function ModeSelectModal({ open, onClose, onStart }: Props) {
-    const [selectedMode, setSelectedMode] = useState<"practice" | "exam">("practice")
+  const [selected, setSelected] = useState<"exam" | "practice">("practice")
 
-    if (!open) return null
+  useEffect(() => {
+    const saved = localStorage.getItem("practice_mode")
+    if (saved === "exam" || saved === "practice") {
+      setSelected(saved)
+    }
+  }, [])
 
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-            <div className="bg-white rounded-2xl p-6 w-[700px] relative">
-                {/* Close */}
-                <button
-                onClick={onClose}
-                className="absolute top-3 right-3 text-gray-500"
-                >
-                ✕
-                </button>
+  const handleStart = () => {
+    localStorage.setItem("practice_mode", selected)
+    onStart(selected)
+  }
 
-                <h2 className="text-xl font-semibold mb-4">
-                Choose Practice Mode
-                </h2>
+  if (!open) return null
 
-                <div className="flex gap-4">
-                {/* Real Exam */}
-                <div
-                    onClick={() => setSelectedMode("exam")}
-                    className={`flex-1 border-2 rounded-xl p-4 cursor-pointer ${
-                    selectedMode === "exam"
-                        ? "border-green-500"
-                        : "border-gray-200"
-                    }`}
-                >
-                    <div className="h-32 bg-gray-100 mb-3 rounded"></div>
-                    <h3 className="font-semibold">Real Exam Mode</h3>
-                    <p className="text-sm text-gray-500">
-                    100% simulation of the actual exam interface
-                    </p>
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-container" onClick={(e) => e.stopPropagation()}>
+        
+        {/* Close */}
+        <button className="modal-close" onClick={onClose}>
+          <X size={20} />
+        </button>
+
+        {/* Header */}
+        <h2 className="modal-title">Choose your test interface</h2>
+
+        {/* Cards */}
+        <div className="modal-cards">
+          {MODES.map((mode) => {
+            const isSelected = selected === mode.id
+
+            return (
+              <div
+                key={mode.id}
+                className={`modal-card ${isSelected ? "selected" : ""}`}
+                onClick={() => setSelected(mode.id as any)}
+              >
+                {/* Preview */}
+                <div className="modal-preview">
+                  <span>Preview</span>
+
+                  {mode.badge && (
+                    <div className="modal-badge">{mode.badge}</div>
+                  )}
                 </div>
 
-                {/* Practice */}
-                <div
-                    onClick={() => setSelectedMode("practice")}
-                    className={`flex-1 border-2 rounded-xl p-4 cursor-pointer ${
-                    selectedMode === "practice"
-                        ? "border-green-500"
-                        : "border-gray-200"
-                    }`}
-                >
-                    <div className="h-32 bg-gray-100 mb-3 rounded"></div>
-                    <h3 className="font-semibold">Practice Mode</h3>
-                    <p className="text-sm text-gray-500">
-                    Support, Explanation & Dictionary
-                    </p>
+                {/* Text */}
+                <div className="modal-text">
+                  <p className="modal-label">{mode.label}</p>
+                  <p className="modal-desc">{mode.description}</p>
                 </div>
-                </div>
-
-                <button
-                onClick={() => onStart(selectedMode)}
-                className="mt-6 w-full bg-orange-500 text-white py-2 rounded-xl"
-                >
-                Get started
-                </button>
-            </div>
+              </div>
+            )
+          })}
         </div>
-    )
+
+        {/* Button */}
+        <button className="modal-button" onClick={handleStart}>
+          Start test
+        </button>
+      </div>
+    </div>
+  )
 }

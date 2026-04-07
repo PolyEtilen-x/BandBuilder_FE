@@ -40,11 +40,11 @@ export default function PracticePage() {
     setOpenModal(false)
 
     navigate(
-      `/practice-test/${selectedTest.id}?unit=${selectedTest.unitId}`,
-      {
-        state: { mode }
-      }
-    )
+    `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
+    {
+      state: { mode }
+    }
+  )
   }
   // Sync URL param → sidebar skill
   useEffect(() => {

@@ -1,0 +1,147 @@
+/* Overlay */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+/* Container */
+.modal-container {
+  background: #fff;
+  width: 100%;
+  max-width: 800px;
+  border-radius: 20px;
+  padding: 32px 28px;
+  position: relative;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* 👉 spacing giữa các block */
+}
+
+/* Close */
+.modal-close {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: #888;
+}
+
+/* Title */
+.modal-title {
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  margin: 8px 0 4px 0;
+}
+
+/* Cards wrapper */
+.modal-cards {
+  display: flex;
+  gap: 20px;
+}
+
+/* Card */
+.modal-card {
+  flex: 1;
+  border: 2px solid #e5e5e5;
+  border-radius: 16px;
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.2s ease;
+  background: #fff;
+}
+
+/* Selected */
+.modal-card.selected {
+  border-color: #22c55e;
+  background: #f0fdf4;
+}
+
+/* Hover */
+.modal-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+/* Preview */
+.modal-preview {
+  height: 160px;
+  background: #eee;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  color: #999;
+}
+
+/* Badge */
+.modal-badge {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  background: #ef4444;
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* Text */
+.modal-text {
+  padding: 16px;
+  text-align: center;
+}
+
+.modal-label {
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.modal-desc {
+  font-size: 14px;
+  color: #666;
+  line-height: 1.4;
+}
+
+/* Button */
+.modal-button {
+  margin-top: 8px;
+  padding: 14px;
+  border-radius: 999px;
+  border: none;
+  background: #1B4B99;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.modal-button:hover {
+  background: #174593;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .modal-cards {
+    flex-direction: column;
+  }
+
+  .modal-container {
+    padding: 24px 20px;
+  }
+
+  .modal-preview {
+    height: 140px;
+  }
+}

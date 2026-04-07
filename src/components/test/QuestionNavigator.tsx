@@ -22,10 +22,11 @@ export default function QuestionNavigator({
     <nav
       style={{
         borderTop:"1px solid #eee",
-        padding:"10px 20px",
+        padding:"10px 16px",
         display:"flex",
-        gap:"20px",
-        overflowX:"auto"
+        gap:"10px",
+        overflowX:"auto",
+        alignItems:"center"
       }}
     >
       {flatQuestions.map((q:any)=>{
@@ -35,19 +36,17 @@ export default function QuestionNavigator({
             key={q.id}
             onClick={()=>goToQuestion(q.id)}
             style={{
-              width:38,
-              height:38,
+              width:34,
+              height:34,
               borderRadius:"50%",
-              border:"none",
+              border:"1px solid #ccc",
               cursor:"pointer",
 
-              background:answered
-                ? "#3b82f6"
-                : "#dbeafe",
+              background: answered ? "#2563eb" : "#f3f4f6",
+              color: answered ? "#fff" : "#111",
 
-              color:answered
-                ? "#fff"
-                : "#1e3a8a"
+              fontSize:"13px",
+              fontWeight:600
             }}
           >
             {q.number}

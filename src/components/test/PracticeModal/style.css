@@ -1,0 +1,86 @@
+.practice-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+}
+
+/* HEADER */
+.practice-header {
+  height: 60px;
+  border-bottom: 1px solid #eee;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 16px;
+  font-weight: 600;
+}
+
+.practice-badge {
+  background: #16a34a;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+/* MAIN */
+.practice-main {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+}
+
+/* LEFT RIGHT */
+.practice-left,
+.practice-right {
+  overflow-y: auto;
+  padding: 20px;
+}
+
+/* DIVIDER */
+.practice-divider {
+  width: 6px;
+  background: #ddd;
+  cursor: col-resize;
+}
+
+/* FOOTER */
+.practice-footer {
+  height: 90px;
+  border-top: 1px solid #eee;
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .practice-main {
+    flex-direction: column;
+  }
+
+  .practice-divider {
+    display: none;
+  }
+
+  .practice-tabs {
+    display: flex;
+    border-bottom: 1px solid #ddd;
+  }
+
+  .practice-tabs button {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: none;
+    font-weight: 600;
+  }
+
+  .practice-tabs button.active {
+    border-bottom: 2px solid #16a34a;
+  }
+
+  .practice-mobile-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+  }
+}

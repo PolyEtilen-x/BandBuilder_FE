@@ -6,7 +6,8 @@ import { practiceApi } from "@/api/practice.api"
 
 import { useEffect, useState } from "react"
 import { useSearchParams, useLocation, useParams } from "react-router-dom"
-
+import RealExam from "@/components/test/RealExamModal/RealExam"
+import PracticeExam from "@/components/test/PracticeModal/PracticeExam"
 export default function PracticeTestPage() {
 
     const [test, setTest] = useState<any>(null)
@@ -75,87 +76,19 @@ export default function PracticeTestPage() {
     }
     console.log("passage", currentUnit)
 
-    return (
-        <main
-            style={{
-                height:"100vh",
-                display:"grid",
-                gridTemplateRows:"1fr 110px",
-                background: "#fff"
-            }}
-        >
-            <div>
-                {mode === "exam" ? (
-                    <ExamLayout />
-                ) : (
-                    <PracticeLayout />
-                )}
-            </div>
-
-            {/* PASSAGE + QUESTIONS */}
-            <section
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "2fr 1fr",
-                    overflow: "hidden"
-                }}
-                className="test-layout"
-            >
-
-                {isReading && <PassagePanel passage={currentUnit} />}
-                {isListening && <ListeningPanel section={currentUnit} />}
-
-                <QuestionPanel
-                    questionBlocks={currentUnit?.question_blocks || []}
-                    answers={answers}
-                    updateAnswer={updateAnswer}
-                />
-
-            </section>
-
-
-            {/* QUESTION NAVIGATOR */}
-            <QuestionNavigator
-                questionBlocks={currentUnit?.question_blocks || []}
-                answers={answers}
-            />
-        </main>
-
+    return mode === "exam" ? (
+        <RealExam
+            test={test}
+            unit={currentUnit}
+            answers={answers}
+            updateAnswer={updateAnswer}
+        />
+        ) : (
+        <PracticeExam
+            test={test}
+            unit={currentUnit}
+            answers={answers}
+            updateAnswer={updateAnswer}
+        />
     )
-
 }
-
-function ExamLayout() {
-  return (<div>UI giống thi thật (no hint)</div>)
-}
-
-function PracticeLayout() {
-  return <div>UI có hint, solution, vocab</div>
-}
-
-{/* <section
-                style={{
-                    display: "grid",
-                    gridTemplateColumns: "2fr 1fr",
-                    overflow: "hidden"
-                }}
-                className="test-layout"
-            >
-
-                {isReading && <PassagePanel passage={currentUnit} />}
-                {isListening && <ListeningPanel section={currentUnit} />}
-
-                <QuestionPanel
-                    questionBlocks={currentUnit?.question_blocks || []}
-                    answers={answers}
-                    updateAnswer={updateAnswer}
-                />
-
-            </section>
-
-
-            // {/* QUESTION NAVIGATOR */}
-            // <QuestionNavigator
-            //     questionBlocks={currentUnit?.question_blocks || []}
-            //     answers={answers}
-            // /> */}
