@@ -14,30 +14,38 @@ type AuthState = {
   fetchUser: () => Promise<void>
   logout: () => void
 }
+let hasFetched = false
 
 export const useAuthStore = create<AuthState>((set) => ({
-  user: null,
-  isLoading: true,
-  isAuthenticated: false,
+    user: null,
+    isLoading: false,
+    isAuthenticated: false,
 
-  fetchUser: async () => {
-    set({ isLoading: true })
+    fetchUser: async () => {
+        // Only fetch once on app load, then rely on isAuthenticated + user state for the rest of the app
+        if (hasFetched) return
 
-    const user = await getCurrentUser()
+        hasFetched = true
+        set({ isLoading: true })
 
-    set({
-      user,
-      isAuthenticated: !!user,
-      isLoading: false
-    })
-  },
+        try {
+        const user = await getCurrentUser()
 
-  logout: () => {
-    set({
-      user: null,
-      isAuthenticated: false
-    })
+        set({
+            user,
+            isAuthenticated: !!user,
+            isLoading: false
+        })
+        } catch {
+        set({ isLoading: false })
+        }
+    },
 
-    window.location.href = "/login"
-  }
+    logout: () => {
+        hasFetched = false
+        set({
+        user: null,
+        isAuthenticated: false
+        })
+    }
 }))

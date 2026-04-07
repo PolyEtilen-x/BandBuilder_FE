@@ -7,6 +7,8 @@ import { practiceApi } from "@/api/practice.api"
 import { normalizeTestUnits, TestUnit } from "@/utils/normalizeTestUnits.utils"
 import { PracticeSkill } from "@/data/practices/practiceSkill.model"
 import { SkillContentPreview } from "@/data/practices/skillContent.model"
+import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
+import { loadSkillsWithPreview } from "@/services/practice/practiceLoader.service"
 
 type EnrichedSkill = PracticeSkill & {
   preview?: SkillContentPreview
@@ -16,7 +18,7 @@ type EnrichedSkill = PracticeSkill & {
 export default function PracticePage() {
   const { skill: skillParam } = useParams<{ skill: string }>()
   const navigate = useNavigate()
-
+  
   const [skills, setSkills] = useState<EnrichedSkill[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -26,6 +28,24 @@ export default function PracticePage() {
     subSection: 1,
   })
 
+  const [openModal, setOpenModal] = useState(false)
+  const [selectedTest, setSelectedTest] = useState<any>(null)
+  
+  const handleClickTest = (test: any) => {
+    setSelectedTest(test)
+    setOpenModal(true)
+  }
+
+  const handleStart = (mode: "practice" | "exam") => {
+    setOpenModal(false)
+
+    navigate(
+      `/practice-test/${selectedTest.id}?unit=${selectedTest.unitId}`,
+      {
+        state: { mode }
+      }
+    )
+  }
   // Sync URL param → sidebar skill
   useEffect(() => {
     if (skillParam && skillParam !== sidebar.skill) {
@@ -37,7 +57,7 @@ export default function PracticePage() {
     }
   }, [skillParam])
 
-  // Fetch tất cả skills + preview song song
+  // Fetch all skills + preview on page load, then cache preview for later use when user switch between skills
   useEffect(() => {
     const load = async () => {
       try {
@@ -45,17 +65,8 @@ export default function PracticePage() {
         const res = await practiceApi.getSkills()
         const list: PracticeSkill[] = res.data.data
 
-        const enriched: EnrichedSkill[] = await Promise.all(
-          list.map(async (s) => {
-            try {
-              const previewRes = await practiceApi.getSkillPreview(s.skillContentId)
-              const preview: SkillContentPreview = previewRes.data
-              return { ...s, preview, units: normalizeTestUnits(preview) }
-            } catch {
-              return { ...s, units: [] }
-            }
-          })
-        )
+        const enriched = await loadSkillsWithPreview(list)
+
         setSkills(enriched)
       } catch (err) {
         console.error(err)
@@ -63,6 +74,7 @@ export default function PracticePage() {
         setLoading(false)
       }
     }
+
     load()
   }, [])
 
@@ -146,20 +158,29 @@ export default function PracticePage() {
               }}
             >
               {cards.map((c) => (
-                <PracticeCard
-                  key={c.key}
-                  id={c.id}
-                  title={c.title}
-                  questions={c.questions}
-                  numberOfVisits={c.numberOfVisits}
-                  progress={0}
-                  unitId={c.unitId}
-                />
+                <div key={c.key} onClick={() => handleClickTest(c)}>
+                  <PracticeCard
+                    id={c.id}
+                    title={c.title}
+                    questions={c.questions}
+                    numberOfVisits={c.numberOfVisits}
+                    progress={0}
+                    unitId={c.unitId}
+                    onClick={() => handleClickTest(c)}
+                  />
+                </div>
               ))}
             </div>
           )}
         </div>
       </div>
+
+      <ModeSelectModal
+        open={openModal}
+        onClose={() => setOpenModal(false)}
+        onStart={handleStart}
+      />
+
     </MainLayout>
   )
 }

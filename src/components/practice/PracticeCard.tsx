@@ -8,6 +8,7 @@ type Props = {
   numberOfVisits: number
   progress: number,
   unitId: string,
+  onClick?: () => void
 }
 
 export default function PracticeCard({
@@ -16,7 +17,8 @@ export default function PracticeCard({
   questions,
   numberOfVisits,
   progress,
-  unitId
+  unitId,
+  onClick
 }: Props){
 
   const navigate = useNavigate()
@@ -31,7 +33,7 @@ export default function PracticeCard({
   return (
 
     <article
-      onClick={openTest}
+      onClick={onClick} className="cursor-pointer"
       style={{
         background: theme.colors.third,
         borderRadius: "1.25rem",

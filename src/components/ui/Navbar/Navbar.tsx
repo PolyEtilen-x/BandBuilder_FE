@@ -3,16 +3,15 @@ import menu from "./menu"
 import theme from "@/styles/theme"
 import { Link } from "react-router-dom"
 import logo from "@/assets/logo.png"
-import { fetchUser, loginWithGoogle } from "@/services/SignUpWithGoogle"
+import { loginWithGoogle } from "@/services/SignUpWithGoogle"
+import { useAuthStore } from "@/services/auth/auth.store"
 
 export default function Navbar() {
     const [active, setActive] = useState<number | null>(null)
     const [open, setOpen] = useState(false)
-    const [user, setUser] = useState<any>(null)
 
-    useEffect(() => {
-        fetchUser().then(setUser)
-    }, [])
+    const user = useAuthStore((s) => s.user)
+
 
     return (
         <nav
@@ -98,7 +97,6 @@ export default function Navbar() {
                 {/* DESKTOP BUTTON */}
                 {user ? (
                     <div style={{ display: "flex", gap: 10 }}>
-                        <img src={user.avatar} style={{ width: 30, borderRadius: "50%" }} />
                         <span>Hello {user.name}</span>
                     </div>
                     ) : (

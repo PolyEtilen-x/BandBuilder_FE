@@ -2,21 +2,20 @@ import PassagePanel from "@/components/test/ReadingPanel"
 import QuestionPanel from "@/components/test/QuestionPanel"
 import QuestionNavigator from "@/components/test/QuestionNavigator"
 import ListeningPanel from "@/components/test/ListeningPanel"
-
-import { useEffect } from "react"
 import { practiceApi } from "@/api/practice.api"
 
-import { useState } from "react"
-import { useParams } from "react-router-dom"
-import { useSearchParams } from "react-router-dom"
+import { useEffect, useState } from "react"
+import { useSearchParams, useLocation, useParams } from "react-router-dom"
 
 export default function PracticeTestPage() {
 
     const [test, setTest] = useState<any>(null)
     const [loading, setLoading] = useState(true)    
 
-    const { skill, id } = useParams()
-    console.log("test id",skill, id)
+    const { id } = useParams()
+
+    const location = useLocation()
+    const mode = location.state?.mode || "practice"
 
     const [searchParams] = useSearchParams()
     const passageNumber = Number(searchParams.get("unit") || 1)    
@@ -85,6 +84,13 @@ export default function PracticeTestPage() {
                 background: "#fff"
             }}
         >
+            <div>
+                {mode === "exam" ? (
+                    <ExamLayout />
+                ) : (
+                    <PracticeLayout />
+                )}
+            </div>
 
             {/* PASSAGE + QUESTIONS */}
             <section
@@ -118,3 +124,38 @@ export default function PracticeTestPage() {
     )
 
 }
+
+function ExamLayout() {
+  return (<div>UI giống thi thật (no hint)</div>)
+}
+
+function PracticeLayout() {
+  return <div>UI có hint, solution, vocab</div>
+}
+
+{/* <section
+                style={{
+                    display: "grid",
+                    gridTemplateColumns: "2fr 1fr",
+                    overflow: "hidden"
+                }}
+                className="test-layout"
+            >
+
+                {isReading && <PassagePanel passage={currentUnit} />}
+                {isListening && <ListeningPanel section={currentUnit} />}
+
+                <QuestionPanel
+                    questionBlocks={currentUnit?.question_blocks || []}
+                    answers={answers}
+                    updateAnswer={updateAnswer}
+                />
+
+            </section>
+
+
+            // {/* QUESTION NAVIGATOR */}
+            // <QuestionNavigator
+            //     questionBlocks={currentUnit?.question_blocks || []}
+            //     answers={answers}
+            // /> */}
