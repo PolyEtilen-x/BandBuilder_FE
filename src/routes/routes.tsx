@@ -5,6 +5,7 @@ import PracticeTestPage from "@/pages/practice/PracticeTestPage"
 import { Route } from "react-router-dom"
 import path from "path"
 import LoginSuccess from "@/pages/loginsuccess"
+import VocabPage from "@/pages/materials/vocabulary/VocabPage"
 
 export const routes = [
   {
@@ -18,6 +19,10 @@ export const routes = [
   {
     path: "/practice/:skill/test/:id",
     element: <PracticeTestPage />,
+  },
+  {
+    path: "/materials/vocabulary",
+    element: <VocabPage />, 
   },
   {
     path: "/login/success",
