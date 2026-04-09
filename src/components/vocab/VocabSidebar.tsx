@@ -23,13 +23,12 @@ const VOCAB_CONFIG: Record<
     VocabKey,
     {
         label: string
-        subItems: string[]
+        subItems?: string[]
         hasMode: boolean
     }
 > = {
     topics: {
         label: "Topics",
-        subItems: ["Education", "Environment", "Technology", "Health"],
         hasMode: false,
     },
     band: {
@@ -39,7 +38,7 @@ const VOCAB_CONFIG: Record<
     },
     flashcard: {
         label: "Flashcards",
-        subItems: ["Recent", "Difficult", "Saved"],
+        subItems: ["Topics", "Band"],
         hasMode: true,
     },
     notebook: {
@@ -80,7 +79,7 @@ const subRowStyle: React.CSSProperties = {
       onChange({
         category: c,
         mode: "list",
-        subItem: VOCAB_CONFIG[c].subItems.length ? 1 : null,
+        subItem: VOCAB_CONFIG[c].subItems?.length ? 1 : null,
       })
     }
   }
@@ -128,8 +127,7 @@ const subRowStyle: React.CSSProperties = {
               </span>
             </div>
 
-            {/* SubItems giống Part */}
-            {isActive && cfg.subItems.length > 0 && (
+            {isActive && cfg.subItems && cfg.subItems.length > 0 && (
               <div>
                 {cfg.subItems.map((label, i) => {
                   const idx = i + 1

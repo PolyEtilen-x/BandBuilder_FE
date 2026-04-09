@@ -1,40 +1,110 @@
+import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
+import { vocabApi } from "@/api/vocab.api"
+import { VocabTopic } from "@/data/vocab/vocab.model"
 import "./style.css"
 
-const MOCK_DATA: any = {
-  Education: [
-    { word: "curriculum", meaning: "chương trình học" },
-    { word: "tuition", meaning: "học phí" },
-    { word: "scholarship", meaning: "học bổng" },
-  ],
-  Environment: [
-    { word: "pollution", meaning: "ô nhiễm" },
-    { word: "deforestation", meaning: "phá rừng" },
-    { word: "sustainability", meaning: "bền vững" },
-  ],
+type Props = {
+  topicName: string
+  onBack: () => void
 }
 
-export default function TopicDetail() {
-  const { topicName } = useParams()
+export default function TopicDetail({ topicName, onBack }: Props) {
+    const decodedName = decodeURIComponent(topicName || "")
 
-  const words = MOCK_DATA[topicName as string] || []
+    const [topic, setTopic] = useState<VocabTopic | null>(null)
+    const [loading, setLoading] = useState(true)
 
-  return (
-    <div className="topic-detail">
-      <h1 className="detail-title">{topicName}</h1>
+    useEffect(() => {
+        const load = async () => {
+        try {
+            setLoading(true)
+            const res = await vocabApi.getTopic(decodedName)
+            setTopic(res || null)
+        } catch (err) {
+            console.error(err)
+        } finally {
+            setLoading(false)
+        }
+        }
 
-      <div className="word-list">
-        {words.map((w: any, i: number) => (
-          <div key={i} className="word-card">
-            <div className="word-main">
-              <span className="word">{w.word}</span>
-              <span className="meaning">{w.meaning}</span>
+        load()
+    }, [decodedName])
+
+    const handleSave = async (id: number) => {
+        const updated = await vocabApi.toggleSave(decodedName, id)
+        if (updated) setTopic(updated)
+    }
+
+    const playAudio = (word: string) => {
+        speechSynthesis.cancel()
+
+        const voices = speechSynthesis.getVoices()
+        const voice = voices.find(v => v.lang === "en-US")
+
+        const utterance = new SpeechSynthesisUtterance(word)
+        utterance.voice = voice || null
+        utterance.rate = 0.9
+
+        speechSynthesis.speak(utterance)
+    }
+
+    if (loading) return <p>Loading...</p>
+    if (!topic) return <p>No data</p>
+
+    return (
+        <div className="vocab-content">
+            <div className="detail-header">
+                <h2 className="detail-title">{topic.topic}</h2>
+                <button onClick={onBack}>← Back</button>
             </div>
+            <div className="detail-container">
+                {topic.vocab_list.map((w) => (
+                    <div key={w.id} className="word-card">
 
-            <button className="save-btn">Save</button>
-          </div>
-        ))}
-      </div>
-    </div>
-  )
+                    {/* LEFT */}
+                    <div className="word-content">
+                        <div className="word-top">
+                        <h3>{w.word}</h3>
+
+                        <button
+                            className="audio-btn"
+                            onClick={() => playAudio(w.word)}
+                        >
+                            🔊
+                        </button>
+                        </div>
+
+                        <span className="pronunciation">{w.pronunciation}</span>
+
+                        <p className="meaning">
+                            Vietnamese meaning: {w.meaning}
+                        </p>
+
+                        <p className="example">
+                            Example: "{w.example}"
+                        </p>
+
+                        {w.synonyms && (
+                        <p className="synonyms">
+                            Synonyms: "{w.synonyms.join(", ")}""
+                        </p>
+                        )}
+                    </div>
+
+                    {/* RIGHT */}
+                    <div className="word-action">
+                        <button
+                        className={`save-btn ${w.isSaved ? "saved" : ""}`}
+                        onClick={() => handleSave(w.id)}
+                        >
+                        {w.isSaved ? "Saved" : "Save"}
+                        </button>
+                    </div>
+
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
 }

@@ -5,7 +5,7 @@ import PracticeTestPage from "@/pages/practice/PracticeTestPage"
 import { Route } from "react-router-dom"
 import path from "path"
 import LoginSuccess from "@/pages/loginsuccess"
-import VocabPage from "@/pages/materials/vocabulary/VocabPage"
+import VocabPage from "@/pages/materials/VocabPage"
 import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 
 export const routes = [

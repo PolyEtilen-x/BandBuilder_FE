@@ -1,0 +1,98 @@
+.flashcard-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.flashcard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mode-toggle button {
+  border: none;
+  padding: 6px 14px;
+  border-radius: 8px;
+  background: #eee;
+  cursor: pointer;
+}
+
+.mode-toggle .active {
+  background: #174593;
+  color: white;
+}
+
+/* FILTER */
+.flashcard-filter {
+  margin: 15px 0;
+}
+
+/* CARD */
+.card-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flashcard {
+  width: 320px;
+  height: 200px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.card {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  backface-visibility: hidden;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  border-radius: 16px;
+  border: 1px solid #e6eaf0;
+  background: white;
+  transition: transform 0.5s;
+}
+
+.front {
+  font-size: 24px;
+}
+
+.back {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flipped .front {
+  transform: rotateY(180deg);
+}
+
+.flashcard.flipped .back {
+  transform: rotateY(360deg);
+}
+
+/* ACTION */
+.flashcard-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.flashcard-actions button {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+}
+
+.flashcard-actions .save {
+  background: #174593;
+  color: white;
+}
