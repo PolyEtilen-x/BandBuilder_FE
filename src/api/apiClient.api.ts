@@ -6,13 +6,13 @@ export const apiClient = axios.create({
   withCredentials: true
 })
 
-
 let isRefreshing = false
-let refreshSubscribers: ((token?: any) => void)[] = []
+let refreshSubscribers: (() => void)[] = []
 
-function subscribeTokenRefresh(cb: (token?: any) => void) {
+function subscribeTokenRefresh(cb: () => void) {
   refreshSubscribers.push(cb)
 }
+
 function onRefreshed() {
   refreshSubscribers.forEach((cb) => cb())
   refreshSubscribers = []
@@ -23,25 +23,26 @@ apiClient.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config
 
-    //  401 = reject
+    // ❗ bỏ qua /auth/me (KHÔNG trigger refresh/login)
+    if (originalRequest.url.includes("/auth/me")) {
+      return Promise.reject(error)
+    }
+
     if (error.response?.status !== 401) {
       return Promise.reject(error)
     }
 
-    // if request is refresh but response 401 → logout
     if (originalRequest.url.includes("/auth/refresh")) {
-      window.location.href = "/login"
+      window.location.href = "https://aidsense.online/auth/google"
       return Promise.reject(error)
     }
 
-    // loop
     if (originalRequest._retry) {
       return Promise.reject(error)
     }
 
     originalRequest._retry = true
 
-    // if refreshing = wait for refresh to finish, then retry original request
     if (isRefreshing) {
       return new Promise((resolve) => {
         subscribeTokenRefresh(() => {
@@ -61,7 +62,7 @@ apiClient.interceptors.response.use(
       return apiClient(originalRequest)
     } catch (err) {
       isRefreshing = false
-      window.location.href = "/login"
+      window.location.href = "https://aidsense.online/auth/google"
       return Promise.reject(err)
     }
   }

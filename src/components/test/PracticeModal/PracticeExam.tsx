@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from "react"
-import QuestionPanel from "@/components/test/QuestionPanel"
-import QuestionNavigator from "@/components/test/QuestionNavigator"
-import ListeningPanel from "@/components/test/ListeningPanel"
+import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
+import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
+import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import PracticeToolbar from "@/components/test/PracticeModal/PracticeToolbar"
-import ReadingPanel from "@/components/test/ReadingPanel"
+import ReadingPanel from "@/components/test/LayoutSkill/ReadingPanel"
 
 import "./style.css"
 

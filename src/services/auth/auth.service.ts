@@ -4,7 +4,10 @@ export async function getCurrentUser() {
   try {
     const res = await apiClient.get("/auth/me")
     return res.data
-  } catch (err) {
+  } catch (err: any) {
+    if (err.response?.status === 401) {
+      return null
+    }
     return null
   }
 }

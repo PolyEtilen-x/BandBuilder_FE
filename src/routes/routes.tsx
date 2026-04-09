@@ -6,6 +6,7 @@ import { Route } from "react-router-dom"
 import path from "path"
 import LoginSuccess from "@/pages/loginsuccess"
 import VocabPage from "@/pages/materials/vocabulary/VocabPage"
+import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 
 export const routes = [
   {
@@ -31,6 +32,9 @@ export const routes = [
   {
     path: "/oauth-success",
     element: <LoginSuccess />,
-  }
-    
+  },
+  {
+    path: "/vocab/topic/:topicName",
+    element: <TopicDetail />
+  }    
 ]

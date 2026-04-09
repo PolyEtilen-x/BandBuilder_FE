@@ -1,13 +1,13 @@
 import { lazy,Suspense } from "react"
 
-const FillBlank = lazy(()=>import("./QuestionTypes/FillBlankQuestion"))
-const MCQ = lazy(()=>import("./QuestionTypes/MCQQuestion"))
-const TrueFalse = lazy(()=>import("./QuestionTypes/TFQuestion"))
+const FillBlank = lazy(()=>import("../QuestionTypes/FillBlankQuestion"))
+const MCQ = lazy(()=>import("../QuestionTypes/MCQQuestion"))
+const TrueFalse = lazy(()=>import("../QuestionTypes/TFQuestion"))
 
-const MatchingFeatures = lazy(()=>import("./QuestionTypes/MatchingQuestion"))
-const TableCompletion = lazy(()=>import("./QuestionTypes/TableComQuestion"))
-const SelectingFactors = lazy(()=>import("./QuestionTypes/SelectingFactorsQuestion"))
-const CauseEffect = lazy(()=>import("./QuestionTypes/MatchingCauseEffectQuestion"))
+const MatchingFeatures = lazy(()=>import("../QuestionTypes/MatchingQuestion"))
+const TableCompletion = lazy(()=>import("../QuestionTypes/TableComQuestion"))
+const SelectingFactors = lazy(()=>import("../QuestionTypes/SelectingFactorsQuestion"))
+const CauseEffect = lazy(()=>import("../QuestionTypes/MatchingCauseEffectQuestion"))
 
 export default function QuestionRenderer({
   question,

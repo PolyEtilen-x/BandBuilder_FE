@@ -2,30 +2,31 @@ import { create } from "zustand"
 import { getCurrentUser } from "./auth.service"
 
 type User = {
-  id: string
-  email: string
-  name?: string
+    userId: string
+    email: string
 }
 
 type AuthState = {
-  user: User | null
-  isLoading: boolean
-  isAuthenticated: boolean
-  fetchUser: () => Promise<void>
-  logout: () => void
+    user: User | null
+    isLoading: boolean
+    isAuthenticated: boolean
+
+    initAuth: () => Promise<void>
+    setUser: (user: User | null) => void
 }
-let hasFetched = false
+
+let initialized = false
 
 export const useAuthStore = create<AuthState>((set) => ({
     user: null,
     isLoading: false,
     isAuthenticated: false,
 
-    fetchUser: async () => {
-        // Only fetch once on app load, then rely on isAuthenticated + user state for the rest of the app
-        if (hasFetched) return
+    initAuth: async () => {
+        // block spam API
+        if (initialized) return
+        initialized = true
 
-        hasFetched = true
         set({ isLoading: true })
 
         try {
@@ -37,15 +38,18 @@ export const useAuthStore = create<AuthState>((set) => ({
             isLoading: false
         })
         } catch {
-        set({ isLoading: false })
+        set({
+            user: null,
+            isAuthenticated: false,
+            isLoading: false
+        })
         }
     },
 
-    logout: () => {
-        hasFetched = false
+    setUser: (user) => {
         set({
-        user: null,
-        isAuthenticated: false
+        user,
+        isAuthenticated: !!user
         })
     }
 }))

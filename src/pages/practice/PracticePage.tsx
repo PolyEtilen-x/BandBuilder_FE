@@ -9,6 +9,9 @@ import { PracticeSkill } from "@/data/practices/practiceSkill.model"
 import { SkillContentPreview } from "@/data/practices/skillContent.model"
 import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
 import { loadSkillsWithPreview } from "@/services/practice/practiceLoader.service"
+import { requireAuth } from "@/guard/auth.guard"
+import { examService } from "@/api/exam.api"
+import { skillService } from "@/api/skill.api"
 
 type EnrichedSkill = PracticeSkill & {
   preview?: SkillContentPreview
@@ -36,16 +39,37 @@ export default function PracticePage() {
     setOpenModal(true)
   }
 
-  const handleStart = (mode: "practice" | "exam") => {
-    setOpenModal(false)
+  const handleStart = async (mode: "practice" | "exam") => {
+    // 1. check login
+    
+    if (!requireAuth()) return
+    if (!selectedTest) return
+    try {
+      setOpenModal(false)
 
-    navigate(
-    `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
-    {
-      state: { mode }
+      // 2. start test
+      const testRes = await examService.startTest(selectedTest.id)
+console.log("TEST RES:", testRes)
+
+const testId = testRes.testId
+console.log("TEST ID:", testId)
+
+      // 3. start skill
+      await skillService.start(testId, sidebar.skill)
+
+      // 4. navigate to exam
+navigate(
+  `/practice/${sidebar.skill}/test/${testId}?unit=${selectedTest.unitId}`,
+  { state: { mode } }
+) 
+      
+
+    } catch (err) {
+      console.error("Start exam failed:", err)
     }
-  )
+    
   }
+
   // Sync URL param → sidebar skill
   useEffect(() => {
     if (skillParam && skillParam !== sidebar.skill) {
@@ -158,7 +182,7 @@ export default function PracticePage() {
               }}
             >
               {cards.map((c) => (
-                <div key={c.key} onClick={() => handleClickTest(c)}>
+                <div key={c.key}>
                   <PracticeCard
                     id={c.id}
                     title={c.title}

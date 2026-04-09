@@ -1,7 +1,7 @@
-import PassagePanel from "@/components/test/ReadingPanel"
-import QuestionPanel from "@/components/test/QuestionPanel"
-import QuestionNavigator from "@/components/test/QuestionNavigator"
-import ListeningPanel from "@/components/test/ListeningPanel"
+import PassagePanel from "@/components/test/LayoutSkill/ReadingPanel"
+import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
+import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
+import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import Timer from "@/components/components/Timer"
 
 import { useState, useRef, useEffect } from "react"
@@ -64,6 +64,8 @@ export default function RealExam({
         }
     }, [])
 
+    const duration = (unit?.time_suggested_minutes || 60) * 60
+
     return (
         <div className="exam-container">
 
@@ -74,10 +76,8 @@ export default function RealExam({
             </div>
 
             <Timer 
-                duration={3600}
-                onTimeUp={() => {
-                    alert("Time is up!")
-                }}          
+                duration={duration} 
+                onTimeUp={() => {submitSkill(); alert("Time is up!") }}   
             />
         </div>
 

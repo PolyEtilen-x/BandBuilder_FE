@@ -1,11 +1,13 @@
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
 import "./ModeSelectModal.css"
+ 
+type Mode = "exam" | "practice"
 
 type Props = {
   open: boolean
   onClose: () => void
-  onStart: (mode: string) => void
+  onStart: (mode: Mode) => any
 }
 
 const MODES = [
@@ -27,7 +29,8 @@ const MODES = [
 
 export default function ModeSelectModal({ open, onClose, onStart }: Props) {
   const [selected, setSelected] = useState<"exam" | "practice">("practice")
-
+  const [loading, setLoading] = useState(false)
+  
   useEffect(() => {
     const saved = localStorage.getItem("practice_mode")
     if (saved === "exam" || saved === "practice") {
@@ -35,9 +38,17 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
     }
   }, [])
 
-  const handleStart = () => {
-    localStorage.setItem("practice_mode", selected)
-    onStart(selected)
+  const handleStart = async () => {
+    
+    try {
+      setLoading(true)
+
+      localStorage.setItem("practice_mode", selected)
+
+      await onStart(selected) 
+    } finally {
+      setLoading(false)
+    }
   }
 
   if (!open) return null
@@ -85,8 +96,12 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
         </div>
 
         {/* Button */}
-        <button className="modal-button" onClick={handleStart}>
-          Start test
+        <button
+          className="modal-button"
+          onClick={handleStart}
+          disabled={loading}
+        >
+          {loading ? "Starting..." : "Start test"}
         </button>
       </div>
     </div>

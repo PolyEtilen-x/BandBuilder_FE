@@ -1,0 +1,66 @@
+.topic-detail {
+  padding: 10px 0;
+}
+
+.detail-title {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+/* LIST */
+.word-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* CARD */
+.word-card {
+  background: #fff;
+  border: 1px solid #e6eaf0;
+  border-radius: 12px;
+  padding: 14px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  transition: 0.2s;
+}
+
+.word-card:hover {
+  border-color: #174593;
+  box-shadow: 0 4px 12px rgba(23, 69, 147, 0.1);
+}
+
+/* WORD */
+.word-main {
+  display: flex;
+  flex-direction: column;
+}
+
+.word {
+  font-size: 16px;
+  font-weight: 600;
+  color: #222;
+}
+
+.meaning {
+  font-size: 13px;
+  color: #666;
+}
+
+/* BUTTON */
+.save-btn {
+  background: #174593;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  opacity: 0.9;
+}

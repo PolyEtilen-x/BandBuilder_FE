@@ -3,7 +3,7 @@ import menu from "./menu"
 import theme from "@/styles/theme"
 import { Link } from "react-router-dom"
 import logo from "@/assets/logo.png"
-import { loginWithGoogle } from "@/services/SignUpWithGoogle"
+import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 
 export default function Navbar() {

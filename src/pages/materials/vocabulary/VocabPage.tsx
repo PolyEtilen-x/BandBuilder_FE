@@ -1,5 +1,5 @@
 import VocabSidebar, { VocabSidebarState } from "@/components/vocab/VocabSidebar"
-import TopicList from "@/components/vocab/TopicList"
+import TopicList from "@/components/vocab/topic/topic_list/TopicList"
 import BandList from "@/components/vocab/BandList"
 import Flashcard from "@/components/vocab/Flashcard"
 import MyNotebook from "@/components/vocab/MyNotebook"

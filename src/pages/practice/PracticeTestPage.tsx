@@ -1,7 +1,7 @@
-import PassagePanel from "@/components/test/ReadingPanel"
-import QuestionPanel from "@/components/test/QuestionPanel"
-import QuestionNavigator from "@/components/test/QuestionNavigator"
-import ListeningPanel from "@/components/test/ListeningPanel"
+import PassagePanel from "@/components/test/LayoutSkill/ReadingPanel"
+import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
+import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
+import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import { practiceApi } from "@/api/practice.api"
 
 import { useEffect, useState } from "react"

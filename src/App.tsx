@@ -2,14 +2,12 @@ import { useEffect } from "react"
 import Router from "./routes/index"
 import { useAuthStore } from "./services/auth/auth.store"
 
-function App() {
-  const fetchUser = useAuthStore((s) => s.fetchUser)
+export default function App() {
+  const initAuth = useAuthStore(state => state.initAuth)
 
   useEffect(() => {
-    fetchUser()
+    initAuth()
   }, [])
 
   return <Router />
 }
-
-export default App
