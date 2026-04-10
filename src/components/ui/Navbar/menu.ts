@@ -6,7 +6,6 @@ const menu = [
       { label: "Practice IELTS Listening", path: "/practice/listening" },
       { label: "Practice IELTS Reading", path: "/practice/reading" },
       { label: "Practice IELTS Speaking", path: "/practice/speaking" },
-      { label: "Register for the IELTS exam", path: "/register" }
     ]
   },
 

@@ -1,0 +1,113 @@
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+.detail-header h1 {
+  font-size: 24px;
+  font-weight: 700;
+}
+
+.detail-header button {
+  background: none;
+  border: none;
+  font-size: 14px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.detail-header button:hover {
+  opacity: 1;
+}
+
+/* LIST */
+.mistake-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* CARD */
+.mistake-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(6px);
+
+  border-radius: 20px;
+  padding: 18px;
+
+  border: 1px solid rgba(0,0,0,0.05);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  transition: all 0.3s ease;
+}
+
+.mistake-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+}
+
+.block {
+  padding: 14px 16px;
+  border-radius: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* glow nhẹ */
+.block::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+/* WRONG */
+.block.wrong {
+  background: linear-gradient(135deg, #ffecec, #fff5f5);
+  border-left: 5px solid #ff4d4f;
+}
+
+/* CORRECT */
+.block.correct {
+  background: linear-gradient(135deg, #eafff1, #f6fff9);
+  border-left: 5px solid #2ecc71;
+}
+
+/* NOTE */
+.block.note {
+  background: linear-gradient(135deg, #eef3ff, #f7f9ff);
+  border-left: 5px solid #3a6cf4;
+}
+
+/* TAG */
+.tag {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  opacity: 0.7;
+
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.icon {
+  font-size: 14px;
+}
+
+/* TEXT */
+.block p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+}

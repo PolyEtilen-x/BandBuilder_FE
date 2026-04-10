@@ -1,0 +1,146 @@
+.grammar-container {
+  padding: 20px;
+}
+
+.grammar-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+/* CARD */
+.grammar-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid #eee;
+  transition: all 0.25s ease;
+}
+
+.grammar-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+}
+
+/* CARD OPEN */
+.grammar-card.open {
+  border: 2px solid #174593;
+  box-shadow: 0 12px 32px rgba(23,69,147,0.12);
+}
+
+/* MAIN */
+.card-main {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  cursor: pointer;
+}
+
+/* TITLE */
+.tense-name {
+  font-size: 22px;
+  font-weight: 800;
+  color: #174593;
+}
+
+/* STRUCTURE */
+.structure-box {
+  background: #f4f7ff;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: #333;
+  border: 1px dashed #c9d6ff;
+}
+
+/* BUTTON TEXT */
+.expand-hint {
+  font-size: 13px;
+  color: #174593;
+  font-weight: 600;
+}
+
+/* EXPAND */
+.card-expand {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #eee;
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  animation: fadeIn 0.25s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* IELTS BOX (QUAN TRỌNG → làm nổi bật) */
+.ielts-box {
+  background: linear-gradient(135deg, #174593, #3a6cf4);
+  color: #fff;
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* EXAMPLES */
+.example-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.example-card {
+  background: #fafafa;
+  border-radius: 14px;
+  padding: 14px;
+  border: 1px solid #eee;
+  transition: all 0.2s;
+}
+
+.example-card:hover {
+  background: #f1f5ff;
+  border-color: #174593;
+  transform: translateX(3px);
+}
+
+/* SENTENCE */
+.example-sentence {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+/* FOOTER */
+.example-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* CONTEXT TAG */
+.example-context {
+  background: #174593;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+
+/* NOTE */
+.example-note {
+  font-size: 12px;
+  color: #888;
+  font-style: italic;
+}
