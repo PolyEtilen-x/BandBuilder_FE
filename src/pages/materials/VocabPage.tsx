@@ -8,15 +8,16 @@ import VocabSidebar, {
 import TopicList from "@/components/vocab/topic/topic_list/TopicList"
 import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 
-import BandList from "@/components/vocab/BandList"
-import Flashcard from "@/components/vocab/Flashcard"
+import BandList from "@/components/vocab/band/band_list/BandList"
+
+import Flashcard from "@/components/vocab/flashcard/Flashcard"
 import MyNotebook from "@/components/vocab/MyNotebook"
 
 type ViewState =
   | { type: "topic_list" }
-  | { type: "topic_detail"; topic: string }
+  | { type: "topic_detail"; topic: string; source: "topic" | "band" }
   | { type: "band_list" }
-  | { type: "flashcard" }
+  | { type: "flashcard"; mode: "topic" | "band" }
   | { type: "notebook" }
 
 export default function VocabPage() {
@@ -30,7 +31,7 @@ export default function VocabPage() {
     type: "topic_list",
   })
 
-  // 🔥 render content
+  // render content
   const renderContent = () => {
     switch (view.type) {
       case "topic_list":
@@ -38,7 +39,7 @@ export default function VocabPage() {
           <TopicList
             topicIndex={state.subItem}
             onSelectTopic={(name: string) =>
-              setView({ type: "topic_detail", topic: name })
+              setView({ type: "topic_detail", topic: name, source: "topic" })
             }
           />
         )
@@ -47,15 +48,30 @@ export default function VocabPage() {
         return (
           <TopicDetail
             topicName={view.topic}
-            onBack={() => setView({ type: "topic_list" })}
+            onBack={() =>
+              setView({
+                type: view.source === "band" ? "band_list" : "topic_list",
+              })
+            }
           />
         )
 
       case "band_list":
-        return <BandList bandIndex={state.subItem} />
+        return (
+          <BandList
+            bandIndex={state.subItem}
+            onSelectTopic={(name: string) =>
+              setView({ type: "topic_detail", topic: name , source: "band" })
+            }
+          />
+        )
 
       case "flashcard":
-        return <Flashcard />
+        return (
+          <Flashcard
+            mode={(state.mode as "topic" | "band") || "topic"}
+          />
+        )
 
       case "notebook":
         return <MyNotebook />
@@ -94,7 +110,7 @@ export default function VocabPage() {
             }
 
             if (next.category === "flashcard") {
-              setView({ type: "flashcard" })
+              setView({ type: "flashcard", mode: next.mode as "topic" | "band" })
             }
 
             if (next.category === "notebook") {

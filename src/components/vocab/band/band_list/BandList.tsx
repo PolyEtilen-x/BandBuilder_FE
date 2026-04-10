@@ -1,19 +1,19 @@
 import { useEffect, useState } from "react"
-import { useNavigate } from "react-router-dom"
 import { vocabApi } from "@/api/vocab.api"
 import { VocabTopic } from "@/data/vocab/vocab.model"
 import "./style.css"
 
 type Props = {
-  topicIndex: number | null
-  onSelectTopic: (name: string) => void
-  showTitle?: boolean
+  bandIndex: number | null
+  onSelectTopic: (name: string) => void  
 }
-export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Props) {
+
+export default function BandList({ bandIndex, onSelectTopic }: Props) {
   const [topics, setTopics] = useState<VocabTopic[]>([])
   const [loading, setLoading] = useState(true)
 
-  const navigate = useNavigate()
+  const BAND_MAP = [5, 6, 7, 8]
+  const currentBand = BAND_MAP[(bandIndex ?? 1) - 1]
 
   useEffect(() => {
     const load = async () => {
@@ -22,8 +22,11 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
         const res = await vocabApi.getTopics()
 
         const filtered = res.filter((t: VocabTopic) => {
-          return !/^(LR|SW)_\d+/.test(t.topic)
-        })
+        const match = t.topic.match(/_(\d+)/)
+        if (!match) return false
+
+        return Number(match[1]) === currentBand
+      })
 
         setTopics(filtered)
       } catch (err) {
@@ -34,16 +37,13 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
     }
 
     load()
-  }, [])
+  }, [bandIndex])
 
   if (loading) return <p>Loading...</p>
 
   return (
     <div className="topic-container">
-      {showTitle !== false && (
-        <h1 className="topic-title">Vocab by Topic</h1>
-      )}
-
+    <h1 className="topic-title">Band {currentBand}.0+</h1>
       <div className="topic-grid">
         {topics.map((topic, index) => {
           const total = topic.vocab_list.length
@@ -58,10 +58,8 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
               className="topic-card"
               onClick={() => onSelectTopic(topic.topic)}
             >
-              {/* TITLE */}
-              <h2>{topic.topic}</h2>
+              <h2>{formatName(topic.topic)}</h2>
 
-              {/* PROGRESS BAR */}
               <div className="progress-bar">
                 <div
                   className="progress-fill"
@@ -69,7 +67,6 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
                 />
               </div>
 
-              {/* INFO */}
               <p className="topic-info">
                 {saved}/{total} words
               </p>
@@ -79,4 +76,14 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
       </div>
     </div>
   )
+}
+
+function formatName(name: string) {
+  if (name.startsWith("LR"))
+    return "Listening & Reading"
+
+  if (name.startsWith("SW"))
+    return "Speaking & Writing"
+
+  return name
 }

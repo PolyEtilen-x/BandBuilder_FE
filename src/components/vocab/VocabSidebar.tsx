@@ -6,8 +6,9 @@ type Mode = "list" | "learn"
 
 export type VocabSidebarState = {
     category: VocabKey
-    mode: Mode
+    mode?: Mode | "topic" | "band" 
     subItem: number | null
+    
 }
 
 const ICONS = {
@@ -85,7 +86,17 @@ const subRowStyle: React.CSSProperties = {
   }
 
   function handleSubItem(idx: number) {
-    onChange({ category, mode: "list", subItem: idx })
+    let nextMode: any = "list"
+
+    if (category === "flashcard") {
+      nextMode = idx === 1 ? "topic" : "band"
+    }
+
+    onChange({
+      category,
+      mode: nextMode,
+      subItem: idx,
+    })
   }
 
   return (

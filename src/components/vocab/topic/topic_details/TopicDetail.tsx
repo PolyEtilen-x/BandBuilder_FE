@@ -55,7 +55,7 @@ export default function TopicDetail({ topicName, onBack }: Props) {
     return (
         <div className="vocab-content">
             <div className="detail-header">
-                <h2 className="detail-title">{topic.topic}</h2>
+                <h2 className="detail-title">  {formatTopicName(topic.topic)}</h2>
                 <button onClick={onBack}>← Back</button>
             </div>
             <div className="detail-container">
@@ -107,4 +107,22 @@ export default function TopicDetail({ topicName, onBack }: Props) {
             </div>
         </div>
     )
+}
+
+function formatTopicName(name: string) {
+  const match = name.match(/(LR|SW)_(\d+)/)
+  if (!match) return name
+
+  const type = match[1]
+  const band = match[2]
+
+  if (type === "LR") {
+    return `Listening & Reading (Band ${band})`
+  }
+
+  if (type === "SW") {
+    return `Speaking & Writing (Band ${band})`
+  }
+
+  return name
 }

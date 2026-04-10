@@ -1,0 +1,45 @@
+.band-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.band-section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.band-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #174593;
+}
+
+.band-list {
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+
+  flex: 1;
+  overflow-y: auto;
+
+  padding-right: 6px;
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
