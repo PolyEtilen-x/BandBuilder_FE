@@ -1,4 +1,6 @@
 import theme from "@/styles/theme"
+import { useDictionary } from "@/services/dictionary/useDictionary"
+import "./style.css"
 
 type ToolType = "highlight" | "note" | "dict"
 
@@ -8,28 +10,30 @@ type Props = {
 }
 
 export default function ListeningPanel({ section, activeTool }: Props) {
-
+    const { lookup } = useDictionary()
     if (!section) return <div>No section</div>
 
     const handleMouseUp = () => {
-        const selection = window.getSelection()?.toString().trim()
-        if (!selection) return
+        const selection = window.getSelection()
+        const text = selection?.toString().trim()
+        if (!text) return
 
         if (activeTool === "highlight") {
-            console.log("🟡 highlight:", selection)
-        }
+            const range = selection!.getRangeAt(0)
+            const span = document.createElement("span")
+            span.style.background = "#8cb5fd"
+            span.style.padding = "2px 4px"
+            span.style.borderRadius = "4px"
 
-        if (activeTool === "note") {
-            const note = prompt("Add note:")
-            console.log("📝", selection, note)
+            range.surroundContents(span)
+            selection?.removeAllRanges()
         }
 
         if (activeTool === "dict") {
-            window.open(
-                `https://dictionary.cambridge.org/dictionary/english/${selection}`
-            )
+            lookup(text)
         }
     }
+
     return (
         <div
         style={{
@@ -83,6 +87,8 @@ export default function ListeningPanel({ section, activeTool }: Props) {
             </div>
             )
         ))}
+        
         </div>
+        
     )
 }

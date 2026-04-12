@@ -1,0 +1,8 @@
+.word {
+  cursor: pointer;
+   user-select: text; 
+}
+
+.word:hover {
+  text-decoration: underline;
+}

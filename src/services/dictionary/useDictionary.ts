@@ -5,18 +5,12 @@ export function useDictionary() {
   const [dict, setDict] = useState<any>(null)
   const [loading, setLoading] = useState(false)
 
-  const lookup = async (word: string) => {
-    if (!word) return
-
+  const lookup = async (word: string, sentence?: string) => {
     setLoading(true)
 
-    const data = await getDictionary(word)
+    const data = await getDictionary(word, sentence) 
 
-    setDict({
-      word,
-      ...data
-    })
-
+    setDict(data)
     setLoading(false)
   }
 

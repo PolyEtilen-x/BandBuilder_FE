@@ -8,31 +8,45 @@ export default function DictionaryPanel({ dict, loading, onClose, onSave }: any)
 
       {/* HEADER */}
       <div className="dict-header">
-        <div>
+        <div className="left">
+          {dict.audio && (
+            <button onClick={() => new Audio(dict.audio).play()}>🔊</button>
+          )}
           <strong>{dict.word}</strong>
-          <span>{dict.phonetic}</span>
+          <span className="phonetic">
+            {dict.phonetic ? `/${dict.phonetic}/` : ""}
+          </span>
         </div>
 
-        <div className="actions">
-          {dict.audio && (
-            <button onClick={() => new Audio(dict.audio).play()}>
-              🔊
-            </button>
-          )}
-          <button onClick={onSave}>+ Save</button>
+        <div className="right">
+          <button onClick={onSave}>+ Lưu từ vựng</button>
           <button onClick={onClose}>✕</button>
         </div>
       </div>
 
-      {/* MEANING */}
-      <div className="dict-meaning">
-        {loading ? "Loading..." : dict.meaning}
-      </div>
+      {/* CONTENT */}
+      <div className="dict-content">
 
-      {/* EXAMPLE */}
-      {dict.example && (
-        <div className="dict-example">{dict.example}</div>
-      )}
+        <div className="dict-section">
+          <strong>Từ/Cấu trúc liên quan:</strong>
+          <p>{dict.related}</p>
+        </div>
+
+        <div className="dict-section">
+          <strong>Giải thích nghĩa tiếng Việt:</strong>
+          <p>{dict.explainVN}</p>
+        </div>
+
+        <div className="dict-section">
+          <strong>Ví dụ:</strong>
+          <p>{dict.example}</p>
+        </div>
+
+        <div className="dict-section">
+          <strong>Dịch nghĩa cả câu:</strong>
+          <p>{dict.translation}</p>
+        </div>
+      </div>
     </div>
   )
 }
