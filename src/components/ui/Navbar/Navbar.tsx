@@ -15,7 +15,10 @@ export default function Navbar() {
 
     return (
         <nav
-            style={{
+             style={{
+                position: "sticky", 
+                top: 0,          
+                zIndex: 9999,         
                 background: theme.colors.background.white,
                 boxShadow: "0 0.125rem 0.5rem rgba(0,0,0,0.05)",
             }}

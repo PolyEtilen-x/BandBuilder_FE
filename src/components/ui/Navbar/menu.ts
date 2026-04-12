@@ -1,10 +1,10 @@
 const menu = [
   {
-    label: "IELTS PREP",
+    label: "IELTS Practice",
     dropdown: [
-      { label: "Practice IELTS Writing", path: "/practice/writing" },
-      { label: "Practice IELTS Listening", path: "/practice/listening" },
       { label: "Practice IELTS Reading", path: "/practice/reading" },
+      { label: "Practice IELTS Listening", path: "/practice/listening" },
+      { label: "Practice IELTS Writing", path: "/practice/writing" },
       { label: "Practice IELTS Speaking", path: "/practice/speaking" },
     ]
   },

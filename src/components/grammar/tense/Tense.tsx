@@ -37,7 +37,7 @@ export default function GrammarTenses({ subItem }: Props) {
           return (
             <div
               key={t.id}
-              className={`grammar-card ${isOpen ? "open" : ""}`}
+              className={`grammar-card-tense ${isOpen ? "open" : ""}`}
             >
               {/* MAIN */}
               <div className="card-main" onClick={() => toggle(t.id)}>

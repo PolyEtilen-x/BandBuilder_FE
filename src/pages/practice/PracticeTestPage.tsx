@@ -48,8 +48,12 @@ export default function PracticeTestPage() {
     const isReading = !!test?.content?.passages
     const isListening = !!test?.content?.sections
 
-    const unitNumber = Number(searchParams.get("unit") || 1)
+    const rawUnit = searchParams.get("unit")
 
+    const unitNumber =
+    rawUnit === "full" ? null : Number(rawUnit || 1)
+
+    
     let currentUnit = null
 
     if (isReading) {

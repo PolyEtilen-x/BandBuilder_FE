@@ -77,7 +77,9 @@ export default function RealExam({
 
             <Timer 
                 duration={duration} 
-                onTimeUp={() => {submitSkill(); alert("Time is up!") }}   
+                onTimeUp={() => {
+                alert("Time is up!")
+                }}            
             />
         </div>
 

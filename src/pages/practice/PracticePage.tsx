@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useNavigate, useParams } from "react-router-dom"
+import { useNavigate, useParams, useLocation  } from "react-router-dom"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import PracticeSidebar, { SidebarState } from "@/components/practice/PracticeSidebar"
 import PracticeCard from "@/components/practice/PracticeCard"
@@ -9,9 +9,9 @@ import { PracticeSkill } from "@/data/practices/practiceSkill.model"
 import { SkillContentPreview } from "@/data/practices/skillContent.model"
 import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
 import { loadSkillsWithPreview } from "@/services/practice/practiceLoader.service"
-import { requireAuth } from "@/guard/auth.guard"
-import { examService } from "@/api/exam.api"
-import { skillService } from "@/api/skill.api"
+import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
+import { useAuthStore } from "@/services/auth/auth.store"
+import "./style.css"
 
 type EnrichedSkill = PracticeSkill & {
   preview?: SkillContentPreview
@@ -21,7 +21,10 @@ type EnrichedSkill = PracticeSkill & {
 export default function PracticePage() {
   const { skill: skillParam } = useParams<{ skill: string }>()
   const navigate = useNavigate()
-  
+  const location = useLocation()  
+
+  const isAuthenticated = useAuthStore(s => s.isAuthenticated)
+
   const [skills, setSkills] = useState<EnrichedSkill[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -40,34 +43,33 @@ export default function PracticePage() {
   }
 
   const handleStart = async (mode: "practice" | "exam") => {
-    // 1. check login
-    
-    if (!requireAuth()) return
     if (!selectedTest) return
+
+    if (!isAuthenticated) {
+      const confirmLogin = confirm("Please login to start")
+
+      if (confirmLogin) {
+        const currentPath = location.pathname + location.search
+
+        localStorage.setItem("redirectAfterLogin", currentPath)
+        
+        loginWithGoogle()
+      }
+
+      return
+    }
+
     try {
       setOpenModal(false)
 
-      // 2. start test
-      const testRes = await examService.startTest(selectedTest.id)
-console.log("TEST RES:", testRes)
-
-const testId = testRes.testId
-console.log("TEST ID:", testId)
-
-      // 3. start skill
-      await skillService.start(testId, sidebar.skill)
-
-      // 4. navigate to exam
-navigate(
-  `/practice/${sidebar.skill}/test/${testId}?unit=${selectedTest.unitId}`,
-  { state: { mode } }
-) 
-      
+      navigate(
+        `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
+        { state: { mode } }
+      )
 
     } catch (err) {
       console.error("Start exam failed:", err)
     }
-    
   }
 
   // Sync URL param → sidebar skill
@@ -204,7 +206,7 @@ navigate(
         onClose={() => setOpenModal(false)}
         onStart={handleStart}
       />
-
+    
     </MainLayout>
   )
 }

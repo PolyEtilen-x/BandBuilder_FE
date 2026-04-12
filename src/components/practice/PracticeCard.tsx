@@ -21,6 +21,15 @@ export default function PracticeCard({
   onClick
 }: Props){
 
+  const navigate = useNavigate()
+  const { skill } = useParams()
+
+  function openTest(e: React.MouseEvent){
+    e.stopPropagation()
+
+    navigate(`/practice/${skill}/test/${id}?unit=${unitId}`)
+  }
+
   return (
 
     <article
