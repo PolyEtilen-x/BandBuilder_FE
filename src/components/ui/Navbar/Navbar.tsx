@@ -100,7 +100,9 @@ export default function Navbar() {
                 {/* DESKTOP BUTTON */}
                 {user ? (
                     <div style={{ display: "flex", gap: 10 }}>
-                        <span>Hello {user.name}</span>
+                        <span>Hello
+                             {/* {user.name} */}
+                             </span>
                     </div>
                     ) : (
                     <button className="desktop-btn"

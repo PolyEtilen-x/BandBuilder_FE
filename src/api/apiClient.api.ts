@@ -17,53 +17,44 @@ function onRefreshed() {
   refreshSubscribers.forEach((cb) => cb())
   refreshSubscribers = []
 }
+let refreshPromise: Promise<any> | null = null
 
 apiClient.interceptors.response.use(
-  (response) => response,
+  (res) => res,
   async (error) => {
     const originalRequest = error.config
 
-    // ❗ bỏ qua /auth/me (KHÔNG trigger refresh/login)
-    if (originalRequest.url.includes("/auth/me")) {
-      return Promise.reject(error)
-    }
+    if (!error.response) throw error
 
-    if (error.response?.status !== 401) {
-      return Promise.reject(error)
-    }
+    const status = error.response.status
+
+    if (status !== 401) throw error
 
     if (originalRequest.url.includes("/auth/refresh")) {
       window.location.href = "https://aidsense.online/auth/google"
-      return Promise.reject(error)
+      throw error
     }
 
     if (originalRequest._retry) {
-      return Promise.reject(error)
+      throw error
     }
 
     originalRequest._retry = true
 
-    if (isRefreshing) {
-      return new Promise((resolve) => {
-        subscribeTokenRefresh(() => {
-          resolve(apiClient(originalRequest))
-        })
-      })
-    }
-
-    isRefreshing = true
-
     try {
-      await apiClient.post("/auth/refresh")
+      if (!refreshPromise) {
+        refreshPromise = apiClient.post("/auth/refresh")
+      }
 
-      isRefreshing = false
-      onRefreshed()
+      await refreshPromise
+      refreshPromise = null
 
-      return apiClient(originalRequest)
+      return await apiClient(originalRequest)
+
     } catch (err) {
-      isRefreshing = false
+      refreshPromise = null
       window.location.href = "https://aidsense.online/auth/google"
-      return Promise.reject(err)
+      throw err
     }
   }
 )

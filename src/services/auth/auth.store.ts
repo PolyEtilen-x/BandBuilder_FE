@@ -23,26 +23,22 @@ export const useAuthStore = create<AuthState>((set) => ({
     isAuthenticated: false,
 
     initAuth: async () => {
-        // block spam API
-        if (initialized) return
-        initialized = true
-
         set({ isLoading: true })
 
         try {
-        const user = await getCurrentUser()
+            const user = await getCurrentUser()
 
-        set({
+            set({
             user,
             isAuthenticated: !!user,
             isLoading: false
-        })
+            })
         } catch {
-        set({
+            set({
             user: null,
             isAuthenticated: false,
             isLoading: false
-        })
+            })
         }
     },
 
