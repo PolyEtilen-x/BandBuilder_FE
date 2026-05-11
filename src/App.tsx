@@ -7,7 +7,7 @@ export default function App() {
   const { initAuth, isAuthenticated } = useAuthStore()
 
   useEffect(() => {
-    // initAuth()
+    initAuth()
   }, [initAuth])
 
   useEffect(() => {
