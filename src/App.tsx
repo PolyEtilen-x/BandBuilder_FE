@@ -7,7 +7,7 @@ export default function App() {
   const { initAuth, isAuthenticated } = useAuthStore()
 
   useEffect(() => {
-    initAuth()
+    // initAuth()
   }, [initAuth])
 
   useEffect(() => {
@@ -24,6 +24,6 @@ export default function App() {
 
     return () => clearInterval(interval)
   }, [isAuthenticated])
-  
+
   return <Router />
 }
