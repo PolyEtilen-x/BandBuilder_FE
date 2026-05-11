@@ -9,6 +9,7 @@ import VocabPage from "@/pages/materials/VocabPage"
 import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 import GrammarPage from "@/pages/materials/GrammarPage"
 import { ProtectedRoute } from "@/guard/route.guard"
+const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 
 export const routes = [
   {
@@ -42,5 +43,13 @@ export const routes = [
   {
     path: "/oauth-success",
     element: <LoginSuccess />,
+  },
+  {
+    path: "/profile",
+    element: (
+      <ProtectedRoute>
+        <ProfilePage />
+      </ProtectedRoute>
+    )
   },
 ]

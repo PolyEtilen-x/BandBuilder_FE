@@ -15,10 +15,10 @@ export default function Navbar() {
 
     return (
         <nav
-             style={{
-                position: "sticky", 
-                top: 0,          
-                zIndex: 9999,         
+            style={{
+                position: "sticky",
+                top: 0,
+                zIndex: 9999,
                 background: theme.colors.background.white,
                 boxShadow: "0 0.125rem 0.5rem rgba(0,0,0,0.05)",
             }}
@@ -99,12 +99,36 @@ export default function Navbar() {
 
                 {/* DESKTOP BUTTON */}
                 {user ? (
-                    <div style={{ display: "flex", gap: 10 }}>
-                        <span>Hello
-                             {/* {user.name} */}
-                             </span>
+                    <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
+                        <Link
+                            to="/profile"
+                            style={{
+                                textDecoration: "none",
+                                color: theme.colors.text.primary,
+                                fontWeight: 600,
+                                fontSize: "0.95rem",
+                                display: "flex",
+                                alignItems: "center",
+                                gap: 8
+                            }}
+                        >
+                            <div style={{
+                                width: 32,
+                                height: 32,
+                                borderRadius: "50%",
+                                background: "#174593",
+                                color: "#fff",
+                                display: "flex",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                fontSize: 14
+                            }}>
+                                {user?.email?.charAt(0).toUpperCase()}
+                            </div>
+                            <span>Account</span>
+                        </Link>
                     </div>
-                    ) : (
+                ) : (
                     <button className="desktop-btn"
                         style={{
                             background: theme.colors.danger,
@@ -195,7 +219,7 @@ export default function Navbar() {
                     </button>
                 </div>
             </div>
-           
+
         </nav>
     )
 }
