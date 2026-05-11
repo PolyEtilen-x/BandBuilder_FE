@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
     if (status !== 401) throw error
 
     if (originalRequest.url.includes("/auth/refresh")) {
-      window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`
+      // Nếu chính request refresh bị lỗi 401, chỉ cần báo lỗi, không redirect
       throw error
     }
 
@@ -53,7 +53,7 @@ apiClient.interceptors.response.use(
 
     } catch (err) {
       refreshPromise = null
-      window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`
+      // Khi refresh thất bại hoàn toàn, cũng không redirect ở đây
       throw err
     }
   }

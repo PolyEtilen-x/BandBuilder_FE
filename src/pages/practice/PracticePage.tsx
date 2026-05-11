@@ -4,6 +4,7 @@ import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import PracticeSidebar from "@/components/practice/PracticeSidebar"
 import PracticeCard from "@/components/practice/PracticeCard"
 import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
+import AuthRequiredModal from "@/components/SelectModal/AuthRequiredModal"
 import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { usePracticeStore } from "@/services/practice/practice.store"
@@ -24,6 +25,7 @@ export default function PracticePage() {
   const { data: rawSkills = [], isLoading: loading } = usePracticeSkills()
 
   const [openModal, setOpenModal] = useState(false)
+  const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedTest, setSelectedTest] = useState<any>(null)
 
   const handleClickTest = (test: any) => {
@@ -35,13 +37,13 @@ export default function PracticePage() {
     if (!selectedTest) return
 
     if (!isAuthenticated) {
-      const confirmLogin = confirm("Please login to start")
-
-      if (confirmLogin) {
-        const currentPath = location.pathname + location.search
-        localStorage.setItem("redirectAfterLogin", currentPath)
-        loginWithGoogle()
-      }
+      // 1. Lưu path hiện tại để quay lại sau khi login
+      const currentPath = location.pathname + location.search
+      localStorage.setItem("redirectAfterLogin", currentPath)
+      
+      // 2. Tắt Modal chọn mode (nếu đang bật) và hiện Modal yêu cầu Login
+      setOpenModal(false)
+      setShowAuthModal(true)
       return
     }
 
@@ -123,6 +125,11 @@ export default function PracticePage() {
         open={openModal}
         onClose={() => setOpenModal(false)}
         onStart={handleStart}
+      />
+
+      <AuthRequiredModal
+        open={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
       />
     </MainLayout>
   )

@@ -16,8 +16,12 @@ export const routes = [
     element: <Home />,
   },
   {
+    path: "/practice",
+    element: <PracticePage />,
+  },
+  {
     path: "/practice/:skill",
-    element: <ProtectedRoute><PracticePage /></ProtectedRoute>,
+    element: <PracticePage />,
   },
   {
     path: "/practice/:skill/test/:id",
