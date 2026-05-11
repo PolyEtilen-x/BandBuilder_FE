@@ -21,7 +21,7 @@ export interface PaymentInitiateResponse {
 }
 
 export interface PaymentStatusResponse {
-  status: 'PENDING' | 'SUCCESS' | 'FAILED'
+  status: 'PENDING' | 'COMPLETED' | 'FAILED'
   transactionId: string
   credits: number
   amountVnd: number

@@ -38,7 +38,7 @@ export default function UpgradePage() {
       interval = setInterval(async () => {
         try {
           const res = await paymentApi.checkStatus(paymentData.transactionId)
-          if (res.data.status === "SUCCESS") {
+          if (res.data.status === "COMPLETED") {
             setIsPaid(true)
             clearInterval(interval)
           }
