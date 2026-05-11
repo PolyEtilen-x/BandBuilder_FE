@@ -112,27 +112,27 @@ export default function UpgradePage() {
                     </p>
 
                     <div className="qr-container">
-                      <img src={paymentData.qrCodeUrl} alt="Payment QR" className="qr-image" />
+                      <img src={paymentData.qrImageUrl} alt="Payment QR" className="qr-image" />
                     </div>
 
                     <div className="payment-info">
                       <div className="info-row">
                         <span className="info-label">Amount:</span>
                         <span className="info-value" style={{ color: '#174593' }}>
-                          {paymentData.amount?.toLocaleString() ?? paymentData.amountVnd?.toLocaleString() ?? "0"} VND
-                          <button onClick={() => copyToClipboard((paymentData.amount || paymentData.amountVnd || 0).toString())} className="copy-btn"><Copy size={14} /></button>
+                          {paymentData.amountVnd?.toLocaleString() ?? "0"} VND
+                          <button onClick={() => copyToClipboard(paymentData.amountVnd.toString())} className="copy-btn"><Copy size={14} /></button>
                         </span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">Content:</span>
                         <span className="info-value">
-                          {paymentData.content}
-                          <button onClick={() => copyToClipboard(paymentData.content)} className="copy-btn"><Copy size={14} /></button>
+                          {paymentData.transferMemo}
+                          <button onClick={() => copyToClipboard(paymentData.transferMemo)} className="copy-btn"><Copy size={14} /></button>
                         </span>
                       </div>
                       <div className="info-row">
                         <span className="info-label">Bank:</span>
-                        <span className="info-value">{paymentData.bankName}</span>
+                        <span className="info-value">{paymentData.bankName || "See QR"}</span>
                       </div>
                     </div>
 

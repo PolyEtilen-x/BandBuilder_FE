@@ -11,12 +11,13 @@ export interface CreditPackage {
 
 export interface PaymentInitiateResponse {
   transactionId: string
-  qrCodeUrl: string
+  qrImageUrl: string
   accountNumber: string
   bankName: string
-  amount: number
-  amountVnd?: number
-  content: string
+  amountVnd: number
+  transferMemo: string
+  credits: number
+  expiredAt: string
 }
 
 export interface PaymentStatusResponse {
