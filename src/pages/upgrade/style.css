@@ -207,7 +207,6 @@
 .info-value {
   color: #1e293b;
   font-weight: 700;
-  font-family: 'Monaco', 'Consolas', monospace;
 }
 
 .copy-btn {
@@ -241,8 +240,13 @@
 }
 
 @keyframes rotation {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 640px) {

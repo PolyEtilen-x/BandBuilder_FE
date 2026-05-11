@@ -76,7 +76,7 @@ export default function UpgradePage() {
                   {pkg.name.includes("Pro") && <div className="popular-badge">POPULAR</div>}
                   <h3 className="package-name">{pkg.name}</h3>
                   <div className="package-price">
-                    <span className="price-amount">{pkg.priceVnd.toLocaleString()}</span>
+                    <span className="price-amount">{pkg.priceVnd?.toLocaleString() ?? "0"}</span>
                     <span className="price-unit">VND</span>
                   </div>
                   <ul className="package-features">
@@ -101,11 +101,11 @@ export default function UpgradePage() {
               <div className="payment-modal">
                 {!isPaid ? (
                   <>
-                    <button className="close-btn" onClick={() => setPaymentData(null)} 
+                    <button className="close-btn" onClick={() => setPaymentData(null)}
                       style={{ position: 'absolute', right: 20, top: 20, background: 'none', border: 'none', cursor: 'pointer' }}>
                       <X size={24} color="#64748b" />
                     </button>
-                    
+
                     <h2 style={{ marginBottom: 8 }}>Complete Your Payment</h2>
                     <p style={{ color: '#64748b', fontSize: 14, marginBottom: 24 }}>
                       Please transfer the exact amount using the QR code or details below.
@@ -119,8 +119,8 @@ export default function UpgradePage() {
                       <div className="info-row">
                         <span className="info-label">Amount:</span>
                         <span className="info-value" style={{ color: '#174593' }}>
-                          {paymentData.amount.toLocaleString()} VND
-                          <button onClick={() => copyToClipboard(paymentData.amount.toString())} className="copy-btn"><Copy size={14} /></button>
+                          {paymentData.amount?.toLocaleString() ?? paymentData.amountVnd?.toLocaleString() ?? "0"} VND
+                          <button onClick={() => copyToClipboard((paymentData.amount || paymentData.amountVnd || 0).toString())} className="copy-btn"><Copy size={14} /></button>
                         </span>
                       </div>
                       <div className="info-row">

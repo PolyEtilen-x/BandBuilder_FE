@@ -11,11 +11,12 @@ export interface CreditPackage {
 
 export interface PaymentInitiateResponse {
   transactionId: string
-  qrCodeUrl: string // Link QR VietQR
+  qrCodeUrl: string
   accountNumber: string
   bankName: string
   amount: number
-  content: string // Nội dung chuyển khoản quan trọng
+  amountVnd?: number
+  content: string
 }
 
 export interface PaymentStatusResponse {
@@ -26,12 +27,12 @@ export interface PaymentStatusResponse {
 }
 
 export const paymentApi = {
-  getPackages: () => 
+  getPackages: () =>
     apiClient.get<CreditPackage[]>("/payment/packages"),
 
-  initiatePayment: (packageId: string) => 
+  initiatePayment: (packageId: string) =>
     apiClient.post<PaymentInitiateResponse>("/payment/initiate", { packageId }),
 
-  checkStatus: (transactionId: string) => 
+  checkStatus: (transactionId: string) =>
     apiClient.get<PaymentStatusResponse>(`/payment/status/${transactionId}`)
 }
