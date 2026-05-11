@@ -85,7 +85,8 @@
   gap: 12px;
 }
 
-.btn-settings, .btn-logout {
+.btn-settings,
+.btn-logout {
   padding: 10px 20px;
   border-radius: 12px;
   display: flex;
@@ -295,7 +296,9 @@
     flex-direction: column;
   }
 
-  .btn-settings, .btn-logout {
+  .btn-upgrade,
+  .btn-settings,
+  .btn-logout {
     width: 100%;
     justify-content: center;
   }

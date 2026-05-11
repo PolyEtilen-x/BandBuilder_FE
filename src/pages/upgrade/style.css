@@ -1,0 +1,252 @@
+.upgrade-page {
+  background: #f8fafc;
+  min-height: calc(100vh - 4rem);
+  padding: 60px 20px;
+}
+
+.upgrade-container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.upgrade-header {
+  text-align: center;
+  margin-bottom: 50px;
+}
+
+.upgrade-header h1 {
+  font-size: 32px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 12px;
+}
+
+.upgrade-header p {
+  color: #64748b;
+  font-size: 16px;
+}
+
+/* --- Packages Grid --- */
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.package-card {
+  background: #fff;
+  border-radius: 24px;
+  padding: 40px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 2px solid transparent;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+
+.package-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  border-color: #174593;
+}
+
+.package-card.popular {
+  border-color: #174593;
+  background: linear-gradient(to bottom, #fff, #f0f4ff);
+}
+
+.popular-badge {
+  position: absolute;
+  top: 20px;
+  right: -35px;
+  background: #174593;
+  color: #fff;
+  padding: 6px 40px;
+  font-size: 12px;
+  font-weight: 700;
+  transform: rotate(45deg);
+}
+
+.package-name {
+  font-size: 20px;
+  font-weight: 700;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.package-price {
+  margin-bottom: 24px;
+}
+
+.price-amount {
+  font-size: 36px;
+  font-weight: 800;
+  color: #174593;
+}
+
+.price-unit {
+  font-size: 14px;
+  color: #64748b;
+  margin-left: 4px;
+}
+
+.package-features {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 32px 0;
+  flex-grow: 1;
+}
+
+.package-features li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 16px;
+  color: #475569;
+  font-size: 15px;
+}
+
+.check-icon {
+  color: #10b981;
+  background: #ecfdf5;
+  border-radius: 50%;
+  padding: 2px;
+}
+
+.btn-choose {
+  width: 100%;
+  padding: 14px;
+  border-radius: 14px;
+  border: none;
+  background: #f1f5f9;
+  color: #1e293b;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.package-card.popular .btn-choose {
+  background: #174593;
+  color: #fff;
+}
+
+.btn-choose:hover {
+  background: #1e293b;
+  color: #fff;
+}
+
+/* --- Payment Overlay --- */
+.payment-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(8px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+  padding: 20px;
+}
+
+.payment-modal {
+  background: #fff;
+  border-radius: 28px;
+  width: 100%;
+  max-width: 500px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+}
+
+.qr-container {
+  background: #f8fafc;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 24px;
+  border: 1px dashed #cbd5e1;
+}
+
+.qr-image {
+  width: 100%;
+  max-width: 240px;
+  height: auto;
+  margin: 0 auto;
+  display: block;
+}
+
+.payment-info {
+  text-align: left;
+  background: #f1f5f9;
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 24px;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+
+.info-row:last-child {
+  margin-bottom: 0;
+}
+
+.info-label {
+  color: #64748b;
+}
+
+.info-value {
+  color: #1e293b;
+  font-weight: 700;
+  font-family: 'Monaco', 'Consolas', monospace;
+}
+
+.copy-btn {
+  background: none;
+  border: none;
+  color: #174593;
+  cursor: pointer;
+  margin-left: 8px;
+}
+
+.payment-status-box {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 12px;
+  background: #eff6ff;
+  border-radius: 12px;
+  color: #174593;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+.loader {
+  width: 18px;
+  height: 18px;
+  border: 2px solid #174593;
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: rotation 1s linear infinite;
+}
+
+@keyframes rotation {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@media (max-width: 640px) {
+  .payment-modal {
+    padding: 24px;
+  }
+}

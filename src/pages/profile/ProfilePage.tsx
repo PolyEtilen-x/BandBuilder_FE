@@ -1,10 +1,12 @@
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import { useAuthStore } from "@/services/auth/auth.store"
+import { useNavigate } from "react-router-dom"
 import { LogOut, Settings, Award, BookOpen, Clock, TrendingUp } from "lucide-react"
 import "./style.css"
 
 export default function ProfilePage() {
   const { user, logout } = useAuthStore()
+  const navigate = useNavigate()
 
   // Dữ liệu mẫu (sau này sẽ fetch từ API)
   const stats = [
@@ -46,7 +48,7 @@ export default function ProfilePage() {
 
             <div className="header-actions">
               {!isPro && (
-                <button className="btn-upgrade">
+                <button className="btn-upgrade" onClick={() => navigate("/upgrade")}>
                   <Award size={18} />
                   Upgrade Pro
                 </button>
