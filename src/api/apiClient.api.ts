@@ -31,7 +31,6 @@ apiClient.interceptors.response.use(
     if (status !== 401) throw error
 
     if (originalRequest.url.includes("/auth/refresh")) {
-      // Nếu chính request refresh bị lỗi 401, chỉ cần báo lỗi, không redirect
       throw error
     }
 
@@ -53,7 +52,6 @@ apiClient.interceptors.response.use(
 
     } catch (err) {
       refreshPromise = null
-      // Khi refresh thất bại hoàn toàn, cũng không redirect ở đây
       throw err
     }
   }
