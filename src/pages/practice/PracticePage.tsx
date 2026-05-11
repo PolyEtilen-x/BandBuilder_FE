@@ -2,12 +2,12 @@ import { useEffect, useState } from "react"
 import { useNavigate, useParams, useLocation } from "react-router-dom"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import PracticeSidebar from "@/components/practice/PracticeSidebar"
-import PracticeSection from "@/components/practice/PracticeSection"
+import PracticeCard from "@/components/practice/PracticeCard"
 import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
 import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { usePracticeStore } from "@/services/practice/practice.store"
-import { usePracticeSkills } from "@/hooks/usePractice"
+import { usePracticeSkills, useSkillPreview } from "@/hooks/usePractice"
 import "./style.css"
 
 export default function PracticePage() {
@@ -99,16 +99,18 @@ export default function PracticePage() {
           ) : activeSkills.length === 0 ? (
             <p style={{ color: "#aaa", fontSize: 14 }}>Chưa có bài tập nào cho kỹ năng này.</p>
           ) : (
-            <div>
+            <div
+              style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(auto-fill, minmax(16rem, 1fr))",
+                gap: 20,
+              }}
+            >
               {activeSkills.map((skill: any) => (
-                <PracticeSection
+                <SkillCardGroup
                   key={skill.skillContentId}
-                  title={skill.title}
-                  count={skill.numberOfTests || 0}
-                  numberOfVisits={skill.numberOfVisits || 0}
-                  skillContentId={skill.skillContentId}
-                  mode={sidebar.mode}
-                  subSection={sidebar.subSection}
+                  skill={skill}
+                  sidebar={sidebar}
                   onClickTest={handleClickTest}
                 />
               ))}
@@ -125,6 +127,53 @@ export default function PracticePage() {
     </MainLayout>
   )
 }
+
+function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
+  const { data: enriched, isLoading } = useSkillPreview(skill.skillContentId)
+
+  if (isLoading) {
+    return (
+      <div style={{ padding: 20, border: "1px solid #eee", borderRadius: 20, background: "#f9f9f9", height: 160 }} className="animate-pulse">
+        <div style={{ height: 20, background: "#eee", borderRadius: 4, width: "70%", marginBottom: 10 }}></div>
+        <div style={{ height: 15, background: "#eee", borderRadius: 4, width: "40%" }}></div>
+      </div>
+    )
+  }
+
+  if (!enriched) return null
+
+  const units = enriched.units || []
+
+  const cards = sidebar.mode === "full"
+    ? [{
+      id: skill.skillContentId,
+      title: enriched.preview?.source || skill.title,
+      questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
+      numberOfVisits: skill.numberOfVisits,
+      unitId: "full",
+    }]
+    : units.filter((u: any) => u.id === sidebar.subSection).map((u: any) => ({
+      id: skill.skillContentId,
+      title: u.title,
+      questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
+      numberOfVisits: skill.numberOfVisits,
+      unitId: String(u.id),
+    }))
+
+  return (
+    <>
+      {cards.map((c: any) => (
+        <PracticeCard
+          key={`${skill.skillContentId}-${c.unitId}`}
+          {...c}
+          progress={0}
+          onClick={() => onClickTest(c)}
+        />
+      ))}
+    </>
+  )
+}
+
 function getSubSectionLabel(skill: string, sub: number | null): string {
   if (sub == null) return ""
   switch (skill) {
