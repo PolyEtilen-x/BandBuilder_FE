@@ -3,5 +3,5 @@ export function loginWithGoogle() {
 
   localStorage.setItem("redirectAfterLogin", currentPath)
 
-  window.location.href = "https://aidsense.online/auth/google"
+  window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`
 }

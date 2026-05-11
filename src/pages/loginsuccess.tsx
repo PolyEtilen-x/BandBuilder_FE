@@ -17,11 +17,10 @@ export default function LoginSuccess() {
     if (isLoading) return
 
     if (isAuthenticated) {
-      const redirectPath =
-        localStorage.getItem("redirectAfterLogin") || "/"
+      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/"
+      console.log("Login success, redirecting to:", redirectPath)
 
       localStorage.removeItem("redirectAfterLogin")
-
       navigate(redirectPath, { replace: true })
     }
   }, [isAuthenticated, isLoading])

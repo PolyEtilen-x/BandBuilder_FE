@@ -1,5 +1,6 @@
 import { BookOpen, Headphones, PenLine, Mic } from "lucide-react"
-import { useState } from "react"
+import { usePracticeStore } from "@/services/practice/practice.store"
+import { useNavigate } from "react-router-dom"
 
 type SkillKey = "reading" | "listening" | "writing" | "speaking"
 type Mode = "full" | "single"
@@ -8,11 +9,6 @@ export type SidebarState = {
   skill: SkillKey
   mode: Mode
   subSection: number | null // null = cnone sub-section
-}
-
-type Props = {
-  state: SidebarState
-  onChange: (next: SidebarState) => void
 }
 
 const SKILL_CONFIG: Record<
@@ -40,7 +36,7 @@ const SKILL_CONFIG: Record<
     label: "Writing",
     icon: <PenLine size={16} />,
     subSections: ["Task 1", "Task 2"],
-    hasFull: false, 
+    hasFull: false,
   },
   speaking: {
     label: "Speaking",
@@ -82,22 +78,26 @@ const subRowStyle: React.CSSProperties = {
   marginLeft: 24,
 }
 
-export default function PracticeSidebar({ state, onChange }: Props) {
-  const { skill: activeSkill, mode, subSection } = state
+export default function PracticeSidebar() {
+  const { sidebar, setSidebar } = usePracticeStore()
+  const { skill: activeSkill, mode, subSection } = sidebar
+  const navigate = useNavigate()
 
   function handleSelectSkill(s: SkillKey) {
-    // Click vào skill khác → đổi skill, giữ nguyên mode
+    // Click another skill → change skill, keep same mode
     if (s !== activeSkill) {
-      onChange({ skill: s, mode, subSection: mode === "single" ? 1 : null })
+      setSidebar({ skill: s, mode, subSection: mode === "single" ? 1 : null })
+      navigate(`/practice/${s}`)
     }
   }
 
   function handleMode(s: SkillKey, m: Mode) {
     if (s !== activeSkill) {
-      // Nếu click vào skill chưa active → active nó luôn
-      onChange({ skill: s, mode: m, subSection: m === "single" ? 1 : null })
+      // if click skill = no active → active and change page
+      setSidebar({ skill: s, mode: m, subSection: m === "single" ? 1 : null })
+      navigate(`/practice/${s}`)
     } else {
-      onChange({
+      setSidebar({
         skill: activeSkill,
         mode: m,
         subSection: m === "single" ? (subSection ?? 1) : null,
@@ -106,7 +106,7 @@ export default function PracticeSidebar({ state, onChange }: Props) {
   }
 
   function handleSubSection(idx: number) {
-    onChange({ skill: activeSkill, mode: "single", subSection: idx })
+    setSidebar({ skill: activeSkill, mode: "single", subSection: idx })
   }
 
   return (
@@ -170,7 +170,6 @@ export default function PracticeSidebar({ state, onChange }: Props) {
               Single Section
             </label>
 
-            {/* Sub-sections (chỉ hiện khi skill active + mode single) */}
             {isActive && mode === "single" && (
               <div style={{ marginTop: 2, marginBottom: 4 }}>
                 {cfg.subSections.map((label, i) => {
@@ -190,7 +189,7 @@ export default function PracticeSidebar({ state, onChange }: Props) {
               </div>
             )}
 
-            {/* ── Full đề ── */}
+            {/* ── Full test ── */}
             {cfg.hasFull && (
               <label style={rowStyle}>
                 <input

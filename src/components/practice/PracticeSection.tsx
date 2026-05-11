@@ -1,10 +1,8 @@
-import { useState, lazy, Suspense, useEffect } from "react"
+import { useState } from "react"
 import { ChevronLeft, ChevronDown } from "lucide-react"
 import theme from "@/styles/theme"
-import { practiceApi } from "@/api/practice.api"
-import { normalizeTestUnits, TestUnit } from "@/utils/normalizeTestUnits.utils"
-
-const PracticeCard = lazy(() => import("./PracticeCard"))
+import { useSkillPreview } from "@/hooks/usePractice"
+import PracticeCard from "./PracticeCard"
 
 type Props = {
   title: string
@@ -13,6 +11,7 @@ type Props = {
   skillContentId: string
   mode: "full" | "single"
   subSection: number | null
+  onClickTest?: (test: any) => void
 }
 
 export default function PracticeSection({
@@ -22,42 +21,42 @@ export default function PracticeSection({
   skillContentId,
   mode,
   subSection,
+  onClickTest,
 }: Props) {
   const [open, setOpen] = useState(false)
-  const [allUnits, setAllUnits] = useState<TestUnit[]>([])
-  const [loaded, setLoaded] = useState(false)
 
-  useEffect(() => {
-    if (!open || loaded) return
+  // Chỉ gọi API preview khi người dùng mở Section để tối ưu hiệu năng
+  const { data: enriched, isLoading } = useSkillPreview(skillContentId)
 
-    const fetchPreview = async () => {
-      try {
-        const res = await practiceApi.getSkillPreview(skillContentId)
-        setAllUnits(normalizeTestUnits(res.data))
-        setLoaded(true)
-      } catch (err) {
-        console.error(err)
-      }
-    }
-
-    fetchPreview()
-  }, [open, skillContentId, loaded])
-
-  // Reset khi mode/subSection thay đổi để re-render đúng filter
-  // (data đã loaded, chỉ cần filter lại — không cần re-fetch)
-  const visibleUnits: TestUnit[] =
-    mode === "full"
-      ? allUnits // full test
-      : allUnits.filter((u) => u.id === subSection) // single section
+  const units = enriched?.units || []
+  
+  // Logic chuẩn bị danh sách card tương tự như SkillCardGroup
+  const cards = mode === "full" 
+    ? [{
+        id: skillContentId,
+        title: enriched?.preview?.source || title,
+        questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
+        numberOfVisits,
+        unitId: "full",
+      }]
+    : units.filter((u: any) => u.id === subSection).map((u: any) => ({
+        id: skillContentId,
+        title: u.title,
+        questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
+        numberOfVisits,
+        unitId: String(u.id),
+      }))
 
   return (
     <section
       style={{
-        background: "#f6f6f6",
-        padding: 24,
+        background: "#fff",
+        padding: "20px 24px",
         borderRadius: 20,
         marginBottom: 20,
-        border: `1px solid ${theme.colors.third}`,
+        border: open ? `2px solid ${theme.colors.third}` : "1px solid #eee",
+        transition: "all 0.2s ease",
+        boxShadow: open ? "0 10px 25px -5px rgba(0,0,0,0.05)" : "none"
       }}
     >
       {/* ── Header ── */}
@@ -72,54 +71,45 @@ export default function PracticeSection({
         }}
       >
         <div>
-          <h2 style={{ color: theme.colors.third, marginBottom: 2 }}>{title}</h2>
-          <p style={{ color: theme.colors.third, fontSize: 13 }}>{count} practice</p>
+          <h2 style={{ color: "#333", fontSize: 18, marginBottom: 4, fontWeight: 700 }}>{title}</h2>
+          <div style={{ display: "flex", gap: 12, fontSize: 13, color: "#888" }}>
+            <span>{count} practice tests</span>
+            <span>{numberOfVisits} visits</span>
+          </div>
         </div>
         {open ? (
-          <ChevronDown color={theme.colors.third} />
+          <ChevronDown color={theme.colors.third} size={24} />
         ) : (
-          <ChevronLeft color={theme.colors.third} />
+          <ChevronLeft color="#888" size={24} />
         )}
       </div>
 
-      {/* ── Cards ── */}
+      {/* ── Content (Cards) ── */}
       {open && (
-        <Suspense fallback={<p style={{ marginTop: 12 }}>Đang tải...</p>}>
-          {!loaded ? (
-            <p style={{ marginTop: 12, color: "#999" }}>Đang tải bài tập...</p>
-          ) : visibleUnits.length === 0 ? (
-            <p style={{ marginTop: 12, color: "#aaa", fontSize: 13 }}>
-              Không có bài nào cho lựa chọn này.
-            </p>
+        <div style={{ marginTop: 24 }}>
+          {isLoading ? (
+            <p style={{ color: "#999", fontSize: 14 }}>Đang tải bài tập...</p>
+          ) : cards.length === 0 ? (
+            <p style={{ color: "#aaa", fontSize: 14 }}>Không có bài tập phù hợp cho lựa chọn này.</p>
           ) : (
             <div
               style={{
-                marginTop: 16,
                 display: "grid",
                 gridTemplateColumns: "repeat(auto-fill, minmax(15rem, 1fr))",
-                gap: 16,
+                gap: 20,
               }}
             >
-              {visibleUnits.map((u) => {
-                const totalQuestions = u.questionBlocks
-                  ?.flatMap((b: any) => b.questions ?? [])
-                  .length
-
-                return (
-                  <PracticeCard
-                    key={u.id}
-                    id={skillContentId}
-                    title={u.title}
-                    questions={totalQuestions}
-                    numberOfVisits={numberOfVisits}
-                    progress={0}
-                    unitId={String(u.id)}
-                  />
-                )
-              })}
+              {cards.map((c: any) => (
+                <PracticeCard
+                  key={`${skillContentId}-${c.unitId}`}
+                  {...c}
+                  progress={0}
+                  onClick={() => onClickTest?.(c)}
+                />
+              ))}
             </div>
           )}
-        </Suspense>
+        </div>
       )}
     </section>
   )

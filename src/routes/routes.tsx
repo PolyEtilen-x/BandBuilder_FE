@@ -8,6 +8,7 @@ import LoginSuccess from "@/pages/loginsuccess"
 import VocabPage from "@/pages/materials/VocabPage"
 import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 import GrammarPage from "@/pages/materials/GrammarPage"
+import { ProtectedRoute } from "@/guard/route.guard"
 
 export const routes = [
   {
@@ -15,20 +16,20 @@ export const routes = [
     element: <Home />,
   },
   {
-    path: "/practice/:skill", 
-    element: <PracticePage/>, 
+    path: "/practice/:skill",
+    element: <ProtectedRoute><PracticePage /></ProtectedRoute>,
   },
   {
     path: "/practice/:skill/test/:id",
-    element: <PracticeTestPage />,
+    element: <ProtectedRoute><PracticeTestPage /></ProtectedRoute>,
   },
   {
     path: "/materials/vocabulary",
-    element: <VocabPage />, 
+    element: <VocabPage />,
   },
   {
     path: "/materials/grammar",
-    element: <GrammarPage />, 
+    element: <GrammarPage />,
   },
   {
     path: "/login/success",
@@ -37,5 +38,5 @@ export const routes = [
   {
     path: "/oauth-success",
     element: <LoginSuccess />,
-  },   
+  },
 ]

@@ -31,7 +31,7 @@ apiClient.interceptors.response.use(
     if (status !== 401) throw error
 
     if (originalRequest.url.includes("/auth/refresh")) {
-      window.location.href = "https://aidsense.online/auth/google"
+      window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`
       throw error
     }
 
@@ -53,7 +53,7 @@ apiClient.interceptors.response.use(
 
     } catch (err) {
       refreshPromise = null
-      window.location.href = "https://aidsense.online/auth/google"
+      window.location.href = `${import.meta.env.VITE_API_BASE_URL}/auth/google`
       throw err
     }
   }
