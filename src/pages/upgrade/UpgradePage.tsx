@@ -143,7 +143,13 @@ export default function UpgradePage() {
                   </>
                 ) : (
                   <div style={{ padding: '20px 0' }}>
-                    <CheckCircle2 size={64} color="#10b981" style={{ marginBottom: 20 }} />
+                    <div style={{
+                      display: "flex",
+                      justifyContent: "center",
+                      marginBottom: 20
+                    }}>
+                      <CheckCircle2 size={64} color="#174593" />
+                    </div>
                     <h2 style={{ marginBottom: 12 }}>Payment Successful!</h2>
                     <p style={{ color: '#64748b', marginBottom: 24 }}>
                       Your account has been upgraded successfully. You can now enjoy all premium features.
