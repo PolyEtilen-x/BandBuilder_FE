@@ -94,6 +94,7 @@ export default function PracticePage() {
         const enriched = await loadSkillsWithPreview(list)
 
         setSkills(enriched)
+        console.log("Loaded skills with preview:", enriched)
       } catch (err) {
         console.error(err)
       } finally {

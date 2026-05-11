@@ -5,8 +5,10 @@ export const practiceApi = {
   getPracticeTests: () =>
     apiClient.get("/practice/tests"),
 
-  getSkills: () =>
-    apiClient.get("/practice/skills"),
+  getSkills: () => {
+    console.log(import.meta.env.VITE_API_URL)
+    return apiClient.get("/practice/skills")
+  },
 
   getSkillPreview: (id: string) =>
     apiClient.get(`/practice/skills/${id}/preview`),

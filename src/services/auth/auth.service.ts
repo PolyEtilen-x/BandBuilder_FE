@@ -17,6 +17,6 @@ export async function refreshToken() {
     await apiClient.post("/auth/refresh")
     return true
   } catch {
-    return false
+    return false  
   }
 }
