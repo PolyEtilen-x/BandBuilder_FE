@@ -11,15 +11,11 @@ import "./style.css"
 type Props = {
     test: PracticeTestDTO
     unit: Passage | Section
-    answers: Record<string, string>
-    updateAnswer: (id: string, value: string) => void
 }
 
 export default function RealExam({
     test,
     unit,
-    answers,
-    updateAnswer,
 }: Props) {
     const isReading = !!test?.content?.passages
     const isListening = !!test?.content?.sections
@@ -114,8 +110,6 @@ export default function RealExam({
                     ) : (
                     <QuestionPanel
                         questionBlocks={unit?.question_blocks || []}
-                        answers={answers}
-                        updateAnswer={updateAnswer}
                     />
                     )}
                 </div>
@@ -142,8 +136,6 @@ export default function RealExam({
                 >
                     <QuestionPanel
                     questionBlocks={unit?.question_blocks || []}
-                    answers={answers}
-                    updateAnswer={updateAnswer}
                     />
                 </div>
                 </>
@@ -154,7 +146,6 @@ export default function RealExam({
         <div className="exam-footer">
             <QuestionNavigator
             questionBlocks={unit?.question_blocks || []}
-            answers={answers}
             />
         </div>
 

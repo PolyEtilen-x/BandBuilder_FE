@@ -1,8 +1,9 @@
-import { useCallback, useState } from "react"
+import { useEffect } from "react"
 import RealExam from "@/components/test/RealExamModal/RealExam"
 import PracticeExam from "@/components/test/PracticeModal/PracticeExam"
 import PracticeSkeleton from "@/components/test/PracticeSkeleton/PracticeSkeleton"
 import { usePracticeTest } from "@/hooks/usePracticeTest"
+import { usePracticeStore } from "@/services/practice/practice.store"
 
 export default function PracticeTestPage() {
     const {
@@ -13,14 +14,14 @@ export default function PracticeTestPage() {
         mode
     } = usePracticeTest()
 
-    const [answers, setAnswers] = useState<Record<string, string>>({})
-
-    const updateAnswer = useCallback((id: string, value: string) => {
-        setAnswers(prev => ({
-            ...prev,
-            [id]: value
-        }))
-    }, [])
+    const clearAnswers = usePracticeStore(state => state.clearAnswers)
+    
+    // Clear answers when starting a new test session
+    useEffect(() => {
+        return () => {
+            clearAnswers()
+        }
+    }, [clearAnswers])
 
     if (isLoading) return <PracticeSkeleton />
 
@@ -44,15 +45,11 @@ export default function PracticeTestPage() {
         <RealExam
             test={test}
             unit={currentUnit}
-            answers={answers}
-            updateAnswer={updateAnswer}
         />
     ) : (
         <PracticeExam
             test={test}
             unit={currentUnit}
-            answers={answers}
-            updateAnswer={updateAnswer}
         />
     )
 }

@@ -1,18 +1,17 @@
 import { QuestionBlock } from "@/types/practice.types"
 import QuestionRenderer from "./QuestionRenderer"
+import { usePracticeStore } from "@/services/practice/practice.store"
 
 interface QuestionPanelProps {
   questionBlocks: QuestionBlock[]
-  answers: Record<string, string>
-  updateAnswer: (id: string, value: string) => void
   mode?: "exam" | "practice"
 }
 
 export default function QuestionPanel({
   questionBlocks = [],
-  answers,
-  updateAnswer
 }: QuestionPanelProps) {
+  const answers = usePracticeStore(state => state.answers)
+  const updateAnswer = usePracticeStore(state => state.setAnswer)
 
   if (!questionBlocks.length) {
     return <p>No questions</p>

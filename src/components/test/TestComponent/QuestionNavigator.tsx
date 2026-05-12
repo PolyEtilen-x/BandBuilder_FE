@@ -1,7 +1,9 @@
+import { usePracticeStore } from "@/services/practice/practice.store"
+
 export default function QuestionNavigator({
   questionBlocks = [],
-  answers
-}:any){
+}: any) {
+  const answers = usePracticeStore(state => state.answers)
 
   const flatQuestions = questionBlocks.flatMap((block:any) => {
     if (block.questions) return block.questions
