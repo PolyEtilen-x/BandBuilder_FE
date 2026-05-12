@@ -154,7 +154,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const cards = sidebar.mode === "full"
     ? [{
       id: skill.skillContentId,
-      title: enriched.preview?.source || skill.title,
+      title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
       unitId: "full",

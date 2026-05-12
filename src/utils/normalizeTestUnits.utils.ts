@@ -1,6 +1,7 @@
 import type { SkillContentPreview } from '@/data/practices/skillContent.model';
 import type { ListeningQuestionBlock } from '@/data/practices/listening.model';
 import type { ReadingQuestionBlock } from '@/data/practices/reading.model';
+import type { PracticeTestDTO } from '@/types/practice.types';
 
 export interface TestUnit {
   id: number;
@@ -13,7 +14,7 @@ export interface TestUnit {
   timeSuggestedMinutes?: number;
 }
 
-export function normalizeTestUnits(test: SkillContentPreview): TestUnit[] {
+export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO): TestUnit[] {
   const content = test.content as any;
 
   // Reading

@@ -6,7 +6,7 @@ export const practiceApi = {
     apiClient.get<PracticeTestPreview[]>("/practice/tests"),
 
   getSkills: () =>
-    apiClient.get<any[]>("/practice/skills"),
+    apiClient.get<{ data: any[] }>("/practice/skills"),
 
   getSkillPreview: (id: string) =>
     apiClient.get<PracticeTestDTO>(`/practice/skills/${id}/preview`),

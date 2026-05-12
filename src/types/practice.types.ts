@@ -42,10 +42,15 @@ export interface TestContent {
 }
 
 export interface PracticeTestDTO {
-  id: string;
+  skillContentId: string;
+  skillType: IELTSComponentType;
+  audioUrl: string | null;
   source: string;
-  skill: IELTSComponentType;
+  createdAt: string;
   content: TestContent;
+  // Aliases for compatibility
+  id: string;
+  skill: IELTSComponentType;
 }
 
 export interface PracticeTestPreview {
