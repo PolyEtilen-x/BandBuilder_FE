@@ -1,0 +1,49 @@
+.practice-content-split {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+}
+
+.practice-left-skeleton {
+  width: 60%;
+  border-right: 1px solid #e2e8f0;
+  overflow-y: auto;
+}
+
+.practice-right-skeleton {
+  width: 40%;
+  overflow-y: auto;
+}
+
+.mb-2 {
+  margin-bottom: 0.5rem;
+}
+
+.mb-3 {
+  margin-bottom: 0.75rem;
+}
+
+.mb-6 {
+  margin-bottom: 1.5rem;
+}
+
+.mb-8 {
+  margin-bottom: 2rem;
+}
+
+@media (max-width: 768px) {
+  .practice-content-split {
+    flex-direction: column;
+  }
+
+  .practice-left-skeleton,
+  .practice-right-skeleton {
+    width: 100%;
+    height: 50%;
+  }
+
+  .practice-divider {
+    display: none;
+  }
+}

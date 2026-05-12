@@ -3,13 +3,14 @@ import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
 import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
 import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import Timer from "@/components/components/Timer"
+import { PracticeTestDTO, Passage, Section } from "@/types/practice.types"
 
 import { useState, useRef, useEffect } from "react"
 
 import "./style.css"
 type Props = {
-    test: any
-    unit: any
+    test: PracticeTestDTO
+    unit: Passage | Section
     answers: Record<string, string>
     updateAnswer: (id: string, value: string) => void
 }

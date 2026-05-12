@@ -9,6 +9,10 @@ export default function Timer({ duration, onTimeUp }: Props) {
   const [timeLeft, setTimeLeft] = useState(duration)
 
   useEffect(() => {
+    setTimeLeft(duration)
+  }, [duration])
+
+  useEffect(() => {
     const interval = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
@@ -21,7 +25,7 @@ export default function Timer({ duration, onTimeUp }: Props) {
     }, 1000)
 
     return () => clearInterval(interval)
-  }, [])
+  }, [duration, onTimeUp])
 
   const minutes = Math.floor(timeLeft / 60)
   const seconds = timeLeft % 60

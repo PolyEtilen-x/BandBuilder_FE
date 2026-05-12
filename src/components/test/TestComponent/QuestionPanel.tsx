@@ -1,17 +1,25 @@
+import { QuestionBlock } from "@/types/practice.types"
 import QuestionRenderer from "./QuestionRenderer"
+
+interface QuestionPanelProps {
+  questionBlocks: QuestionBlock[]
+  answers: Record<string, string>
+  updateAnswer: (id: string, value: string) => void
+  mode?: "exam" | "practice"
+}
 
 export default function QuestionPanel({
   questionBlocks = [],
   answers,
   updateAnswer
-}:any){
+}: QuestionPanelProps) {
 
   if (!questionBlocks.length) {
     return <p>No questions</p>
   }
 
   return (
-    
+
     <aside
       style={{
         padding: "24px",
@@ -21,10 +29,10 @@ export default function QuestionPanel({
         lineHeight: 1.6
       }}
     >
-      {questionBlocks.map((block:any, index:number)=>(
-        <div key={index} style={{marginBottom:32}}>
+      {questionBlocks.map((block: any, index: number) => (
+        <div key={index} style={{ marginBottom: 32 }}>
 
-          <h3 
+          <h3
             style={{
               fontSize: "16px",
               fontWeight: 600,
@@ -53,7 +61,7 @@ export default function QuestionPanel({
             />
           )}
 
-          {block.questions?.map((q:any)=>(
+          {block.questions?.map((q: any) => (
             <div id={`question-${q.id}`} key={q.id}>
               <QuestionRenderer
                 question={q}

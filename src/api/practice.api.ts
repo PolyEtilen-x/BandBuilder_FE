@@ -1,16 +1,16 @@
-import axios from "axios"
 import { apiClient } from "./apiClient.api"
+import { PracticeTestDTO, PracticeTestPreview } from "@/types/practice.types"
 
 export const practiceApi = {
   getPracticeTests: () =>
-    apiClient.get("/practice/tests"),
+    apiClient.get<PracticeTestPreview[]>("/practice/tests"),
 
-  getSkills: () => 
-    apiClient.get("/practice/skills"),
+  getSkills: () =>
+    apiClient.get<any[]>("/practice/skills"),
 
   getSkillPreview: (id: string) =>
-    apiClient.get(`/practice/skills/${id}/preview`),
+    apiClient.get<PracticeTestDTO>(`/practice/skills/${id}/preview`),
 
   getTestPreview: (id: string) =>
-    apiClient.get(`/practice/tests/${id}/preview`)
+    apiClient.get<PracticeTestDTO>(`/practice/tests/${id}/preview`)
 }

@@ -1,84 +1,44 @@
-import PassagePanel from "@/components/test/LayoutSkill/ReadingPanel"
-import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
-import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
-import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
-import { practiceApi } from "@/api/practice.api"
-
-import { useEffect, useState } from "react"
-import { useSearchParams, useLocation, useParams } from "react-router-dom"
+import { useCallback, useState } from "react"
 import RealExam from "@/components/test/RealExamModal/RealExam"
 import PracticeExam from "@/components/test/PracticeModal/PracticeExam"
+import PracticeSkeleton from "@/components/test/PracticeSkeleton/PracticeSkeleton"
+import { usePracticeTest } from "@/hooks/usePracticeTest"
+
 export default function PracticeTestPage() {
+    const {
+        test,
+        currentUnit,
+        isLoading,
+        error,
+        mode
+    } = usePracticeTest()
 
-    const [test, setTest] = useState<any>(null)
-    const [loading, setLoading] = useState(true)    
+    const [answers, setAnswers] = useState<Record<string, string>>({})
 
-    const { id } = useParams()
-
-    const location = useLocation()
-    const mode = location.state?.mode || "practice"
-
-    const [searchParams] = useSearchParams()
-    const passageNumber = Number(searchParams.get("unit") || 1)    
-
-    const [answers,setAnswers] = useState<Record<string,string>>({})
-    
-    useEffect(() => {
-        const fetchTest = async () => {
-            try {
-                const res = await practiceApi.getSkillPreview(id!)
-                setTest(res.data)
-            } catch (err) {
-                console.error(err)
-            } finally {
-                setLoading(false)
-            }
-        }
-
-        if (id) fetchTest()
-    }, [id])
-
-    console.log("test data:", test)
-
-    if (loading) return <div>Loading...</div>
-    if (!test) return <div>No data</div>
-    
-    console.log("id =", id)
-
-    const isReading = !!test?.content?.passages
-    const isListening = !!test?.content?.sections
-
-    const rawUnit = searchParams.get("unit")
-
-    const unitNumber =
-    rawUnit === "full" ? null : Number(rawUnit || 1)
-
-    
-    let currentUnit = null
-
-    if (isReading) {
-    const passages = test.content.passages
-    currentUnit =
-        passages.find((p:any)=>p.passage_number === unitNumber)
-        || passages[0]
-    }
-
-    if (isListening) {
-    const sections = test.content.sections
-    currentUnit =
-        sections.find((s:any)=>s.section === unitNumber)
-        || sections[0]
-    }
-
-    if (!currentUnit) return <div>No passage found</div>
-
-    function updateAnswer(id:string,value:string){
+    const updateAnswer = useCallback((id: string, value: string) => {
         setAnswers(prev => ({
             ...prev,
-            [id]:value
+            [id]: value
         }))
-    }
-    console.log("passage", currentUnit)
+    }, [])
+
+    if (isLoading) return <PracticeSkeleton />
+
+    if (error) return (
+        <div className="flex items-center justify-center h-screen flex-col gap-4">
+            <h2 className="text-xl font-semibold text-red-600">Failed to load test</h2>
+            <p className="text-gray-500">{(error as Error).message}</p>
+            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+                Try Again
+            </button>
+        </div>
+    )
+
+    if (!test || !currentUnit) return (
+        <div className="flex items-center justify-center h-screen">
+            <p className="text-gray-500">No data found for this test.</p>
+        </div>
+    )
 
     return mode === "exam" ? (
         <RealExam
@@ -87,7 +47,7 @@ export default function PracticeTestPage() {
             answers={answers}
             updateAnswer={updateAnswer}
         />
-        ) : (
+    ) : (
         <PracticeExam
             test={test}
             unit={currentUnit}

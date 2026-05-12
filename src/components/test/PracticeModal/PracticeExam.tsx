@@ -4,12 +4,13 @@ import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator
 import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import PracticeToolbar from "@/components/test/PracticeModal/PracticeToolbar"
 import ReadingPanel from "@/components/test/LayoutSkill/ReadingPanel"
+import { PracticeTestDTO, Passage, Section } from "@/types/practice.types"
 
 import "./style.css"
 
 type Props = {
-  test: any
-  unit: any
+  test: PracticeTestDTO
+  unit: Passage | Section
   answers: Record<string, string>
   updateAnswer: (id: string, value: string) => void
 }
