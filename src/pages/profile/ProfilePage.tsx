@@ -1,14 +1,17 @@
+import { useState } from "react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { useNavigate } from "react-router-dom"
 import { LogOut, Settings, Award, BookOpen, Clock, TrendingUp, Calendar, CreditCard } from "lucide-react"
 import { useUserProfile } from "@/hooks/useUser"
+import EditProfileModal from "./EditProfileModal"
 import "./style.css"
 
 export default function ProfilePage() {
   const { logout } = useAuthStore()
   const navigate = useNavigate()
   const { data: profile, isLoading, error } = useUserProfile()
+  const [openEditModal, setOpenEditModal] = useState(false)
 
   if (isLoading) return (
     <MainLayout>
@@ -78,7 +81,7 @@ export default function ProfilePage() {
                   Upgrade Pro
                 </button>
               )}
-              <button className="btn-action-secondary">
+              <button className="btn-action-secondary" onClick={() => setOpenEditModal(true)}>
                 <Settings size={18} />
                 Edit Profile
               </button>
@@ -173,6 +176,15 @@ export default function ProfilePage() {
 
         </div>
       </div>
+
+      <EditProfileModal 
+        open={openEditModal} 
+        onClose={() => setOpenEditModal(false)} 
+        initialData={{ 
+          fullName: user.fullName, 
+          avatarUrl: user.avatarUrl 
+        }} 
+      />
     </MainLayout>
   )
 }
