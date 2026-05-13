@@ -11,19 +11,21 @@ import "./style.css"
 type Props = {
     test: PracticeTestDTO
     unit: Passage | Section
+    isReview?: boolean
 }
 
 export default function RealExam({
     test,
     unit,
+    isReview = false
 }: Props) {
     const isReading = !!test?.content?.passages
     const isListening = !!test?.content?.sections
-    
+
     const [activeTab, setActiveTab] = useState<"passage" | "question">("passage")
-    const [leftWidth, setLeftWidth] = useState(60) 
+    const [leftWidth, setLeftWidth] = useState(60)
     const isDragging = useRef(false)
-    
+
     const [isMobile, setIsMobile] = useState(false)
 
     useEffect(() => {
@@ -35,13 +37,12 @@ export default function RealExam({
 
     const handleMouseDown = () => {
         isDragging.current = true
+        document.body.style.userSelect = "none"
     }
 
     const handleMouseMove = (e: MouseEvent) => {
         if (!isDragging.current) return
-
         const newWidth = (e.clientX / window.innerWidth) * 100
-
         if (newWidth > 20 && newWidth < 80) {
             setLeftWidth(newWidth)
         }
@@ -49,12 +50,12 @@ export default function RealExam({
 
     const handleMouseUp = () => {
         isDragging.current = false
+        document.body.style.userSelect = "auto"
     }
 
     useEffect(() => {
         window.addEventListener("mousemove", handleMouseMove)
         window.addEventListener("mouseup", handleMouseUp)
-
         return () => {
             window.removeEventListener("mousemove", handleMouseMove)
             window.removeEventListener("mouseup", handleMouseUp)
@@ -66,90 +67,68 @@ export default function RealExam({
     return (
         <div className="exam-container">
 
-        {/* HEADER */}
-        <div className="exam-header">
-            <div className="exam-title">
-            {test?.source || "IELTS Test"}
+            {/* HEADER */}
+            <div className="exam-header">
+                <div className="exam-title">
+                    {test?.source || "IELTS Test"} {isReview && "(Reviewing)"}
+                </div>
+
+                {!isReview && (
+                    <Timer
+                        duration={duration}
+                        onTimeUp={() => {
+                            alert("Time is up!")
+                        }}
+                    />
+                )}
+                {isReview && <div className="practice-badge" style={{ background: "#174593", color: "#fff", padding: "4px 12px", borderRadius: "6px", fontWeight: 700 }}>Review Mode</div>}
             </div>
 
-            <Timer 
-                duration={duration} 
-                onTimeUp={() => {
-                alert("Time is up!")
-                }}            
-            />
-        </div>
+            {/* MAIN */}
+            <div className="exam-main">
+                {isMobile ? (
+                    <>
+                        {/* TAB BAR */}
+                        <div className="exam-tabs">
+                            <button className={activeTab === "passage" ? "active" : ""} onClick={() => setActiveTab("passage")}>Passage</button>
+                            <button className={activeTab === "question" ? "active" : ""} onClick={() => setActiveTab("question")}>Questions</button>
+                        </div>
 
-        {/* MAIN */}
-        <div className="exam-main">
-            {isMobile ? (
-                <>
-                {/* TAB BAR */}
-                <div className="exam-tabs">
-                    <button
-                        className={activeTab === "passage" ? "active" : ""}
-                        onClick={() => setActiveTab("passage")}
-                    >
-                     Passage
-                    </button>
+                        <div className="exam-mobile-content">
+                            {activeTab === "passage" ? (
+                                isReading ? <PassagePanel passage={unit} /> : <ListeningPanel section={unit} />
+                            ) : (
+                                <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+                            )}
+                        </div>
+                    </>
+                ) : (
+                    <>
+                        {/* DESKTOP SPLIT */}
+                        <div className="exam-left" style={{ width: `${leftWidth}%` }}>
+                            {isReading && <PassagePanel passage={unit} />}
+                            {isListening && <ListeningPanel section={unit} />}
+                        </div>
 
-                    <button
-                        className={activeTab === "question" ? "active" : ""}
-                        onClick={() => setActiveTab("question")}
-                    >
-                        Questions
-                    </button>
-                </div>
+                        <div className="exam-divider" onMouseDown={handleMouseDown} />
 
-                {/* CONTENT */}
-                <div className="exam-mobile-content">
-                    {activeTab === "passage" ? (
-                    isReading
-                        ? <PassagePanel passage={unit} />
-                        : <ListeningPanel section={unit} />
-                    ) : (
-                    <QuestionPanel
-                        questionBlocks={unit?.question_blocks || []}
-                    />
-                    )}
-                </div>
-                </>
-            ) : (
-                <>
-                {/* DESKTOP SPLIT */}
-                <div
-                    className="exam-left"
-                    style={{ width: `${leftWidth}%` }}
-                >
-                    {isReading && <PassagePanel passage={unit} />}
-                    {isListening && <ListeningPanel section={unit} />}
-                </div>
+                        <div className="exam-right" style={{ width: `${100 - leftWidth}%` }}>
+                            <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+                        </div>
+                    </>
+                )}
+            </div>
 
-                <div
-                    className="exam-divider"
-                    onMouseDown={handleMouseDown}
-                />
-
-                <div
-                    className="exam-right"
-                    style={{ width: `${100 - leftWidth}%` }}
-                >
-                    <QuestionPanel
+            {/* FOOTER */}
+            <div className="exam-footer">
+                <QuestionNavigator
                     questionBlocks={unit?.question_blocks || []}
-                    />
-                </div>
-                </>
-            )}
-        </div>
-
-        {/* FOOTER */}
-        <div className="exam-footer">
-            <QuestionNavigator
-            questionBlocks={unit?.question_blocks || []}
-            />
-        </div>
+                    examId={test?.id}
+                    currentUnit={unit}
+                />
+            </div>
 
         </div>
     )
-  
 }
+

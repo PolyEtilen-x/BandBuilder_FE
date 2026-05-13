@@ -1,7 +1,7 @@
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { useNavigate } from "react-router-dom"
 
-export default function QuestionNavigator({ questionBlocks = [] }: any) {
+export default function QuestionNavigator({ questionBlocks = [], examId, currentUnit }: any) {
   const answers = usePracticeStore(state => state.answers)
   const navigate = useNavigate()
 
@@ -31,8 +31,11 @@ export default function QuestionNavigator({ questionBlocks = [] }: any) {
 
   const handleFinish = () => {
     if (window.confirm("Bạn có chắc chắn muốn nộp bài?")) {
-      usePracticeStore.getState().clearAnswers()
-      navigate("/profile")
+      navigate(`/practice/result/${examId}`, {
+        state: {
+          examData: { sections: [currentUnit] }
+        }
+      })
     }
   }
 

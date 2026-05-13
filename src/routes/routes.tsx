@@ -8,6 +8,7 @@ import GrammarPage from "@/pages/materials/GrammarPage"
 import { ProtectedRoute } from "@/guard/route.guard"
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))
+const ResultPage = lazy(() => import("@/pages/practice/ResultPage"))
 
 export const routes = [
   {
@@ -25,6 +26,14 @@ export const routes = [
   {
     path: "/practice/:skill/test/:id",
     element: <ProtectedRoute><PracticeTestPage /></ProtectedRoute>,
+  },
+  {
+    path: "/practice/result/:id",
+    element: <ProtectedRoute><ResultPage /></ProtectedRoute>,
+  },
+  {
+    path: "/practice/review/:id",
+    element: <ProtectedRoute><PracticeTestPage mode="review" /></ProtectedRoute>,
   },
   {
     path: "/materials/vocabulary",

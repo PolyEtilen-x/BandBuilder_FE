@@ -5,10 +5,12 @@ import { usePracticeStore } from "@/services/practice/practice.store"
 interface QuestionPanelProps {
   questionBlocks: QuestionBlock[]
   mode?: "exam" | "practice"
+  isReview?: boolean
 }
 
 export default function QuestionPanel({
   questionBlocks = [],
+  isReview = false
 }: QuestionPanelProps) {
   const answers = usePracticeStore(state => state.answers)
   const updateAnswer = usePracticeStore(state => state.setAnswer)
@@ -75,6 +77,7 @@ export default function QuestionPanel({
                   value={answers[q.id || q.number]}
                   onChange={updateAnswer}
                   extra={block}
+                  isReview={isReview}
                 />
               </div>
             ))}

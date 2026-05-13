@@ -3,12 +3,15 @@ type Props = {
   value: string
   onChange: (id: string, value: string) => void
   extra?: any
+  isReview?: boolean
 }
 
-export default function FillBlankQuestion({ question, value, onChange, extra }: Props) {
+export default function FillBlankQuestion({ question, value, onChange, extra, isReview = false }: Props) {
   const placeholderRegex = /_{3,}/;
   const parts = question.text?.split(placeholderRegex) || [question.text || "", ""];
   const wordBank = extra?.word_bank || [];
+  const correctAnswer = question.correct_answer?.toString().trim().toLowerCase();
+  const isCorrect = value?.toString().trim().toLowerCase() === correctAnswer;
 
   return (
     <div id={`question-${question.id}`} style={{ marginBottom: 35, color: "#1e293b" }}>
@@ -20,24 +23,37 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
           <span key={index}>
             {part}
             {index < parts.length - 1 && (
-              <input
-                type="text"
-                value={value || ""}
-                onChange={(e) => onChange(question.id, e.target.value)}
-                style={{
-                  border: "none", borderBottom: "2px solid #174593", outline: "none",
-                  width: 150, padding: "2px 10px", fontSize: "16px", fontWeight: 700,
-                  textAlign: "center", background: "#f8fafc", borderRadius: "6px 6px 0 0",
-                  transition: "all 0.2s"
-                }}
-                placeholder="..."
-              />
+              <div style={{ display: "inline-flex", flexDirection: "column", alignItems: "center" }}>
+                <input
+                    type="text"
+                    value={value || ""}
+                    disabled={isReview}
+                    onChange={(e) => onChange(question.id, e.target.value)}
+                    style={{
+                        border: "none", 
+                        borderBottom: `2px solid ${isReview ? (isCorrect ? "#22c55e" : "#ef4444") : "#174593"}`, 
+                        outline: "none",
+                        width: 150, padding: "2px 10px", fontSize: "16px", fontWeight: 700,
+                        textAlign: "center", 
+                        background: isReview ? (isCorrect ? "#f0fdf4" : "#fef2f2") : "#f8fafc", 
+                        borderRadius: "6px 6px 0 0",
+                        transition: "all 0.2s",
+                        color: isReview ? (isCorrect ? "#166534" : "#991b1b") : "#1e293b"
+                    }}
+                    placeholder="..."
+                />
+                {isReview && !isCorrect && (
+                    <span style={{ fontSize: "12px", color: "#166534", fontWeight: 800, marginTop: 2 }}>
+                        {question.correct_answer}
+                    </span>
+                )}
+              </div>
             )}
           </span>
         ))}
       </div>
 
-      {wordBank.length > 0 && (
+      {wordBank.length > 0 && !isReview && (
         <div style={{ 
           marginTop: 20, padding: "20px", background: "#f8fafc", borderRadius: "16px",
           display: "flex", flexWrap: "wrap", gap: "10px", border: "1.5px dashed #174593"
@@ -63,6 +79,16 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
               </button>
             );
           })}
+        </div>
+      )}
+
+      {isReview && question.explanation && (
+        <div style={{ 
+          marginTop: 16, padding: "12px 16px", background: "#f8fafc", 
+          borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "14px"
+        }}>
+          <strong style={{ color: "#174593", display: "block", marginBottom: 4 }}>GIẢI THÍCH:</strong>
+          <p style={{ margin: 0, color: "#475569", lineHeight: 1.6 }}>{question.explanation}</p>
         </div>
       )}
     </div>

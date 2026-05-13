@@ -2,13 +2,16 @@ export default function TrueFalseQuestion({
   question,
   value,
   onChange,
-  type
+  type,
+  isReview = false
 }: any) {
 
   const isYesNo = type === "yes_no_not_given";
   const options = isYesNo
     ? ["Yes", "No", "Not Given"]
     : ["True", "False", "Not Given"];
+  
+  const correctAnswer = question.correct_answer
 
   return (
     <div
@@ -30,6 +33,21 @@ export default function TrueFalseQuestion({
       }}>
         {options.map(op => {
           const isSelected = value === op;
+          const isCorrect = op === correctAnswer;
+
+          let borderColor = isSelected ? "#174593" : "#e2e8f0"
+          let bgColor = isSelected ? "#eff6ff" : "#fff"
+
+          if (isReview) {
+            if (isCorrect) {
+              borderColor = "#22c55e"
+              bgColor = "#f0fdf4"
+            } else if (isSelected && !isCorrect) {
+              borderColor = "#ef4444"
+              bgColor = "#fef2f2"
+            }
+          }
+
           return (
             <label
               key={op}
@@ -39,9 +57,9 @@ export default function TrueFalseQuestion({
                 gap: 10,
                 padding: "8px 16px",
                 borderRadius: "6px",
-                border: `1px solid ${isSelected ? "#174593" : "#e2e8f0"}`,
-                background: isSelected ? "#eff6ff" : "#fff",
-                cursor: "pointer",
+                border: `1px solid ${borderColor}`,
+                background: bgColor,
+                cursor: isReview ? "default" : "pointer",
                 transition: "all 0.2s",
                 maxWidth: "fit-content"
               }}
@@ -49,13 +67,14 @@ export default function TrueFalseQuestion({
               <input
                 type="radio"
                 checked={isSelected}
+                disabled={isReview}
                 onChange={() => onChange(question.id, op)}
-                style={{ cursor: "pointer" }}
+                style={{ cursor: isReview ? "default" : "pointer" }}
               />
               <span style={{
                 fontSize: "14px",
-                fontWeight: isSelected ? 600 : 400,
-                color: isSelected ? "#174593" : "#475569"
+                fontWeight: (isSelected || (isReview && isCorrect)) ? 600 : 400,
+                color: isReview && isCorrect ? "#15803d" : (isSelected ? "#174593" : "#475569")
               }}>
                 {op}
               </span>
@@ -63,6 +82,16 @@ export default function TrueFalseQuestion({
           );
         })}
       </div>
+
+      {isReview && question.explanation && (
+        <div style={{ 
+          marginTop: 16, padding: "12px 16px", background: "#f8fafc", 
+          borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "14px"
+        }}>
+          <strong style={{ color: "#174593", display: "block", marginBottom: 4 }}>GIẢI THÍCH:</strong>
+          <p style={{ margin: 0, color: "#475569", lineHeight: 1.6 }}>{question.explanation}</p>
+        </div>
+      )}
     </div>
 
   )

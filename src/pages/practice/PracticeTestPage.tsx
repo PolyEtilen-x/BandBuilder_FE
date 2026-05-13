@@ -5,7 +5,7 @@ import PracticeSkeleton from "@/components/test/PracticeSkeleton/PracticeSkeleto
 import { usePracticeTest } from "@/hooks/usePracticeTest"
 import { usePracticeStore } from "@/services/practice/practice.store"
 
-export default function PracticeTestPage() {
+export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode?: "practice" | "review" }) {
     const {
         test,
         currentUnit,
@@ -13,14 +13,6 @@ export default function PracticeTestPage() {
         error,
         mode
     } = usePracticeTest()
-
-    const clearAnswers = usePracticeStore(state => state.clearAnswers)
-
-    // answers are now persisted via Zustand's persist middleware
-    useEffect(() => {
-        // No longer clearing answers on unmount to support refresh/persistence
-    }, [])
-
 
     if (isLoading) return <PracticeSkeleton />
 
@@ -40,15 +32,20 @@ export default function PracticeTestPage() {
         </div>
     )
 
+    const isReview = pageMode === "review"
+
     return mode === "exam" ? (
         <RealExam
             test={test}
             unit={currentUnit}
+            isReview={isReview}
         />
     ) : (
         <PracticeExam
             test={test}
             unit={currentUnit}
+            isReview={isReview}
         />
     )
 }
+
