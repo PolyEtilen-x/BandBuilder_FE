@@ -61,7 +61,7 @@ export default function MatchingCauseEffectQuestion({
 
           {isReview && !isCorrect && (
             <span style={{ fontSize: "12px", color: "#166534", fontWeight: 800 }}>
-              Đáp án: {correctAnswer}
+              Answer: {correctAnswer}
             </span>
           )}
         </div>
@@ -72,7 +72,7 @@ export default function MatchingCauseEffectQuestion({
           marginTop: 10, padding: "10px 16px", background: "#f8fafc",
           borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "14px"
         }}>
-          <strong style={{ color: "#174593", display: "block", marginBottom: 2 }}>GIẢI THÍCH:</strong>
+          <strong style={{ color: "#174593", display: "block", marginBottom: 2 }}>EXPLANATION:</strong>
           <p style={{ margin: 0, color: "#475569", lineHeight: 1.5 }}>{question.explanation}</p>
         </div>
       )}

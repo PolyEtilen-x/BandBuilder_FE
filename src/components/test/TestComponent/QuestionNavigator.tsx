@@ -30,7 +30,7 @@ export default function QuestionNavigator({ questionBlocks = [], examId, current
   }
 
   const handleFinish = () => {
-    if (window.confirm("Bạn có chắc chắn muốn nộp bài?")) {
+    if (window.confirm("Are you sure you want to finish the test?")) {
       navigate(`/practice/result/${examId}`, {
         state: {
           examData: { sections: [currentUnit] }

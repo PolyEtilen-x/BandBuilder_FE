@@ -1,4 +1,4 @@
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } from "lucide-react"
@@ -14,16 +14,23 @@ export default function ResultPage() {
   const answers = usePracticeStore(state => state.answers)
   const clearAnswers = usePracticeStore(state => state.clearAnswers)
 
-  // Lấy dữ liệu từ state hoặc fetch mới nếu refresh trang
+  // Safety check for undefined ID
+  useEffect(() => {
+    if (!id || id === "undefined") {
+      navigate("/practice")
+    }
+  }, [id, navigate])
+
+  // Get data from state or fetch new if refreshed
   const stateData = location.state?.examData
-  
+
   const { data: fetchedTest, isLoading } = useQuery({
     queryKey: ["practice-test", id],
     queryFn: () => practiceApi.getSkillPreview(id!).then(res => res.data),
-    enabled: !stateData && !!id
+    enabled: !stateData && !!id && id !== "undefined"
   })
 
-  // Chuẩn hóa dữ liệu
+  // Normalize data
   const examData = useMemo(() => {
     if (stateData) return stateData
     if (fetchedTest) return fetchedTest
@@ -53,7 +60,7 @@ export default function ResultPage() {
           blockTotal++
           const userAns = answers[q.id]
           const isCorrect = userAns?.toString().trim().toLowerCase() === q.correct_answer?.toString().trim().toLowerCase()
-          
+
           if (!userAns) skipped++
           else if (isCorrect) {
             correct++
@@ -62,28 +69,29 @@ export default function ResultPage() {
         })
 
         if (blockTotal > 0) {
-            const existing = details.find(d => d.type === type)
-            if (existing) {
-              existing.total += blockTotal
-              existing.correct += blockCorrect
-            } else {
-              details.push({ type, total: blockTotal, correct: blockCorrect })
-            }
+          const existing = details.find(d => d.type === type)
+          if (existing) {
+            existing.total += blockTotal
+            existing.correct += blockCorrect
+          } else {
+            details.push({ type, total: blockTotal, correct: blockCorrect })
+          }
         }
       })
     })
 
     const wrong = total - correct - skipped
     const score = total > 0 ? Math.round((correct / total) * 100) : 0
-    
+
     return { total, correct, wrong, skipped, score, details }
   }, [examData, answers])
 
-  if (isLoading) return <div className="loading-state">Đang phân tích kết quả...</div>
+  if (isLoading) return <div className="loading-state">Analyzing results...</div>
+
   if (!stats || stats.total === 0) return (
     <div className="error-state">
-        <p>Không tìm thấy dữ liệu câu hỏi để tính điểm.</p>
-        <button onClick={() => navigate("/practice")} className="back-home-btn">Quay lại</button>
+      <p>No question data found to calculate score.</p>
+      <button onClick={() => navigate("/practice")} className="back-home-btn">Back to Practice</button>
     </div>
   )
 
@@ -93,36 +101,36 @@ export default function ResultPage() {
         <div className="result-header-content">
           <button onClick={() => navigate(-1)} className="back-button">
             <ArrowLeft size={20} />
-            Quay lại
+            Back
           </button>
-          <div className="header-title">Kết quả luyện tập</div>
+          <div className="header-title">Practice Results</div>
           <div style={{ width: 40 }}></div>
         </div>
       </header>
 
       <main className="result-main">
         <div className="result-grid">
-          
+
           {/* LEFT CONTENT */}
           <div className="result-left-column">
             <div className="overview-card">
               <div className="overview-content">
                 <h1 className="overview-title">
-                  {stats.score >= 80 ? "Xuất sắc! 🔥" : stats.score >= 50 ? "Khá lắm! 👍" : "Cố gắng thêm nhé! 💪"}
+                  {stats.score >= 80 ? "Excellent! 🔥" : stats.score >= 50 ? "Good Job! 👍" : "Keep Trying! 💪"}
                 </h1>
-                <p className="overview-subtitle">Bạn đã hoàn thành bài luyện tập với tỉ lệ chính xác {stats.score}%.</p>
+                <p className="overview-subtitle">You completed the practice with {stats.score}% accuracy.</p>
 
                 <div className="stats-grid">
                   <div className="stat-box correct">
-                    <div className="stat-label">Đúng</div>
+                    <div className="stat-label">Correct</div>
                     <div className="stat-value">{stats.correct}</div>
                   </div>
                   <div className="stat-box wrong">
-                    <div className="stat-label">Sai</div>
+                    <div className="stat-label">Wrong</div>
                     <div className="stat-value">{stats.wrong}</div>
                   </div>
                   <div className="stat-box skipped">
-                    <div className="stat-label">Bỏ qua</div>
+                    <div className="stat-label">Skipped</div>
                     <div className="stat-value">{stats.skipped}</div>
                   </div>
                 </div>
@@ -131,7 +139,7 @@ export default function ResultPage() {
 
             <div className="details-card">
               <div className="details-header">
-                <h2>Chi tiết theo loại câu hỏi</h2>
+                <h2>Performance by Question Type</h2>
               </div>
               <div className="details-list">
                 {stats.details.map((item: any, idx: number) => (
@@ -142,17 +150,17 @@ export default function ResultPage() {
                       </div>
                       <div className="item-text">
                         <div className="item-type">{item.type.replace(/_/g, " ")}</div>
-                        <div className="item-count">{item.total} câu hỏi</div>
+                        <div className="item-count">{item.total} questions</div>
                       </div>
                     </div>
                     <div className="item-progress-container">
                       <div className="progress-text">
                         <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
-                        <div className="progress-label">Chính xác</div>
+                        <div className="progress-label">Accuracy</div>
                       </div>
                       <div className="progress-bar-bg">
-                        <div 
-                          className="progress-bar-fill" 
+                        <div
+                          className="progress-bar-fill"
                           style={{ width: `${(item.correct / item.total) * 100}%` }}
                         />
                       </div>
@@ -177,33 +185,33 @@ export default function ResultPage() {
                 {stats.score}<span className="score-unit">%</span>
               </div>
               <p className="analysis-text">
-                Hãy xem lại giải thích để hiểu rõ tại sao mình sai và cải thiện ở bài tiếp theo nhé!
+                Review the explanations to understand your mistakes and improve in your next practice session!
               </p>
 
               <div className="action-buttons">
-                <button 
+                <button
                   onClick={() => navigate(`/practice/review/${id}`)}
                   className="primary-btn"
                 >
-                  XEM GIẢI THÍCH <ChevronRight size={18} />
+                  REVIEW EXPLANATION <ChevronRight size={18} />
                 </button>
-                <button 
+                <button
                   onClick={() => {
                     clearAnswers()
                     navigate("/practice")
                   }}
                   className="secondary-btn"
                 >
-                  LÀM BÀI KHÁC
+                  PRACTICE MORE
                 </button>
               </div>
             </div>
 
             <div className="tip-card">
-                <h3 className="tip-title">Mẹo nhỏ cho bạn 💡</h3>
-                <p className="tip-text">
-                    Việc xem lại các câu sai quan trọng hơn việc làm nhiều bài mới. Hãy dành ít nhất 10 phút để đọc phần giải thích.
-                </p>
+              <h3 className="tip-title">Tip for you 💡</h3>
+              <p className="tip-text">
+                Reviewing wrong answers is more important than doing new tasks. Spend at least 10 minutes reading the explanations.
+              </p>
             </div>
           </div>
 

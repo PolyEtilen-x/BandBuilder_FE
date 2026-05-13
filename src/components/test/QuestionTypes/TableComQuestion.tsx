@@ -48,11 +48,11 @@ export default function TableCompletionQuestion({
 
       {isReview && question.explanation && (
         <div style={{ 
-          marginTop: 8, padding: "10px 16px", background: "#f8fafc", 
-          borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "13px"
+          marginTop: 16, padding: "12px 16px", background: "#f8fafc", 
+          borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "14px"
         }}>
-          <strong style={{ color: "#174593", display: "block" }}>Giải thích:</strong>
-          <p style={{ margin: 0, color: "#475569" }}>{question.explanation}</p>
+          <strong style={{ color: "#174593", display: "block", marginBottom: 4 }}>EXPLANATION:</strong>
+          <p style={{ margin: 0, color: "#475569", lineHeight: 1.6 }}>{question.explanation}</p>
         </div>
       )}
     </div>

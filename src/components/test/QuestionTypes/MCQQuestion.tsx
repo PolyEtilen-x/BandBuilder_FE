@@ -123,7 +123,7 @@ export default function MCQQuestion({
           marginTop: 16, padding: "12px 16px", background: "#f8fafc", 
           borderLeft: "4px solid #174593", borderRadius: "8px", fontSize: "14px"
         }}>
-          <strong style={{ color: "#174593", display: "block", marginBottom: 4 }}>GIẢI THÍCH:</strong>
+          <strong style={{ color: "#174593", display: "block", marginBottom: 4 }}>EXPLANATION:</strong>
           <p style={{ margin: 0, color: "#475569", lineHeight: 1.6 }}>{question.explanation}</p>
         </div>
       )}
