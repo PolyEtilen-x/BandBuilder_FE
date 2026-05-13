@@ -1,0 +1,568 @@
+# IELTS & English Learning Roadmap System
+
+## Overview
+
+Hệ thống roadmap là một trong những core feature quan trọng nhất của nền tảng học tiếng Anh và luyện thi IELTS.
+
+Mục tiêu của roadmap:
+
+- Tạo cảm giác progression rõ ràng
+- Giúp user biết mình đang ở đâu
+- Biết cần học gì tiếp theo
+- Tăng retention và motivation
+- Gamification hóa quá trình học
+- Cá nhân hóa hành trình học tập
+
+Roadmap không chỉ là danh sách bài học, mà là một “Learning Journey System”.
+
+---
+
+# Core Philosophy
+
+## Không nên làm
+
+- Chỉ hiển thị text lessons
+- Danh sách bài học dài
+- Course kiểu LMS truyền thống
+- Knowledge graph quá phức tạp
+
+## Nên làm
+
+### Journey Map + Skill Tree + Lessons
+
+Cấu trúc chuẩn:
+
+```text
+Journey Map
+    ↓
+Skill Tree
+    ↓
+Modules
+    ↓
+Lessons
+    ↓
+Exercises
+```
+
+---
+
+# Roadmap Architecture
+
+## Main Structure
+
+```text
+[Foundation]
+      ↓
+[Communication]
+      ↓
+[IELTS Foundation]
+      ↓
+[Band 5 Builder]
+      ↓
+[Band 6 Mastery]
+      ↓
+[Band 7+]
+```
+
+---
+
+# Learning Paths
+
+Hệ thống gồm 2 roadmap chính:
+
+## 1. General English Path
+
+Dành cho:
+- Người mới học tiếng Anh
+- Giao tiếp
+- Tiếng Anh công việc
+- Daily English
+
+### Chuẩn sử dụng:
+CEFR Framework
+
+| Level | Meaning |
+|---|---|
+| A1 | Beginner |
+| A2 | Elementary |
+| B1 | Intermediate |
+| B2 | Upper Intermediate |
+| C1 | Advanced |
+
+---
+
+## 2. IELTS Path
+
+Dành cho:
+- Luyện thi IELTS
+- Tăng band
+- Academic English
+
+### Chia theo band:
+
+| Path | Goal |
+|---|---|
+| IELTS Foundation | 3.0 → 4.5 |
+| Band 5 Builder | 4.5 → 5.5 |
+| Band 6 Accelerator | 5.5 → 6.5 |
+| Band 7 Mastery | 6.5 → 7.5 |
+| Band 8 Elite | 8.0+ |
+
+---
+
+# UI/UX Direction
+
+## Main UI Style
+
+### Journey Map (Recommended)
+
+Kiểu tương tự:
+- Duolingo
+- ELSA
+- RPG progression systems
+
+Ví dụ:
+
+```text
+[Starter]
+   ↓
+[Communication]
+   ↓
+[IELTS Core]
+   ↓
+[Band 5]
+   ↓
+[Band 6]
+```
+
+### Vì sao tốt:
+- Dễ hiểu
+- Tạo dopamine progression
+- User biết còn bao xa
+- Tăng completion rate
+- Rất phù hợp mobile app
+
+---
+
+# Skill Tree System
+
+## Mỗi roadmap sẽ có Skill Tree riêng
+
+Ví dụ:
+
+# Speaking
+
+```text
+Speaking
+ ├── Pronunciation
+ ├── Fluency
+ ├── Vocabulary
+ ├── Grammar
+ └── Confidence
+```
+
+# Writing
+
+```text
+Writing
+ ├── Task Response
+ ├── Coherence
+ ├── Vocabulary
+ └── Grammar
+```
+
+---
+
+# General English Roadmap
+
+# A1 — English Starter
+
+## Grammar
+- Be verbs
+- Pronouns
+- Present Simple
+- Articles
+
+## Vocabulary
+- Numbers
+- Family
+- Food
+- Colors
+- Daily objects
+
+## Speaking
+- Greetings
+- Self introduction
+- Basic Q&A
+
+## Listening
+- Basic words
+- Simple conversation
+
+---
+
+# A2 — Communication Builder
+
+## Grammar
+- Past Simple
+- Future Tense
+- Comparatives
+
+## Communication
+- Shopping
+- Travel
+- Daily routine
+- Hobbies
+
+## Listening
+- Short dialogs
+- Basic instructions
+
+## Reading
+- Short paragraphs
+- Notices
+
+---
+
+# B1 — Intermediate Speaker
+
+## Speaking
+- Opinions
+- Storytelling
+- Discussion
+
+## Writing
+- Emails
+- Paragraph writing
+
+## Reading
+- Articles
+- Information extraction
+
+## Listening
+- Longer conversations
+- Main idea detection
+
+---
+
+# IELTS Roadmap
+
+# Phase System
+
+```text
+Phase 1 → Foundation
+Phase 2 → Skill Building
+Phase 3 → Exam Strategy
+Phase 4 → Mock Test
+Phase 5 → Band Boost
+```
+
+---
+
+# IELTS Listening Roadmap
+
+## Foundation
+- Number listening
+- Spelling
+- Keyword recognition
+
+## Intermediate
+- Note completion
+- Map labeling
+- Distractor handling
+
+## Advanced
+- Paraphrase recognition
+- Multi-speaker tracking
+- Fast speech processing
+
+---
+
+# IELTS Reading Roadmap
+
+## Foundation
+- Skimming
+- Scanning
+- Keyword matching
+
+## Intermediate
+- TFNG
+- Matching Heading
+- Sentence Completion
+
+## Advanced
+- Inference
+- Time pressure
+- Advanced paraphrasing
+
+---
+
+# IELTS Writing Roadmap
+
+## Foundation
+- Sentence structure
+- Grammar accuracy
+- Linking words
+
+## Intermediate
+- Paragraph organization
+- Task response
+- Idea generation
+
+## Advanced
+- Complex grammar
+- Coherence
+- Academic vocabulary
+
+---
+
+# IELTS Speaking Roadmap
+
+## Foundation
+- Pronunciation
+- Confidence
+- Short answers
+
+## Intermediate
+- Fluency
+- Elaboration
+- Filler reduction
+
+## Advanced
+- Natural speaking
+- Advanced vocabulary
+- Abstract discussion
+
+---
+
+# Progression System
+
+## Mastery System
+
+Ví dụ:
+
+```text
+Reading Mastery: 72%
+Speaking Mastery: 64%
+```
+
+---
+
+# Unlock System
+
+Ví dụ:
+
+```text
+🔒 Band 6 Mock Test
+
+Requirement:
+✓ Reading mastery > 70%
+✓ Speaking fluency > 60%
+✓ Writing coherence > 65%
+```
+
+---
+
+# Weakness Tracking
+
+Ví dụ:
+
+```text
+Weakest Skills:
+- Pronunciation
+- Matching Heading
+- Coherence
+```
+
+---
+
+# Gamification System
+
+## Features
+
+- XP
+- Daily streak
+- Rank
+- Achievement
+- Unlock system
+- Mastery system
+
+---
+
+# Suggested Levels
+
+| Level | Title |
+|---|---|
+| A1 | English Starter |
+| A2 | Communication Builder |
+| B1 | Intermediate Speaker |
+| IELTS 5 | Band 5 Builder |
+| IELTS 6 | Band 6 Mastery |
+| IELTS 7 | Band 7 Elite |
+
+---
+
+# Recommended Technical Architecture
+
+## Structure
+
+```text
+Journey
+ └── Skill Tree
+      └── Modules
+           └── Lessons
+                └── Exercises
+```
+
+---
+
+# Suggested Database Structure
+
+## Roadmaps
+
+```sql
+id
+title
+type
+level
+description
+```
+
+---
+
+## Modules
+
+```sql
+id
+roadmap_id
+title
+skill
+difficulty
+order_index
+```
+
+---
+
+## Lessons
+
+```sql
+id
+module_id
+title
+type
+xp_reward
+estimated_time
+```
+
+---
+
+## User Progress
+
+```sql
+user_id
+lesson_id
+status
+score
+completed_at
+```
+
+---
+
+# AI Integration Strategy
+
+## Không dùng AI cho:
+- Generate roadmap realtime
+- Curriculum
+- Learning structure
+
+## Dùng AI cho:
+- Speaking feedback
+- Writing correction
+- Pronunciation scoring
+- Chatbot
+- Personalized feedback
+
+---
+
+# Product Direction
+
+## Goal
+
+Không xây dựng:
+- LMS truyền thống
+- Blog học IELTS
+- Chỉ là chatbot AI
+
+Mà xây dựng:
+
+# AI IELTS Coach Platform
+
+Bao gồm:
+- Journey progression
+- Skill tree
+- Adaptive learning
+- IELTS band tracking
+- Weakness analysis
+- AI speaking evaluation
+- AI writing correction
+- Gamified learning system
+
+---
+
+# Inspiration Sources
+
+Roadmap và UX tham khảo từ:
+
+- Duolingo
+- ELSA Speak
+- Busuu
+- Babbel
+- Cambridge English
+- IELTS IDP
+- CEFR Framework
+
+---
+
+# Final Recommended Structure
+
+## Main Flow
+
+```text
+General English
+    ↓
+Communication
+    ↓
+IELTS Foundation
+    ↓
+Band 5 Builder
+    ↓
+Band 6 Mastery
+    ↓
+Band 7 Elite
+```
+
+---
+
+# Final Recommendation
+
+## Best Approach
+
+### Main Layer
+- Journey Map
+
+### Secondary Layer
+- Skill Tree
+
+### Content Layer
+- Lessons + Exercises
+
+### Intelligence Layer
+- AI Feedback + Weakness Analysis
+
+Đây là cấu trúc phù hợp nhất cho:
+- Mobile app
+- Web app
+- IELTS platform
+- AI learning systems
+- Gamification
+- Long-term scalability

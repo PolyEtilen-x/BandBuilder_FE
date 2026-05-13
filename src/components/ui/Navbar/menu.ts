@@ -23,6 +23,12 @@ const menu = [
       { label: "Grammar", path: "/materials/grammar" },
       { label: "IELTS Tips", path: "/materials/tips" }
     ]
+  },
+  {
+    label: "Study Plan",
+    dropdown: [
+      { label: "Learning Roadmap", path: "/roadmap" }
+    ]
   }
 ]
 

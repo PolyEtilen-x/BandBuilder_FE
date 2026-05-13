@@ -9,11 +9,16 @@ import { ProtectedRoute } from "@/guard/route.guard"
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))
 const ResultPage = lazy(() => import("@/pages/practice/ResultPage"))
+const RoadmapPage = lazy(() => import("@/pages/roadmap/RoadmapPage"))
 
 export const routes = [
   {
     path: "/",
     element: <Home />,
+  },
+  {
+    path: "/roadmap",
+    element: <RoadmapPage />,
   },
   {
     path: "/practice",

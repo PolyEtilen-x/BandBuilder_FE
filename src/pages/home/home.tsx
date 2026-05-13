@@ -3,49 +3,49 @@ import { useState, useEffect, useRef } from "react";
 import "./style.css";
 
 /* ── Types ─────────────────────────────────────────── */
-interface Stat        { value: string; label: string; }
-interface Tool        { icon: string; title: string; desc: string; tag: string; color: string; }
-interface Feature     { icon: string; title: string; desc: string; }
-interface Step        { n: string; title: string; desc: string; }
+interface Stat { value: string; label: string; }
+interface Tool { icon: string; title: string; desc: string; tag: string; color: string; }
+interface Feature { icon: string; title: string; desc: string; }
+interface Step { n: string; title: string; desc: string; }
 interface Testimonial { initials: string; name: string; country: string; score: string; text: string; }
-interface Plan        { name: string; price: string; period: string; features: string[]; popular: boolean; }
-interface FaqItem     { q: string; a: string; }
+interface Plan { name: string; price: string; period: string; features: string[]; popular: boolean; }
+interface FaqItem { q: string; a: string; }
 
 /* ── Data ───────────────────────────────────────────── */
 const STATS: Stat[] = [
   { value: "50K+", label: "Active Learners" },
   { value: "500+", label: "Practice Tests" },
   { value: "4.9★", label: "Average Rating" },
-  { value: "98%",  label: "AI Accuracy" },
+  { value: "98%", label: "AI Accuracy" },
 ];
 
 const TOOLS: Tool[] = [
-  { icon: "✍️", title: "AI Writing Coach",    tag: "Writing",    color: "#f97316", desc: "Submit Task 1 & Task 2 essays. Our AI scores them across all 4 IELTS criteria and delivers line-by-line improvement suggestions in seconds." },
-  { icon: "🎙️", title: "Speaking Simulator",  tag: "Speaking",   color: "#8b5cf6", desc: "Practice Part 1, 2 & 3 with an AI examiner. Receive detailed feedback on pronunciation, fluency, lexical range and coherence." },
-  { icon: "📖", title: "Reading Lab",          tag: "Reading",    color: "#10b981", desc: "200+ academic passages categorised by question type. Every answer includes a full explanation and passage reference." },
-  { icon: "🎧", title: "Listening Practice",   tag: "Listening",  color: "#3b82f6", desc: "Authentic IELTS-style audio across all four sections. Full transcript, time-stamped highlights and gap-fill analysis after each test." },
-  { icon: "🃏", title: "Smart Flashcards",     tag: "Vocabulary", color: "#ec4899", desc: "Topic-grouped IELTS vocabulary with spaced-repetition scheduling. The system auto-adjusts review intervals based on your memory curve." },
-  { icon: "📐", title: "Grammar Checker",      tag: "Grammar",    color: "#f59e0b", desc: "Paste any paragraph for instant grammar analysis. The AI identifies error patterns, explains the rule and rewrites the sentence for you." },
+  { icon: "✍️", title: "AI Writing Coach", tag: "Writing", color: "#f97316", desc: "Submit Task 1 & Task 2 essays. Our AI scores them across all 4 IELTS criteria and delivers line-by-line improvement suggestions in seconds." },
+  { icon: "🎙️", title: "Speaking Simulator", tag: "Speaking", color: "#8b5cf6", desc: "Practice Part 1, 2 & 3 with an AI examiner. Receive detailed feedback on pronunciation, fluency, lexical range and coherence." },
+  { icon: "📖", title: "Reading Lab", tag: "Reading", color: "#10b981", desc: "200+ academic passages categorised by question type. Every answer includes a full explanation and passage reference." },
+  { icon: "🎧", title: "Listening Practice", tag: "Listening", color: "#3b82f6", desc: "Authentic IELTS-style audio across all four sections. Full transcript, time-stamped highlights and gap-fill analysis after each test." },
+  { icon: "🃏", title: "Smart Flashcards", tag: "Vocabulary", color: "#ec4899", desc: "Topic-grouped IELTS vocabulary with spaced-repetition scheduling. The system auto-adjusts review intervals based on your memory curve." },
+  { icon: "📐", title: "Grammar Checker", tag: "Grammar", color: "#f59e0b", desc: "Paste any paragraph for instant grammar analysis. The AI identifies error patterns, explains the rule and rewrites the sentence for you." },
 ];
 
 const FEATURES: Feature[] = [
-  { icon: "🤖", title: "Instant AI Feedback",       desc: "No waiting. Get a score and detailed commentary the moment you submit — Writing, Speaking or Grammar." },
-  { icon: "📊", title: "Progress Dashboard",         desc: "Visual charts track band score trends, study time and skill breakdowns across every session." },
-  { icon: "🎯", title: "Personalised Study Path",    desc: "Our engine analyses your weak points and recommends the exact exercises that will move your score fastest." },
-  { icon: "🔥", title: "Streaks & Leaderboards",     desc: "Build daily study habits, earn achievement badges and compete on weekly leaderboards with learners worldwide." },
+  { icon: "🤖", title: "Instant AI Feedback", desc: "No waiting. Get a score and detailed commentary the moment you submit — Writing, Speaking or Grammar." },
+  { icon: "📊", title: "Progress Dashboard", desc: "Visual charts track band score trends, study time and skill breakdowns across every session." },
+  { icon: "🎯", title: "Personalised Study Path", desc: "Our engine analyses your weak points and recommends the exact exercises that will move your score fastest." },
+  { icon: "🔥", title: "Streaks & Leaderboards", desc: "Build daily study habits, earn achievement badges and compete on weekly leaderboards with learners worldwide." },
 ];
 
 const STEPS: Step[] = [
-  { n: "01", title: "Take a Placement Test",  desc: "A 15-minute diagnostic pinpoints your current band level and identifies your weakest sub-skills." },
+  { n: "01", title: "Take a Placement Test", desc: "A 15-minute diagnostic pinpoints your current band level and identifies your weakest sub-skills." },
   { n: "02", title: "Get Your Study Roadmap", desc: "The AI builds a day-by-day practice schedule targeting your biggest score gains first." },
-  { n: "03", title: "Practice & Get Scored",  desc: "Submit work any time. AI feedback lands in seconds with scores, highlights and model answer comparisons." },
-  { n: "04", title: "Track & Level Up",       desc: "Your dashboard updates in real time — watch your band score climb week by week with clear milestones." },
+  { n: "03", title: "Practice & Get Scored", desc: "Submit work any time. AI feedback lands in seconds with scores, highlights and model answer comparisons." },
+  { n: "04", title: "Track & Level Up", desc: "Your dashboard updates in real time — watch your band score climb week by week with clear milestones." },
 ];
 
 const TESTIMONIALS: Testimonial[] = [
-  { initials: "LN", name: "Linh Nguyen",   country: "🇻🇳", score: "Band 7.5", text: "The AI Writing coach spotted grammar patterns I had been repeating for months without realising. Went from 6.0 to 7.5 in just 3 months." },
-  { initials: "AH", name: "Ahmed Hassan",  country: "🇪🇬", score: "Band 8.0", text: "Speaking Simulator felt so close to the real exam that I walked into the test centre genuinely relaxed. Scored 8.0 on my very first attempt." },
-  { initials: "PS", name: "Priya Sharma",  country: "🇮🇳", score: "Band 7.0", text: "Smart Flashcards combined with the Grammar Checker is a killer combo. I study on my phone during commutes and the progress is very real." },
+  { initials: "LN", name: "Linh Nguyen", country: "🇻🇳", score: "Band 7.5", text: "The AI Writing coach spotted grammar patterns I had been repeating for months without realising. Went from 6.0 to 7.5 in just 3 months." },
+  { initials: "AH", name: "Ahmed Hassan", country: "🇪🇬", score: "Band 8.0", text: "Speaking Simulator felt so close to the real exam that I walked into the test centre genuinely relaxed. Scored 8.0 on my very first attempt." },
+  { initials: "PS", name: "Priya Sharma", country: "🇮🇳", score: "Band 7.0", text: "Smart Flashcards combined with the Grammar Checker is a killer combo. I study on my phone during commutes and the progress is very real." },
 ];
 
 const PLANS: Plan[] = [
@@ -64,10 +64,10 @@ const PLANS: Plan[] = [
 ];
 
 const FAQS: FaqItem[] = [
-  { q: "How accurate is the AI scoring?",         a: "Our Writing AI is trained on thousands of examiner-graded scripts and consistently scores within ±0.5 band of certified IELTS examiners. Speaking feedback focuses on fluency, pronunciation and coherence." },
-  { q: "Do I need prior IELTS knowledge?",         a: "Not at all. The placement test calibrates the platform for any level — from complete beginners targeting Band 5 to advanced learners pushing for Band 8+." },
-  { q: "Can I use BandBuilder on mobile?",          a: "Yes. BandBuilder is fully responsive and works on any device. Flashcards and listening practice are specially optimised for on-the-go sessions." },
-  { q: "Is there a free trial for the Pro plan?",   a: "The Free plan lets you explore every feature type with a monthly usage limit. Upgrade to Pro any time with no lock-in — cancel in one click." },
+  { q: "How accurate is the AI scoring?", a: "Our Writing AI is trained on thousands of examiner-graded scripts and consistently scores within ±0.5 band of certified IELTS examiners. Speaking feedback focuses on fluency, pronunciation and coherence." },
+  { q: "Do I need prior IELTS knowledge?", a: "Not at all. The placement test calibrates the platform for any level — from complete beginners targeting Band 5 to advanced learners pushing for Band 8+." },
+  { q: "Can I use BandBuilder on mobile?", a: "Yes. BandBuilder is fully responsive and works on any device. Flashcards and listening practice are specially optimised for on-the-go sessions." },
+  { q: "Is there a free trial for the Pro plan?", a: "The Free plan lets you explore every feature type with a monthly usage limit. Upgrade to Pro any time with no lock-in — cancel in one click." },
 ];
 
 /* ── Hook ───────────────────────────────────────────── */
@@ -143,9 +143,9 @@ function FaqRow({ item }: { item: FaqItem }) {
 function Hero() {
   const [band, setBand] = useState(6.5);
   const criteria = [
-    { k: "Task Achievement",  v: Math.min(band * 0.98, 9) },
-    { k: "Coherence",         v: Math.min(band * 0.94, 9) },
-    { k: "Lexical Resource",  v: Math.min(band * 0.90, 9) },
+    { k: "Task Achievement", v: Math.min(band * 0.98, 9) },
+    { k: "Coherence", v: Math.min(band * 0.94, 9) },
+    { k: "Lexical Resource", v: Math.min(band * 0.90, 9) },
     { k: "Grammatical Range", v: Math.min(band * 0.92, 9) },
   ];
   return (
