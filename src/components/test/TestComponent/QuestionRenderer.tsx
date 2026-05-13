@@ -23,18 +23,25 @@ export default function QuestionRenderer({
 
       {/* summary_completion */}
       {type==="summary_completion" && (
-        <FillBlank question={question} value={value} onChange={onChange}/>
+        <FillBlank question={question} value={value} onChange={onChange} extra={extra}/>
       )}
 
       {/* multiple_choice */}
       {type==="multiple_choice" && (
-        <MCQ question={question} value={value} onChange={onChange}/>
+        <MCQ question={question} value={value} onChange={onChange} extra={extra}/>
       )}
+
 
       {/* yes_no_not_given */}
       {type==="yes_no_not_given" && (
-        <TrueFalse question={question} value={value} onChange={onChange}/>
+        <TrueFalse question={question} value={value} onChange={onChange} type={type}/>
       )}
+
+      {/* true_false_not_given */}
+      {type==="true_false_not_given" && (
+        <TrueFalse question={question} value={value} onChange={onChange} type={type}/>
+      )}
+
 
       {/* matching_features */}
       {type==="matching_features" && (
@@ -78,12 +85,22 @@ export default function QuestionRenderer({
 
       {/* form_completion */}
       {type==="form_completion" && (
-        <FillBlank question={question} value={value} onChange={onChange}/>
+        <FillBlank question={question} value={value} onChange={onChange} extra={extra}/>
       )}
 
       {/* note_completion */}
       {type==="note_completion" && (
-        <FillBlank question={question} value={value} onChange={onChange}/>
+        <FillBlank question={question} value={value} onChange={onChange} extra={extra}/>
+      )}
+
+      {/* sentence_completion */}
+      {type==="sentence_completion" && (
+        <FillBlank question={question} value={value} onChange={onChange} extra={extra}/>
+      )}
+
+      {/* short_answer */}
+      {type==="short_answer" && (
+        <FillBlank question={question} value={value} onChange={onChange} extra={extra}/>
       )}
 
       {/* matching (listening) */}

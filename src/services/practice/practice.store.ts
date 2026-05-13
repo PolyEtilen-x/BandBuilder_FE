@@ -3,12 +3,12 @@ import { SidebarState } from "@/components/practice/PracticeSidebar"
 
 interface PracticeStore {
     sidebar: SidebarState
-    answers: Record<string, string>
+    answers: Record<string, any> // Cho phép string hoặc string[]
     
     setSidebar: (state: Partial<SidebarState>) => void
     resetSidebar: () => void
     
-    setAnswer: (id: string, value: string) => void
+    setAnswer: (id: string, value: any) => void
     clearAnswers: () => void
 }
 
@@ -35,3 +35,4 @@ export const usePracticeStore = create<PracticeStore>((set) => ({
 
     clearAnswers: () => set({ answers: {} })
 }))
+

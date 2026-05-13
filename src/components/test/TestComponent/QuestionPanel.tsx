@@ -13,12 +13,25 @@ export default function QuestionPanel({
   const answers = usePracticeStore(state => state.answers)
   const updateAnswer = usePracticeStore(state => state.setAnswer)
 
+  const parseRange = (range: string) => {
+    if (!range) return []
+    const parts = range.split("-").map(p => parseInt(p.trim()))
+    if (parts.length === 1) return [parts[0]]
+    if (parts.length === 2) {
+      const result = []
+      for (let i = parts[0]; i <= parts[1]; i++) {
+        result.push(i)
+      }
+      return result
+    }
+    return []
+  }
+
   if (!questionBlocks.length) {
     return <p>No questions</p>
   }
 
   return (
-
     <aside
       style={{
         padding: "24px",
@@ -28,51 +41,46 @@ export default function QuestionPanel({
         lineHeight: 1.6
       }}
     >
-      {questionBlocks.map((block: any, index: number) => (
-        <div key={index} style={{ marginBottom: 32 }}>
+      {questionBlocks.map((block: any, index: number) => {
+        const questionsFromRange = !block.questions || block.questions.length === 0
+          ? parseRange(block.questions_range).map(num => ({
+            id: `${block.id || index}_${num}`, // Tạo ID tạm thời nếu không có
+            number: num,
+            text: "", // Thường là matching hoặc fill blank sẽ có text ở instruction
+          }))
+          : []
 
-          <h3
-            style={{
-              fontSize: "16px",
-              fontWeight: 600,
-              marginBottom: "12px"
-            }}
-          >
-            {block.instruction}
-          </h3>
+        const displayQuestions = block.questions?.length > 0 ? block.questions : questionsFromRange
 
-          {block.question_type === "selecting_factors" && (
-            <QuestionRenderer
-              question={{ id: block.questions_range }}
-              type={block.question_type}
-              value={answers[block.questions_range]}
-              onChange={updateAnswer}
-              extra={block}
-            />
-          )}
-          {!block.questions && (
-            <QuestionRenderer
-              question={{ id: block.questions_range }}
-              type={block.question_type}
-              value={answers[block.questions_range]}
-              onChange={updateAnswer}
-              extra={block}
-            />
-          )}
+        return (
+          <div key={index} style={{ marginBottom: 32 }}>
+            <h3
+              style={{
+                fontSize: "16px",
+                fontWeight: 600,
+                marginBottom: "16px",
+                paddingBottom: "8px",
+                borderBottom: "1px solid #f1f5f9",
+                color: "#334155"
+              }}
+            >
+              {block.instruction}
+            </h3>
 
-          {block.questions?.map((q: any) => (
-            <div id={`question-${q.id}`} key={q.id}>
-              <QuestionRenderer
-                question={q}
-                type={block.question_type}
-                value={answers[q.id]}
-                onChange={updateAnswer}
-                extra={block}
-              />
-            </div>
-          ))}
-        </div>
-      ))}
+            {displayQuestions.map((q: any) => (
+              <div id={`question-${q.id || q.number}`} key={q.id || q.number}>
+                <QuestionRenderer
+                  question={q}
+                  type={block.question_type}
+                  value={answers[q.id || q.number]}
+                  onChange={updateAnswer}
+                  extra={block}
+                />
+              </div>
+            ))}
+          </div>
+        )
+      })}
     </aside>
   )
 }
