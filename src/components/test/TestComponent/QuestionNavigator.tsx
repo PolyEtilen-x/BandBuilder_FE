@@ -1,7 +1,9 @@
 import { usePracticeStore } from "@/services/practice/practice.store"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 
-export default function QuestionNavigator({ questionBlocks = [], examId, currentUnit }: any) {
+export default function QuestionNavigator({ questionBlocks = [], examId: propExamId, currentUnit }: any) {
+  const { id: urlId } = useParams()
+  const examId = propExamId || urlId
   const answers = usePracticeStore(state => state.answers)
   const navigate = useNavigate()
 

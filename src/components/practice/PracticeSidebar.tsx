@@ -123,7 +123,7 @@ export default function PracticeSidebar() {
               borderRadius: 16,
               padding: "12px 16px",
               marginBottom: 12,
-              background: isActive ? "#f6fff6" : "#fff",
+              background: isActive ? "#f0f7ff" : "#fff",
               transition: "all 0.15s ease",
             }}
           >

@@ -18,7 +18,7 @@ export default function PracticePage() {
 
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
 
-  // 1. Sử dụng Zustand Store cho Sidebar
+  // 1. Use Zustand Store for Sidebar
   const { sidebar, setSidebar } = usePracticeStore()
 
   // 2. use TanStack Query for lists Skills
@@ -37,13 +37,18 @@ export default function PracticePage() {
     if (!selectedTest) return
 
     if (!isAuthenticated) {
-      // 1. Lưu path hiện tại để quay lại sau khi login
+      // 1. Save current path to return after login
       const currentPath = location.pathname + location.search
       localStorage.setItem("redirectAfterLogin", currentPath)
-      
-      // 2. Tắt Modal chọn mode (nếu đang bật) và hiện Modal yêu cầu Login
+
+      // 2. Hide mode select and show login required modal
       setOpenModal(false)
       setShowAuthModal(true)
+      return
+    }
+
+    if (!selectedTest.id || selectedTest.id === "undefined") {
+      alert("Error: Test ID is invalid. Please try another test.")
       return
     }
 
@@ -74,7 +79,7 @@ export default function PracticePage() {
 
   const pageTitle =
     sidebar.mode === "full"
-      ? "Full test"
+      ? "Full Practice Test"
       : getSubSectionLabel(sidebar.skill, sidebar.subSection)
 
   return (
@@ -97,9 +102,9 @@ export default function PracticePage() {
           </h2>
 
           {loading ? (
-            <p style={{ color: "#888" }}>Đang tải danh sách bài tập...</p>
+            <p style={{ color: "#888" }}>Loading practice list...</p>
           ) : activeSkills.length === 0 ? (
-            <p style={{ color: "#aaa", fontSize: 14 }}>Chưa có bài tập nào cho kỹ năng này.</p>
+            <p style={{ color: "#aaa", fontSize: 14 }}>No practice sessions found for this skill.</p>
           ) : (
             <div
               style={{
@@ -110,7 +115,7 @@ export default function PracticePage() {
             >
               {activeSkills.map((skill: any) => (
                 <SkillCardGroup
-                  key={skill.skillContentId}
+                  key={skill.skillContentId || skill.id || skill._id}
                   skill={skill}
                   sidebar={sidebar}
                   onClickTest={handleClickTest}
@@ -136,7 +141,8 @@ export default function PracticePage() {
 }
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
-  const { data: enriched, isLoading } = useSkillPreview(skill.skillContentId)
+  const skillId = skill.skillContentId || skill.id || skill._id
+  const { data: enriched, isLoading } = useSkillPreview(skillId)
 
   if (isLoading) {
     return (
@@ -153,14 +159,14 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
 
   const cards = sidebar.mode === "full"
     ? [{
-      id: skill.skillContentId,
+      id: skillId,
       title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
       unitId: "full",
     }]
     : units.filter((u: any) => u.id === sidebar.subSection).map((u: any) => ({
-      id: skill.skillContentId,
+      id: skillId,
       title: u.title,
       questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
       numberOfVisits: skill.numberOfVisits,
@@ -171,7 +177,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
     <>
       {cards.map((c: any) => (
         <PracticeCard
-          key={`${skill.skillContentId}-${c.unitId}`}
+          key={`${skillId}-${c.unitId}`}
           {...c}
           progress={0}
           onClick={() => onClickTest(c)}
