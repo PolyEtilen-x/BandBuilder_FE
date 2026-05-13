@@ -20,7 +20,7 @@ export default function SelectingFactorsQuestion({
       style={{ marginBottom: 30 }}
     >
       <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontWeight: 700, color: "#2563eb" }}>
+        <span style={{ fontWeight: 700, color: "#174593" }}>
           {question.number || question.question_number}.
         </span>
         <p style={{ fontWeight: 500, margin: 0, color: "#1e293b" }}>{question.text || "Select the correct factors:"}</p>
@@ -43,7 +43,7 @@ export default function SelectingFactorsQuestion({
                 gap: 10,
                 padding: "8px 16px",
                 borderRadius: "6px",
-                border: `1px solid ${isSelected ? "#3b82f6" : "#e2e8f0"}`,
+                border: `1px solid ${isSelected ? "#174593" : "#e2e8f0"}`,
                 background: isSelected ? "#eff6ff" : "#fff",
                 cursor: "pointer",
                 transition: "all 0.2s",
@@ -59,7 +59,7 @@ export default function SelectingFactorsQuestion({
               <span style={{
                 fontSize: "14px",
                 fontWeight: isSelected ? 600 : 400,
-                color: isSelected ? "#1d4ed8" : "#475569"
+                color: isSelected ? "#174593" : "#475569"
               }}>
                 {op}
               </span>
@@ -68,5 +68,6 @@ export default function SelectingFactorsQuestion({
         })}
       </div>
     </div>
+
   )
 }

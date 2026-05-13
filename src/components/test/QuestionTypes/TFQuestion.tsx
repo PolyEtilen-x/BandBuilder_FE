@@ -5,10 +5,9 @@ export default function TrueFalseQuestion({
   type
 }: any) {
 
-  // Tự động xác định nhãn dựa trên loại câu hỏi
   const isYesNo = type === "yes_no_not_given";
-  const options = isYesNo 
-    ? ["Yes", "No", "Not Given"] 
+  const options = isYesNo
+    ? ["Yes", "No", "Not Given"]
     : ["True", "False", "Not Given"];
 
   return (
@@ -17,17 +16,17 @@ export default function TrueFalseQuestion({
       style={{ marginBottom: 30 }}
     >
       <div style={{ display: "flex", gap: 10, marginBottom: 12 }}>
-        <span style={{ fontWeight: 700, color: "#2563eb" }}>
+        <span style={{ fontWeight: 700, color: "#174593" }}>
           {question.number || question.question_number}.
         </span>
         <p style={{ fontWeight: 500, margin: 0, color: "#1e293b" }}>{question.text}</p>
       </div>
 
-      <div style={{ 
-        display: "flex", 
-        flexDirection: "column", 
+      <div style={{
+        display: "flex",
+        flexDirection: "column",
         gap: 8,
-        paddingLeft: 24 
+        paddingLeft: 24
       }}>
         {options.map(op => {
           const isSelected = value === op;
@@ -40,7 +39,7 @@ export default function TrueFalseQuestion({
                 gap: 10,
                 padding: "8px 16px",
                 borderRadius: "6px",
-                border: `1px solid ${isSelected ? "#3b82f6" : "#e2e8f0"}`,
+                border: `1px solid ${isSelected ? "#174593" : "#e2e8f0"}`,
                 background: isSelected ? "#eff6ff" : "#fff",
                 cursor: "pointer",
                 transition: "all 0.2s",
@@ -53,10 +52,10 @@ export default function TrueFalseQuestion({
                 onChange={() => onChange(question.id, op)}
                 style={{ cursor: "pointer" }}
               />
-              <span style={{ 
-                fontSize: "14px", 
+              <span style={{
+                fontSize: "14px",
                 fontWeight: isSelected ? 600 : 400,
-                color: isSelected ? "#1d4ed8" : "#475569" 
+                color: isSelected ? "#174593" : "#475569"
               }}>
                 {op}
               </span>
@@ -65,5 +64,6 @@ export default function TrueFalseQuestion({
         })}
       </div>
     </div>
+
   )
 }

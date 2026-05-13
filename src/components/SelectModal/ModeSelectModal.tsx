@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
-import "./ModeSelectModal.css"
- 
+import "./style.css"
+
 type Mode = "exam" | "practice"
 
 type Props = {
@@ -30,7 +30,7 @@ const MODES = [
 export default function ModeSelectModal({ open, onClose, onStart }: Props) {
   const [selected, setSelected] = useState<"exam" | "practice">("practice")
   const [loading, setLoading] = useState(false)
-  
+
   useEffect(() => {
     const saved = localStorage.getItem("practice_mode")
     if (saved === "exam" || saved === "practice") {
@@ -39,13 +39,13 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
   }, [])
 
   const handleStart = async () => {
-    
+
     try {
       setLoading(true)
 
       localStorage.setItem("practice_mode", selected)
 
-      await onStart(selected) 
+      await onStart(selected)
       console.log("AFTER onStart")
     } finally {
       setLoading(false)
@@ -57,7 +57,7 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-container" onClick={(e) => e.stopPropagation()}>
-        
+
         {/* Close */}
         <button className="modal-close" onClick={onClose}>
           <X size={20} />

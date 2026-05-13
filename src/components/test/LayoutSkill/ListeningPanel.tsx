@@ -52,12 +52,12 @@ export default function ListeningPanel({ section, activeTool }: Props) {
                 {section.question_blocks?.map((block: any, index: number) => (
                     <div key={index} style={{ padding: "28px", borderRadius: "20px", border: "1px solid #f1f5f9", background: "#fff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
                         <div style={{ marginBottom: 16 }}>
-                            <span style={{ background: "#2563eb", color: "#fff", padding: "5px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 800 }}>
+                            <span style={{ background: "#174593", color: "#fff", padding: "5px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 800 }}>
                                 QUESTIONS {block.questions_range}
                             </span>
                         </div>
                         {block.instruction && (
-                            <p style={{ fontSize: "15px", color: "#1e293b", fontWeight: 700, marginBottom: 24, fontStyle: "italic", borderLeft: "4px solid #3b82f6", paddingLeft: "16px" }}>
+                            <p style={{ fontSize: "15px", color: "#1e293b", fontWeight: 700, marginBottom: 24, fontStyle: "italic", borderLeft: "4px solid #174593", paddingLeft: "16px" }}>
                                 {block.instruction}
                             </p>
                         )}

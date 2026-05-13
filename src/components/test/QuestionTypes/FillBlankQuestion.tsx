@@ -13,7 +13,7 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
   return (
     <div id={`question-${question.id}`} style={{ marginBottom: 35, color: "#1e293b" }}>
       <div style={{ display: "flex", alignItems: "baseline", flexWrap: "wrap", gap: "6px 10px", lineHeight: 2 }}>
-        <span style={{ fontWeight: 800, color: "#2563eb", marginRight: 5 }}>
+        <span style={{ fontWeight: 800, color: "#174593", marginRight: 5 }}>
           {question.number || question.question_number}.
         </span>
         {parts.map((part: string, index: number) => (
@@ -25,7 +25,7 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
                 value={value || ""}
                 onChange={(e) => onChange(question.id, e.target.value)}
                 style={{
-                  border: "none", borderBottom: "2px solid #3b82f6", outline: "none",
+                  border: "none", borderBottom: "2px solid #174593", outline: "none",
                   width: 150, padding: "2px 10px", fontSize: "16px", fontWeight: 700,
                   textAlign: "center", background: "#f8fafc", borderRadius: "6px 6px 0 0",
                   transition: "all 0.2s"
@@ -40,9 +40,9 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
       {wordBank.length > 0 && (
         <div style={{ 
           marginTop: 20, padding: "20px", background: "#f8fafc", borderRadius: "16px",
-          display: "flex", flexWrap: "wrap", gap: "10px", border: "1.5px dashed #3b82f6"
+          display: "flex", flexWrap: "wrap", gap: "10px", border: "1.5px dashed #174593"
         }}>
-          <div style={{ width: "100%", fontSize: "11px", color: "#3b82f6", fontWeight: 800, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+          <div style={{ width: "100%", fontSize: "11px", color: "#174593", fontWeight: 800, marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>
             Click a word below to fill in the blank:
           </div>
           {wordBank.map((word: string) => {
@@ -52,9 +52,9 @@ export default function FillBlankQuestion({ question, value, onChange, extra }: 
                 key={word} 
                 onClick={() => onChange(question.id, word)}
                 style={{ 
-                  background: isSelected ? "#2563eb" : "#fff", padding: "8px 16px", 
+                  background: isSelected ? "#174593" : "#fff", padding: "8px 16px", 
                   borderRadius: "10px", fontSize: "14px", fontWeight: 600,
-                  border: `1px solid ${isSelected ? "#2563eb" : "#e2e8f0"}`,
+                  border: `1px solid ${isSelected ? "#174593" : "#e2e8f0"}`,
                   color: isSelected ? "#fff" : "#334155", cursor: "pointer",
                   transition: "all 0.2s", boxShadow: "0 1px 3px rgba(0,0,0,0.05)"
                 }}

@@ -27,7 +27,7 @@ export default function MCQQuestion({
       style={{ marginBottom: 30 }}
     >
       <div style={{ display: "flex", gap: 10, marginBottom: 10 }}>
-        <span style={{ fontWeight: 700, color: "#2563eb" }}>
+        <span style={{ fontWeight: 700, color: "#174593" }}>
           {question.number || question.question_number}.
         </span>
         <div style={{ flex: 1 }}>
@@ -62,7 +62,7 @@ export default function MCQQuestion({
                 gap: 10,
                 padding: "10px 14px",
                 borderRadius: 8,
-                border: `1px solid ${isSelected ? "#3b82f6" : "#e5e7eb"}`,
+                border: `1px solid ${isSelected ? "#174593" : "#e5e7eb"}`,
                 background: isSelected ? "#eff6ff" : "transparent",
                 cursor: "pointer",
                 transition: "all 0.2s"

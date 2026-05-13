@@ -14,7 +14,7 @@ export default function TableCompletionQuestion({
         gap: 12 
       }}
     >
-      <span style={{ fontWeight: 700, color: "#2563eb", minWidth: "24px" }}>
+      <span style={{ fontWeight: 700, color: "#174593", minWidth: "24px" }}>
         {question.number || question.question_number}.
       </span>
 
@@ -24,7 +24,7 @@ export default function TableCompletionQuestion({
         onChange={(e) => onChange(question.id, e.target.value)}
         style={{
           border: "1px solid #e2e8f0",
-          borderBottom: "2px solid #3b82f6",
+          borderBottom: "2px solid #174593",
           outline: "none",
           padding: "6px 12px",
           borderRadius: "4px",

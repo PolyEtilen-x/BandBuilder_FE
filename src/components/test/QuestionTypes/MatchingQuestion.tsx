@@ -20,7 +20,7 @@ export default function MatchingFeaturesQuestion({
       }}
     >
       <div style={{ flex: 1 }}>
-        <span style={{ fontWeight: 700, color: "#2563eb", marginRight: 8 }}>
+        <span style={{ fontWeight: 700, color: "#174593", marginRight: 8 }}>
           {question.number || question.question_number}.
         </span>
         <span style={{ color: "#334155" }}>{question.text || "Choose the correct answer"}</span>

@@ -31,7 +31,8 @@ export default function QuestionNavigator({ questionBlocks = [] }: any) {
 
   const handleFinish = () => {
     if (window.confirm("Bạn có chắc chắn muốn nộp bài?")) {
-      alert("Nộp bài thành công!"); navigate("/profile")
+      usePracticeStore.getState().clearAnswers()
+      navigate("/profile")
     }
   }
 
@@ -48,8 +49,8 @@ export default function QuestionNavigator({ questionBlocks = [] }: any) {
               key={q.id} onClick={() => goToQuestion(q.id)}
               style={{
                 minWidth: "40px", height: "40px", borderRadius: "10px", fontWeight: 800,
-                border: `2px solid ${answered ? "#2563eb" : "#f1f5f9"}`,
-                background: answered ? "#2563eb" : "#fff", color: answered ? "#fff" : "#94a3b8",
+                border: `2px solid ${answered ? "#174593" : "#f1f5f9"}`,
+                background: answered ? "#174593" : "#fff", color: answered ? "#fff" : "#94a3b8",
                 cursor: "pointer", transition: "all 0.2s", fontSize: "14px"
               }}
             >
