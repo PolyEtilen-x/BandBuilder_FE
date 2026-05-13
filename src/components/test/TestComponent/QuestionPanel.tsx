@@ -1,4 +1,4 @@
-import { QuestionBlock } from "@/types/practice.types"
+import { QuestionBlock } from "@/data/practices/practice.types"
 import QuestionRenderer from "./QuestionRenderer"
 import { usePracticeStore } from "@/services/practice/practice.store"
 

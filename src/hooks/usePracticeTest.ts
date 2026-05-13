@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation, useSearchParams } from "react-router-dom";
 import { practiceApi } from "@/api/practice.api";
 import { useMemo } from "react";
-import { PracticeTestDTO } from "@/types/practice.types";
+import { PracticeTestDTO } from "@/data/practices/practice.types";
 
 export const usePracticeTest = () => {
   const { id } = useParams<{ id: string }>();

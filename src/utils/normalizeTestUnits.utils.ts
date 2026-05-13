@@ -1,7 +1,7 @@
 import type { SkillContentPreview } from '@/data/practices/skillContent.model';
 import type { ListeningQuestionBlock } from '@/data/practices/listening.model';
 import type { ReadingQuestionBlock } from '@/data/practices/reading.model';
-import type { PracticeTestDTO } from '@/types/practice.types';
+import type { PracticeTestDTO } from '@/data/practices/practice.types';
 
 export interface TestUnit {
   id: number;

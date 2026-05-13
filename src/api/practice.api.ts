@@ -1,5 +1,5 @@
 import { apiClient } from "./apiClient.api"
-import { PracticeTestDTO, PracticeTestPreview } from "@/types/practice.types"
+import { PracticeTestDTO, PracticeTestPreview } from "@/data/practices/practice.types"
 
 export const practiceApi = {
   getPracticeTests: () =>

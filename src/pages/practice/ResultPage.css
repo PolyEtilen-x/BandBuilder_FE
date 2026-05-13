@@ -112,20 +112,23 @@
 .stat-box.correct { 
   background: #ecfdf5; 
   border: 1px solid #10b981; 
-  color: #065f46; 
 }
+.stat-box.correct .stat-label { color: #059669; }
+.stat-box.correct .stat-value { color: #047857; }
 
 .stat-box.wrong { 
   background: #fff1f2; 
   border: 1px solid #f43f5e; 
-  color: #9f1239; 
 }
+.stat-box.wrong .stat-label { color: #e11d48; }
+.stat-box.wrong .stat-value { color: #be123c; }
 
 .stat-box.skipped { 
   background: #f8fafc; 
   border: 1px solid #cbd5e1; 
-  color: #334155; 
 }
+.stat-box.skipped .stat-label { color: #64748b; }
+.stat-box.skipped .stat-value { color: #334155; }
 
 .stat-label { 
   font-size: 11px; 
@@ -133,11 +136,11 @@
   text-transform: uppercase; 
   margin-bottom: 4px; 
   letter-spacing: 0.05em;
-  opacity: 0.7; 
+  opacity: 0.9; 
 }
 
 .stat-value { 
-  font-size: 28px; 
+  font-size: 32px; 
   font-weight: 900; 
 }
 

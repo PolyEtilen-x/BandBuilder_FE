@@ -3,7 +3,7 @@ import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
 import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
 import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import Timer from "@/components/components/Timer"
-import { PracticeTestDTO, Passage, Section } from "@/types/practice.types"
+import { PracticeTestDTO, Passage, Section } from "@/data/practices/practice.types"
 
 import { useState, useRef, useEffect } from "react"
 
