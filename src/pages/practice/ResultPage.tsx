@@ -5,6 +5,8 @@ import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } fro
 import { useQuery } from "@tanstack/react-query"
 import { practiceApi } from "@/api/practice.api"
 
+import "./ResultPage.css"
+
 export default function ResultPage() {
   const location = useLocation()
   const { id } = useParams()
@@ -36,7 +38,6 @@ export default function ResultPage() {
     let skipped = 0
     const details: any[] = []
 
-    // Xử lý linh hoạt các cấu trúc dữ liệu khác nhau của bài thi
     const sections = examData.sections || (examData.content?.passages ? examData.content.passages : [examData])
 
     sections.forEach((section: any) => {
@@ -78,83 +79,80 @@ export default function ResultPage() {
     return { total, correct, wrong, skipped, score, details }
   }, [examData, answers])
 
-  if (isLoading) return <div className="flex items-center justify-center h-screen font-bold text-slate-500">Đang phân tích kết quả...</div>
+  if (isLoading) return <div className="loading-state">Đang phân tích kết quả...</div>
   if (!stats || stats.total === 0) return (
-    <div className="flex flex-col items-center justify-center h-screen gap-4">
-        <p className="text-slate-500 font-medium">Không tìm thấy dữ liệu câu hỏi để tính điểm.</p>
-        <button onClick={() => navigate("/practice")} className="px-6 py-2 bg-slate-900 text-white rounded-xl font-bold">Quay lại</button>
+    <div className="error-state">
+        <p>Không tìm thấy dữ liệu câu hỏi để tính điểm.</p>
+        <button onClick={() => navigate("/practice")} className="back-home-btn">Quay lại</button>
     </div>
   )
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] pb-20">
-      <header className="bg-white border-b sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-slate-600 hover:text-[#174593] transition-colors font-semibold">
+    <div className="result-page-container">
+      <header className="result-header">
+        <div className="result-header-content">
+          <button onClick={() => navigate(-1)} className="back-button">
             <ArrowLeft size={20} />
             Quay lại
           </button>
-          <div className="text-sm font-bold text-slate-400 uppercase tracking-widest">Kết quả luyện tập</div>
-          <div className="w-20"></div>
+          <div className="header-title">Kết quả luyện tập</div>
+          <div style={{ width: 40 }}></div>
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 pt-10">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <main className="result-main">
+        <div className="result-grid">
           
-          <div className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-slate-100 overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-8 opacity-5">
-                <CheckCircle2 size={120} color="#174593" />
-              </div>
-              
-              <div className="relative z-10">
-                <h1 className="text-3xl font-extrabold text-slate-900 mb-2">
+          {/* LEFT CONTENT */}
+          <div className="result-left-column">
+            <div className="overview-card">
+              <div className="overview-content">
+                <h1 className="overview-title">
                   {stats.score >= 80 ? "Xuất sắc! 🔥" : stats.score >= 50 ? "Khá lắm! 👍" : "Cố gắng thêm nhé! 💪"}
                 </h1>
-                <p className="text-slate-500 font-medium mb-8">Bạn đã hoàn thành bài luyện tập với tỉ lệ chính xác {stats.score}%.</p>
+                <p className="overview-subtitle">Bạn đã hoàn thành bài luyện tập với tỉ lệ chính xác {stats.score}%.</p>
 
-                <div className="grid grid-cols-3 gap-4">
-                  <div className="bg-[#f0fdf4] rounded-2xl p-4 border border-[#bbf7d0]">
-                    <div className="text-[#166534] text-xs font-bold uppercase mb-1">Đúng</div>
-                    <div className="text-2xl font-black text-[#166534]">{stats.correct}</div>
+                <div className="stats-grid">
+                  <div className="stat-box correct">
+                    <div className="stat-label">Đúng</div>
+                    <div className="stat-value">{stats.correct}</div>
                   </div>
-                  <div className="bg-[#fef2f2] rounded-2xl p-4 border border-[#fecaca]">
-                    <div className="text-[#991b1b] text-xs font-bold uppercase mb-1">Sai</div>
-                    <div className="text-2xl font-black text-[#991b1b]">{stats.wrong}</div>
+                  <div className="stat-box wrong">
+                    <div className="stat-label">Sai</div>
+                    <div className="stat-value">{stats.wrong}</div>
                   </div>
-                  <div className="bg-[#f8fafc] rounded-2xl p-4 border border-slate-200">
-                    <div className="text-slate-500 text-xs font-bold uppercase mb-1">Bỏ qua</div>
-                    <div className="text-2xl font-black text-slate-600">{stats.skipped}</div>
+                  <div className="stat-box skipped">
+                    <div className="stat-label">Bỏ qua</div>
+                    <div className="stat-value">{stats.skipped}</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-              <div className="p-6 border-b border-slate-50 flex items-center justify-between">
-                <h2 className="font-bold text-slate-800">Chi tiết theo loại câu hỏi</h2>
+            <div className="details-card">
+              <div className="details-header">
+                <h2>Chi tiết theo loại câu hỏi</h2>
               </div>
-              <div className="divide-y divide-slate-50">
+              <div className="details-list">
                 {stats.details.map((item: any, idx: number) => (
-                  <div key={idx} className="p-5 flex items-center justify-between hover:bg-slate-50/50 transition-colors">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-[#174593]">
+                  <div key={idx} className="details-item">
+                    <div className="item-info">
+                      <div className="item-icon">
                         <HelpCircle size={20} />
                       </div>
-                      <div>
-                        <div className="font-bold text-slate-700 capitalize">{item.type.replace(/_/g, " ")}</div>
-                        <div className="text-xs text-slate-400 font-medium">{item.total} câu hỏi</div>
+                      <div className="item-text">
+                        <div className="item-type">{item.type.replace(/_/g, " ")}</div>
+                        <div className="item-count">{item.total} câu hỏi</div>
                       </div>
                     </div>
-                    <div className="flex items-center gap-6">
-                      <div className="text-right">
-                        <div className="font-black text-slate-900">{Math.round((item.correct / item.total) * 100)}%</div>
-                        <div className="text-[10px] font-bold text-slate-400 uppercase leading-none">Chính xác</div>
+                    <div className="item-progress-container">
+                      <div className="progress-text">
+                        <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
+                        <div className="progress-label">Chính xác</div>
                       </div>
-                      <div className="w-32 h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="progress-bar-bg">
                         <div 
-                          className="h-full bg-[#174593] rounded-full" 
+                          className="progress-bar-fill" 
                           style={{ width: `${(item.correct / item.total) * 100}%` }}
                         />
                       </div>
@@ -165,24 +163,27 @@ export default function ResultPage() {
             </div>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-[#0f172a] rounded-3xl p-8 text-white shadow-xl shadow-slate-200">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-xl bg-white/10 flex items-center justify-center">
-                  <Clock size={20} className="text-blue-400" />
+          {/* RIGHT SIDEBAR */}
+          <div className="result-right-column">
+            <div className="analysis-card">
+              <div className="analysis-header">
+                <div className="analysis-icon-box">
+                  <Clock size={20} color="#60a5fa" />
                 </div>
-                <div className="font-bold uppercase text-[10px] tracking-widest text-slate-400 leading-tight">Analysis</div>
+                <div className="analysis-label">Analysis</div>
               </div>
 
-              <div className="text-5xl font-black mb-2">{stats.score}<span className="text-2xl text-blue-400">%</span></div>
-              <p className="text-slate-400 text-sm font-medium mb-8 leading-relaxed">
+              <div className="score-display">
+                {stats.score}<span className="score-unit">%</span>
+              </div>
+              <p className="analysis-text">
                 Hãy xem lại giải thích để hiểu rõ tại sao mình sai và cải thiện ở bài tiếp theo nhé!
               </p>
 
-              <div className="space-y-3">
+              <div className="action-buttons">
                 <button 
                   onClick={() => navigate(`/practice/review/${id}`)}
-                  className="w-full bg-white text-slate-900 h-14 rounded-2xl font-extrabold flex items-center justify-center gap-2 hover:bg-blue-50 transition-all active:scale-95"
+                  className="primary-btn"
                 >
                   XEM GIẢI THÍCH <ChevronRight size={18} />
                 </button>
@@ -191,11 +192,18 @@ export default function ResultPage() {
                     clearAnswers()
                     navigate("/practice")
                   }}
-                  className="w-full bg-white/10 text-white h-14 rounded-2xl font-extrabold flex items-center justify-center gap-2 hover:bg-white/20 transition-all"
+                  className="secondary-btn"
                 >
                   LÀM BÀI KHÁC
                 </button>
               </div>
+            </div>
+
+            <div className="tip-card">
+                <h3 className="tip-title">Mẹo nhỏ cho bạn 💡</h3>
+                <p className="tip-text">
+                    Việc xem lại các câu sai quan trọng hơn việc làm nhiều bài mới. Hãy dành ít nhất 10 phút để đọc phần giải thích.
+                </p>
             </div>
           </div>
 
