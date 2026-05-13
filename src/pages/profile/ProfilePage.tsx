@@ -177,13 +177,13 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      <EditProfileModal 
-        open={openEditModal} 
-        onClose={() => setOpenEditModal(false)} 
-        initialData={{ 
-          fullName: user.fullName, 
-          avatarUrl: user.avatarUrl 
-        }} 
+      <EditProfileModal
+        open={openEditModal}
+        onClose={() => setOpenEditModal(false)}
+        initialData={{
+          fullName: user.fullName,
+          avatarUrl: user.avatarUrl
+        }}
       />
     </MainLayout>
   )
