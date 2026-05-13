@@ -1,130 +1,76 @@
-import theme from "@/styles/theme"
 import { useDictionary } from "@/services/dictionary/useDictionary"
-import "./style.css"
+import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
 
 type ToolType = "highlight" | "note" | "dict"
 
 type Props = {
-  section: any
-  activeTool?: ToolType   
+    section: any
+    activeTool?: ToolType
 }
 
 export default function ListeningPanel({ section, activeTool }: Props) {
-    const { lookup } = useDictionary()
-    if (!section) return <div style={{ padding: 24 }}>No section data available</div>
+    const { dict, loading, lookup, close, save } = useDictionary()
+
+    if (!section) return <div style={{ padding: 40, textAlign: "center", color: "#94a3b8" }}>Loading section...</div>
 
     const handleMouseUp = () => {
         const selection = window.getSelection()
         const text = selection?.toString().trim()
-        if (!text) return
-
-        if (activeTool === "highlight") {
-            const range = selection!.getRangeAt(0)
-            const span = document.createElement("span")
-            span.style.background = "#8cb5fd"
-            span.style.padding = "2px 4px"
-            span.style.borderRadius = "4px"
-
-            range.surroundContents(span)
-            selection?.removeAllRanges()
-        }
-
-        if (activeTool === "dict") {
-            lookup(text)
-        }
+        if (!text || activeTool !== "dict") return
+        lookup(text)
     }
 
     return (
         <div
-            style={{
-                padding: 30,
-                height: "100%",
-                overflowY: "auto",
-                backgroundColor: "#fff",
-                borderRight: "1px solid #eee"
-            }}
+            style={{ padding: "40px", height: "100%", overflowY: "auto", backgroundColor: "#fff" }}
             onMouseUp={handleMouseUp}
         >
-            {/* TITLE */}
-            <h2 style={{ 
-                color: theme.colors.third, 
-                fontSize: "22px", 
-                fontWeight: 700,
-                marginBottom: "8px" 
-            }}>
-                Section {section.section}
-            </h2>
-
-            <p style={{ margin: "0 0 20px 0", color: "#64748b", fontSize: "15px" }}>
-                {section.description}
-            </p>
-
-            {section.speakers && (
-                <p style={{ fontSize: 14, color: "#94a3b8", marginBottom: 20 }}>
-                    <span style={{ fontWeight: 600 }}>Speakers:</span> {section.speakers.join(", ")}
+            <div style={{ marginBottom: 40 }}>
+                <h2 style={{ color: "#0f172a", fontSize: "28px", fontWeight: 800, marginBottom: "12px" }}>
+                    Section {section.section}
+                </h2>
+                <p style={{ color: "#475569", fontSize: "17px", lineHeight: 1.6, fontWeight: 500 }}>
+                    {section.description}
                 </p>
-            )}
+            </div>
 
             {section.audioUrl && (
-                <div style={{ 
-                    marginTop: 24, 
-                    marginBottom: 32, 
-                    padding: "16px", 
-                    background: "#f8fafc", 
-                    borderRadius: "12px",
-                    border: "1px solid #e2e8f0"
+                <div style={{
+                    marginBottom: 48, padding: "24px", background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+                    borderRadius: "20px", border: "1px solid #e2e8f0", boxShadow: "0 4px 12px rgba(0,0,0,0.03)"
                 }}>
-                    <audio controls style={{ width: "100%" }}>
+                    <div style={{ fontSize: "11px", fontWeight: 800, color: "#64748b", marginBottom: 16, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                        Audio Control Panel
+                    </div>
+                    <audio controls style={{ width: "100%", height: "40px" }}>
                         <source src={section.audioUrl} type="audio/mpeg" />
-                        Your browser does not support audio.
                     </audio>
                 </div>
             )}
 
-            <div style={{ display: "flex", flexDirection: "column", gap: 30 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 32 }}>
                 {section.question_blocks?.map((block: any, index: number) => (
-                    <div key={index} style={{ 
-                        padding: "20px", 
-                        borderRadius: "12px", 
-                        border: "1px solid #f1f5f9",
-                        background: "#fcfcfc"
-                    }}>
-                        <div style={{ marginBottom: 12, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                            <span style={{ 
-                                background: "#2563eb", 
-                                color: "#fff", 
-                                padding: "2px 10px", 
-                                borderRadius: "4px", 
-                                fontSize: "12px", 
-                                fontWeight: 600 
-                            }}>
-                                Questions {block.questions_range}
+                    <div key={index} style={{ padding: "28px", borderRadius: "20px", border: "1px solid #f1f5f9", background: "#fff", boxShadow: "0 4px 6px -1px rgba(0,0,0,0.02)" }}>
+                        <div style={{ marginBottom: 16 }}>
+                            <span style={{ background: "#2563eb", color: "#fff", padding: "5px 14px", borderRadius: "8px", fontSize: "12px", fontWeight: 800 }}>
+                                QUESTIONS {block.questions_range}
                             </span>
                         </div>
-
                         {block.instruction && (
-                            <p style={{ fontSize: "14px", color: "#334155", fontWeight: 500, marginBottom: 16, lineHeight: 1.5 }}>
+                            <p style={{ fontSize: "15px", color: "#1e293b", fontWeight: 700, marginBottom: 24, fontStyle: "italic", borderLeft: "4px solid #3b82f6", paddingLeft: "16px" }}>
                                 {block.instruction}
                             </p>
                         )}
-
                         {block.imgUrl && (
-                            <div style={{ marginTop: 10 }}>
-                                <img
-                                    src={block.imgUrl}
-                                    alt="Listening visual"
-                                    style={{
-                                        width: "100%",
-                                        borderRadius: 8,
-                                        boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1)"
-                                    }}
-                                />
+                            <div style={{ textAlign: "center", marginTop: 20 }}>
+                                <img src={block.imgUrl} alt="Visual" style={{ maxWidth: "100%", borderRadius: "16px", boxShadow: "0 10px 15px -3px rgba(0,0,0,0.1)" }} />
                             </div>
                         )}
                     </div>
                 ))}
             </div>
+
+            <DictionaryPanel dict={dict} loading={loading} onClose={close} onSave={save} />
         </div>
     )
 }
-

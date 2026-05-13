@@ -3,120 +3,176 @@
   display: flex;
   flex-direction: column;
   background: #fff;
+  overflow: hidden;
 }
 
 /* HEADER */
 .practice-header {
   height: 60px;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #e5e7eb;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 16px;
-  font-weight: 600;
+  padding: 0 24px;
+  font-weight: 700;
+  background: #fff;
+  color: #1e293b;
 }
 
 .practice-badge {
-  background: #16a34a;
+  background: #059669;
   color: #fff;
-  padding: 4px 10px;
+  padding: 4px 12px;
   border-radius: 6px;
-  font-size: 12px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 }
 
 /* MAIN */
 .practice-main {
   display: flex;
   flex: 1;
+  overflow: hidden; 
 }
 
-/* TOOLBAR */
+/* TOOLBAR - Cố định bên trái */
 .practice-toolbar {
-  width: 120px;
-  border-right: 1px solid #eee;
-  padding: 12px;
+  width: 100px;
+  border-right: 1px solid #e5e7eb;
+  padding: 20px 10px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 15px;
+  background: #f8fafc;
+  flex-shrink: 0;
 }
 
 .toolbar-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: #666;
-  margin-bottom: 8px;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-weight: 700;
+  color: #94a3b8;
+  margin-bottom: 5px;
+  text-align: center;
 }
 
-/* BUTTON */
 .tool-btn {
-  border: 1px solid #ddd;
+  border: 1px solid #e2e8f0;
   background: #fff;
-  padding: 10px;
-  border-radius: 8px;
+  padding: 12px 5px;
+  border-radius: 12px;
   cursor: pointer;
-  font-size: 13px;
-  text-align: left;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  transition: all 0.2s;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.tool-btn div {
+  font-size: 11px;
+  font-weight: 700;
+  color: #334155;
 }
 
 .tool-btn small {
-  color: #888;
+  font-size: 10px;
+  color: #94a3b8;
 }
 
 .tool-btn.active {
-  border-color: #1b4b99;
-  background: #ecfdf5;
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.1);
 }
 
-/* LEFT RIGHT */
+/* LEFT RIGHT - Cuộn độc lập */
 .practice-left,
 .practice-right {
+  height: 100%;
   overflow-y: auto;
-  padding: 20px;
+  background: #fff;
+  scrollbar-width: thin;
+}
+
+.practice-left::-webkit-scrollbar,
+.practice-right::-webkit-scrollbar {
+  width: 6px;
+}
+
+.practice-left::-webkit-scrollbar-thumb,
+.practice-right::-webkit-scrollbar-thumb {
+  background: #e2e8f0;
+  border-radius: 10px;
 }
 
 /* DIVIDER */
 .practice-divider {
-  width: 6px;
-  background: #ddd;
+  width: 4px;
+  background: #f1f5f9;
   cursor: col-resize;
+  transition: background 0.2s;
+  position: relative;
+  z-index: 5;
+}
+
+.practice-divider:hover {
+  background: #3b82f6;
+}
+
+.practice-divider::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  height: 40px;
+  width: 2px;
+  background: #cbd5e1;
+  border-radius: 2px;
 }
 
 /* FOOTER */
 .practice-footer {
-  height: 90px;
-  border-top: 1px solid #eee;
+  height: 80px;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+  z-index: 10;
 }
 
 /* MOBILE */
 @media (max-width: 768px) {
-  .practice-main {
-    flex-direction: column;
-  }
+  .practice-main { flex-direction: column; }
+  .practice-toolbar { width: 100%; height: auto; flex-direction: row; justify-content: center; padding: 10px; }
+  .practice-divider { display: none; }
+  .practice-tabs { display: flex; border-bottom: 1px solid #e5e7eb; }
+  .practice-tabs button { flex: 1; padding: 14px; border: none; background: none; font-weight: 700; color: #64748b; }
+  .practice-tabs button.active { color: #2563eb; border-bottom: 3px solid #2563eb; }
+  .practice-mobile-content { flex: 1; overflow-y: auto; padding: 20px; }
+}
 
-  .practice-divider {
-    display: none;
-  }
+/* Dictionary glassmorphism */
+.dict-bottom {
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 500px;
+  max-width: 90%;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+}
 
-  .practice-tabs {
-    display: flex;
-    border-bottom: 1px solid #ddd;
-  }
-
-  .practice-tabs button {
-    flex: 1;
-    padding: 12px;
-    border: none;
-    background: none;
-    font-weight: 600;
-  }
-
-  .practice-tabs button.active {
-    border-bottom: 2px solid #1b4b99;
-  }
-
-  .practice-mobile-content {
-    flex: 1;
-    overflow-y: auto;
-    padding: 16px;
-  }
+@keyframes slideUp {
+  from { transform: translate(-50%, 100%); opacity: 0; }
+  to { transform: translate(-50%, 0); opacity: 1; }
 }

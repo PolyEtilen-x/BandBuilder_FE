@@ -15,13 +15,12 @@ export default function PracticeTestPage() {
     } = usePracticeTest()
 
     const clearAnswers = usePracticeStore(state => state.clearAnswers)
-    
-    // Clear answers when starting a new test session
+
+    // answers are now persisted via Zustand's persist middleware
     useEffect(() => {
-        return () => {
-            clearAnswers()
-        }
-    }, [clearAnswers])
+        // No longer clearing answers on unmount to support refresh/persistence
+    }, [])
+
 
     if (isLoading) return <PracticeSkeleton />
 
