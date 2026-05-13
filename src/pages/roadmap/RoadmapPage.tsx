@@ -1,193 +1,153 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useParams } from "react-router-dom"
+import { motion, AnimatePresence } from "framer-motion"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
-import { Check, Lock, BookOpen, Mic, PenTool, Headphones, Brain, Star, TrendingUp } from "lucide-react"
+import { useRoadmap } from "@/hooks/useRoadmap"
+import { Roadmap, RoadmapNode } from "@/types/roadmap.types"
+import { Clock, BookOpen, CheckCircle2, ChevronRight, PlayCircle, Star, Sparkles } from "lucide-react"
+import mockRoadmap from "@/data/roadmap/ielts_5_to_6.json"
 import "./style.css"
 
-interface Skill {
-  name: string
-  icon: any
-}
-
-interface RoadmapStep {
-  id: string
-  level: string
-  title: string
-  desc: string
-  skills: Skill[]
-  progress: number
-  isLocked: boolean
-}
-
-const GENERAL_ROADMAP: RoadmapStep[] = [
-  {
-    id: "a1",
-    level: "A1",
-    title: "English Starter",
-    desc: "Foundation for beginners. Focus on basic grammar, everyday vocabulary, and simple introductions.",
-    progress: 100,
-    isLocked: false,
-    skills: [
-      { name: "Grammar", icon: BookOpen },
-      { name: "Family & Food", icon: Star },
-      { name: "Greetings", icon: Mic },
-      { name: "Basic Words", icon: Headphones }
-    ]
-  },
-  {
-    id: "a2",
-    level: "A2",
-    title: "Communication Builder",
-    desc: "Build your confidence in daily situations like shopping, traveling, and talking about hobbies.",
-    progress: 45,
-    isLocked: false,
-    skills: [
-      { name: "Past Simple", icon: BookOpen },
-      { name: "Daily Routine", icon: Brain },
-      { name: "Travel Talk", icon: Mic },
-      { name: "Short Stories", icon: PenTool }
-    ]
-  },
-  {
-    id: "b1",
-    level: "B1",
-    title: "Intermediate Speaker",
-    desc: "Express opinions, tell detailed stories, and handle most situations while traveling in an English-speaking area.",
-    progress: 0,
-    isLocked: true,
-    skills: [
-      { name: "Opinions", icon: Mic },
-      { name: "Storytelling", icon: PenTool },
-      { name: "Articles", icon: BookOpen },
-      { name: "Main Ideas", icon: Headphones }
-    ]
-  }
-]
-
-const IELTS_ROADMAP: RoadmapStep[] = [
-  {
-    id: "foundation",
-    level: "Band 4.0",
-    title: "IELTS Foundation",
-    desc: "Master the basics of the IELTS format. Focus on number spelling, keyword recognition, and basic skimming.",
-    progress: 100,
-    isLocked: false,
-    skills: [
-      { name: "Spelling", icon: PenTool },
-      { name: "Skimming", icon: BookOpen },
-      { name: "Keywords", icon: Brain },
-      { name: "Pronunciation", icon: Mic }
-    ]
-  },
-  {
-    id: "band5",
-    level: "Band 5.5",
-    title: "Band 5 Builder",
-    desc: "Learn core strategies for every section. Focus on note completion, sentence building, and fluency.",
-    progress: 60,
-    isLocked: false,
-    skills: [
-      { name: "Note Completion", icon: Headphones },
-      { name: "Sentence Structure", icon: PenTool },
-      { name: "TFNG Basics", icon: BookOpen },
-      { name: "Elaboration", icon: Mic }
-    ]
-  },
-  {
-    id: "band6",
-    level: "Band 6.5",
-    title: "Band 6 Mastery",
-    desc: "Deep dive into complex question types and academic vocabulary. Handle distractors and inference with ease.",
-    progress: 0,
-    isLocked: true,
-    skills: [
-      { name: "Map Labeling", icon: Headphones },
-      { name: "Heading Matching", icon: BookOpen },
-      { name: "Coherence", icon: PenTool },
-      { name: "Abstract Topics", icon: Mic }
-    ]
-  },
-  {
-    id: "band7",
-    level: "Band 7.5+",
-    title: "Band 7 Elite",
-    desc: "Polishing your skills to perfection. Focus on native-like fluency, complex grammar, and advanced paraphrasing.",
-    progress: 0,
-    isLocked: true,
-    skills: [
-      { name: "Fast Speech", icon: Headphones },
-      { name: "Time Pressure", icon: TrendingUp },
-      { name: "Complex Grammar", icon: BookOpen },
-      { name: "Natural Speaking", icon: Mic }
-    ]
-  }
-]
-
 export default function RoadmapPage() {
-  const [activeTab, setActiveTab] = useState<"general" | "ielts">("ielts")
-  const data = activeTab === "general" ? GENERAL_ROADMAP : IELTS_ROADMAP
+  const { id } = useParams()
+  const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null)
+  
+  // In a real app, we would use the hook:
+  // const { data: roadmap, isLoading } = useRoadmap(id || "")
+  
+  // For demo, we use the mock data directly
+  const roadmap: Roadmap = mockRoadmap as Roadmap
+
+  useEffect(() => {
+    if (roadmap.nodes.length > 0 && !selectedNode) {
+      setSelectedNode(roadmap.nodes[0])
+    }
+  }, [roadmap])
 
   return (
     <MainLayout>
-      <div className="roadmap-container">
-        <div className="roadmap-header">
-          <h1>Learning Roadmap</h1>
-          <p>Your personalized path to mastering English and reaching your target IELTS band score.</p>
-        </div>
+      <div className="bg-slate-50 min-h-screen">
+        <div className="roadmap-container">
+          {/* HEADER */}
+          <div className="mb-12">
+            <div className="flex items-center gap-3 text-blue-600 font-bold text-sm uppercase tracking-widest mb-2">
+              <Sparkles size={18} />
+              Personalized Journey
+            </div>
+            <h1 className="text-4xl font-black text-slate-900 mb-4">{roadmap.title}</h1>
+            <p className="text-slate-500 text-lg max-w-2xl">{roadmap.description}</p>
+          </div>
 
-        <div className="roadmap-tabs">
-          <button
-            className={`roadmap-tab ${activeTab === "general" ? "active" : ""}`}
-            onClick={() => setActiveTab("general")}
-          >
-            General English
-          </button>
-          <button
-            className={`roadmap-tab ${activeTab === "ielts" ? "active" : ""}`}
-            onClick={() => setActiveTab("ielts")}
-          >
-            IELTS Journey
-          </button>
-        </div>
-
-        <div className="journey-path">
-          {data.map((step) => (
-            <div key={step.id} className={`journey-step ${step.isLocked ? "step-locked" : ""}`}>
-              <div className="step-node">
-                {step.isLocked ? <Lock size={18} /> : (step.progress === 100 ? <Check size={20} /> : <div className="step-num-icon">{data.indexOf(step) + 1}</div>)}
+          <div className="roadmap-layout">
+            {/* LEFT: TIMELINE */}
+            <div className="journey-timeline">
+              <div className="journey-line">
+                <div className="journey-line-progress" style={{ height: '40%' }}></div>
               </div>
 
-              <div className="step-content">
-                <div className="step-header">
-                  <span className="step-badge">{step.level}</span>
-                  {!step.isLocked && step.progress > 0 && <span className="step-percent">{step.progress}%</span>}
-                </div>
-
-                <h3 className="step-title">{step.title}</h3>
-                <p className="step-desc">{step.desc}</p>
-
-                <div className="skill-grid">
-                  {step.skills.map((skill, idx) => (
-                    <div key={idx} className="skill-item">
-                      <div className="skill-icon"><skill.icon size={16} /></div>
-                      <span className="skill-name">{skill.name}</span>
-                    </div>
-                  ))}
-                </div>
-
-                {!step.isLocked && (
-                  <div className="step-progress">
-                    <div className="progress-info">
-                      <span>Mastery</span>
-                      <span>{step.progress}%</span>
-                    </div>
-                    <div className="progress-track">
-                      <div className="progress-fill" style={{ width: `${step.progress}%` }}></div>
+              {roadmap.nodes.map((node, index) => (
+                <motion.div
+                  key={node.id}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: index * 0.1 }}
+                  className={`node-item ${selectedNode?.id === node.id ? 'active' : ''}`}
+                  onClick={() => setSelectedNode(node)}
+                >
+                  <div className="node-dot">
+                    {index === 0 && <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>}
+                  </div>
+                  <div className="node-card">
+                    <span className="node-tag">{node.estimatedTime}</span>
+                    <h3 className="text-xl font-bold text-slate-800 mb-2">{node.title}</h3>
+                    <p className="text-slate-500 text-sm line-clamp-2">{node.description}</p>
+                    
+                    <div className="flex flex-wrap gap-2 mt-4">
+                      {node.focus.map(f => (
+                        <span key={f} className="px-2 py-1 bg-slate-50 text-slate-500 rounded-md text-[10px] font-bold uppercase border border-slate-100">
+                          {f}
+                        </span>
+                      ))}
                     </div>
                   </div>
-                )}
-              </div>
+                </motion.div>
+              ))}
             </div>
-          ))}
+
+            {/* RIGHT: NODE DETAIL */}
+            <div className="detail-panel-container">
+              <AnimatePresence mode="wait">
+                {selectedNode && (
+                  <motion.div
+                    key={selectedNode.id}
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -20 }}
+                    className="detail-panel"
+                  >
+                    <div className="detail-header">
+                      <div className="flex items-center justify-between mb-4">
+                        <span className="px-3 py-1 bg-blue-600 text-white rounded-full text-xs font-black uppercase tracking-tighter">
+                          Currently Focusing
+                        </span>
+                        <div className="flex items-center gap-2 text-slate-400 text-sm font-bold">
+                          <Clock size={16} />
+                          {selectedNode.estimatedTime}
+                        </div>
+                      </div>
+                      <h2 className="detail-title">{selectedNode.title}</h2>
+                      <p className="detail-desc">{selectedNode.description}</p>
+                    </div>
+
+                    <div className="detail-section">
+                      <h4 className="detail-section-title">Key Skills</h4>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedNode.skills.map(skill => (
+                          <div key={skill} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm">
+                            <CheckCircle2 size={16} />
+                            {skill}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="detail-section">
+                      <h4 className="detail-section-title">Lessons & Resources</h4>
+                      <div className="resource-list">
+                        {selectedNode.resources.map((res, idx) => (
+                          <div key={idx} className="resource-item group">
+                            <div className="resource-icon group-hover:scale-110 transition-transform">
+                              <PlayCircle size={20} />
+                            </div>
+                            <div className="flex-1">
+                              <div className="resource-name">{res.replace('_', ' ')}</div>
+                              <div className="text-[11px] text-slate-400 font-bold uppercase">Video Lesson • 15m</div>
+                            </div>
+                            <ChevronRight size={18} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
+                          </div>
+                        ))}
+                        <div className="resource-item group bg-amber-50/50 border-amber-100">
+                          <div className="resource-icon text-amber-600 bg-white">
+                            <Star size={20} />
+                          </div>
+                          <div className="flex-1">
+                            <div className="resource-name text-amber-900 font-bold">Practice Exercises</div>
+                            <div className="text-[11px] text-amber-600/60 font-bold uppercase">Quiz • 10 Questions</div>
+                          </div>
+                          <ChevronRight size={18} className="text-amber-300" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <button className="w-full mt-8 h-14 bg-slate-900 hover:bg-black text-white rounded-2xl font-bold transition-all flex items-center justify-center gap-2 group">
+                      Continue Learning
+                      <ChevronRight size={20} className="group-hover:translate-x-1 transition-transform" />
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          </div>
         </div>
       </div>
     </MainLayout>

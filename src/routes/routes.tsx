@@ -9,6 +9,7 @@ import { ProtectedRoute } from "@/guard/route.guard"
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))
 const ResultPage = lazy(() => import("@/pages/practice/ResultPage"))
+const RoadmapSetupPage = lazy(() => import("@/pages/roadmap/RoadmapSetupPage"))
 const RoadmapPage = lazy(() => import("@/pages/roadmap/RoadmapPage"))
 
 export const routes = [
@@ -18,6 +19,10 @@ export const routes = [
   },
   {
     path: "/roadmap",
+    element: <RoadmapSetupPage />,
+  },
+  {
+    path: "/roadmap/:id",
     element: <RoadmapPage />,
   },
   {
