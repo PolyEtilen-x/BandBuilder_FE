@@ -2,21 +2,27 @@ import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom"
 import { motion, AnimatePresence } from "framer-motion"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
-import { useRoadmap } from "@/hooks/useRoadmap"
-import { Roadmap, RoadmapNode } from "@/types/roadmap.types"
-import { Clock, BookOpen, CheckCircle2, ChevronRight, PlayCircle, Star, Sparkles } from "lucide-react"
+import { RoadmapDetailResponse, RoadmapNode } from "@/types/roadmap.types"
+import { Clock, BookOpen, CheckCircle2, ChevronRight, PlayCircle, Star, Sparkles, Mic, Headphones, PenTool, GraduationCap } from "lucide-react"
 import mockRoadmap from "@/data/roadmap/ielts_5_to_6.json"
 import "./style.css"
 
+const getIcon = (type: string) => {
+  switch (type) {
+    case 'speaking': return <Mic size={18} />
+    case 'listening': return <Headphones size={18} />
+    case 'reading': return <BookOpen size={18} />
+    case 'writing': return <PenTool size={18} />
+    case 'foundation': return <GraduationCap size={18} />
+    default: return <Star size={18} />
+  }
+}
+
 export default function RoadmapPage() {
   const { id } = useParams()
-  const [selectedNode, setSelectedNode] = useState<RoadmapNode | null>(null)
+  const [selectedNode, setSelectedNode] = useState<any>(null)
   
-  // In a real app, we would use the hook:
-  // const { data: roadmap, isLoading } = useRoadmap(id || "")
-  
-  // For demo, we use the mock data directly
-  const roadmap: Roadmap = mockRoadmap as Roadmap
+  const roadmap: RoadmapDetailResponse = mockRoadmap as any
 
   useEffect(() => {
     if (roadmap.nodes.length > 0 && !selectedNode) {
@@ -42,7 +48,7 @@ export default function RoadmapPage() {
             {/* LEFT: TIMELINE */}
             <div className="journey-timeline">
               <div className="journey-line">
-                <div className="journey-line-progress" style={{ height: '40%' }}></div>
+                <div className="journey-line-progress" style={{ height: '33%' }}></div>
               </div>
 
               {roadmap.nodes.map((node, index) => (
@@ -55,15 +61,24 @@ export default function RoadmapPage() {
                   onClick={() => setSelectedNode(node)}
                 >
                   <div className="node-dot">
-                    {index === 0 && <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>}
+                    {node.isCompleted ? (
+                      <div className="absolute inset-0 bg-blue-600 rounded-full flex items-center justify-center text-white">
+                        <CheckCircle2 size={14} />
+                      </div>
+                    ) : (
+                      index === 1 && <div className="absolute inset-0 bg-blue-500 rounded-full animate-ping opacity-20"></div>
+                    )}
                   </div>
                   <div className="node-card">
-                    <span className="node-tag">{node.estimatedTime}</span>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="node-tag">{node.estimatedTime}</span>
+                      <div className="text-slate-400">{getIcon(node.iconType)}</div>
+                    </div>
                     <h3 className="text-xl font-bold text-slate-800 mb-2">{node.title}</h3>
                     <p className="text-slate-500 text-sm line-clamp-2">{node.description}</p>
                     
                     <div className="flex flex-wrap gap-2 mt-4">
-                      {node.focus.map(f => (
+                      {node.focusSkills.map(f => (
                         <span key={f} className="px-2 py-1 bg-slate-50 text-slate-500 rounded-md text-[10px] font-bold uppercase border border-slate-100">
                           {f}
                         </span>
@@ -102,7 +117,7 @@ export default function RoadmapPage() {
                     <div className="detail-section">
                       <h4 className="detail-section-title">Key Skills</h4>
                       <div className="flex flex-wrap gap-2">
-                        {selectedNode.skills.map(skill => (
+                        {selectedNode.focusSkills.map((skill: string) => (
                           <div key={skill} className="flex items-center gap-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl font-bold text-sm">
                             <CheckCircle2 size={16} />
                             {skill}
@@ -114,28 +129,18 @@ export default function RoadmapPage() {
                     <div className="detail-section">
                       <h4 className="detail-section-title">Lessons & Resources</h4>
                       <div className="resource-list">
-                        {selectedNode.resources.map((res, idx) => (
+                        {selectedNode.resources.map((res: any, idx: number) => (
                           <div key={idx} className="resource-item group">
                             <div className="resource-icon group-hover:scale-110 transition-transform">
                               <PlayCircle size={20} />
                             </div>
                             <div className="flex-1">
-                              <div className="resource-name">{res.replace('_', ' ')}</div>
-                              <div className="text-[11px] text-slate-400 font-bold uppercase">Video Lesson • 15m</div>
+                              <div className="resource-name">{res.title}</div>
+                              <div className="text-[11px] text-slate-400 font-bold uppercase">{res.type} • 15m</div>
                             </div>
                             <ChevronRight size={18} className="text-slate-300 group-hover:text-blue-500 transition-colors" />
                           </div>
                         ))}
-                        <div className="resource-item group bg-amber-50/50 border-amber-100">
-                          <div className="resource-icon text-amber-600 bg-white">
-                            <Star size={20} />
-                          </div>
-                          <div className="flex-1">
-                            <div className="resource-name text-amber-900 font-bold">Practice Exercises</div>
-                            <div className="text-[11px] text-amber-600/60 font-bold uppercase">Quiz • 10 Questions</div>
-                          </div>
-                          <ChevronRight size={18} className="text-amber-300" />
-                        </div>
                       </div>
                     </div>
 

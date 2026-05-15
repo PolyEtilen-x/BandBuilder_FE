@@ -8,49 +8,71 @@
   "estimatedDuration": "3 months",
   "nodes": [
     {
-      "id": "foundation",
-      "title": "Foundation",
+      "id": "node_1",
+      "roadmapId": "ielts_5_to_6",
+      "title": "IELTS Foundation",
       "description": "Xây dựng nền tảng IELTS: Ngữ pháp và Từ vựng cốt lõi.",
+      "orderIndex": 0,
       "estimatedTime": "2 weeks",
-      "focus": ["Grammar", "Vocabulary"],
-      "skills": ["speaking", "writing"],
-      "resources": ["grammar_basics", "vocab_foundation"]
+      "focusSkills": ["Grammar", "Vocabulary"],
+      "iconType": "foundation",
+      "resources": [
+        {
+          "id": "res_1",
+          "nodeId": "node_1",
+          "type": "video",
+          "title": "IELTS Grammar Essentials",
+          "contentId": "gram_01"
+        },
+        {
+          "id": "res_2",
+          "nodeId": "node_1",
+          "type": "reading",
+          "title": "Vocab for Band 5",
+          "contentId": "vocab_01"
+        }
+      ],
+      "isCompleted": true
     },
     {
-      "id": "listening_strategies",
-      "title": "Listening Strategies",
+      "id": "node_2",
+      "roadmapId": "ielts_5_to_6",
+      "title": "Listening Mastery",
       "description": "Luyện tập nghe số, đánh vần và nhận diện từ khóa.",
+      "orderIndex": 1,
       "estimatedTime": "3 weeks",
-      "focus": ["Number spelling", "Keyword recognition"],
-      "skills": ["listening"],
-      "resources": ["listening_lab_1", "spelling_practice"]
+      "focusSkills": ["Spelling", "Keywords"],
+      "iconType": "listening",
+      "resources": [
+        {
+          "id": "res_3",
+          "nodeId": "node_2",
+          "type": "quiz",
+          "title": "Spelling Drill",
+          "contentId": "quiz_01"
+        }
+      ],
+      "isCompleted": false
     },
     {
-      "id": "reading_skimming",
-      "title": "Reading Skimming",
-      "description": "Kỹ thuật Skimming và Scanning cơ bản để nắm bắt ý chính.",
+      "id": "node_3",
+      "roadmapId": "ielts_5_to_6",
+      "title": "Reading Strategies",
+      "description": "Kỹ thuật Skimming và Scanning cơ bản.",
+      "orderIndex": 2,
       "estimatedTime": "2 weeks",
-      "focus": ["Skimming", "Scanning"],
-      "skills": ["reading"],
-      "resources": ["reading_tips_101"]
-    },
-    {
-      "id": "writing_task_1",
-      "title": "Writing Task 1",
-      "description": "Cách mô tả biểu đồ và cấu trúc đoạn văn chuẩn.",
-      "estimatedTime": "3 weeks",
-      "focus": ["Data description", "Paragraph organization"],
-      "skills": ["writing"],
-      "resources": ["task_1_templates"]
-    },
-    {
-      "id": "speaking_fluency",
-      "title": "Speaking Fluency",
-      "description": "Cải thiện sự trôi chảy và tự tin khi trả lời Part 1.",
-      "estimatedTime": "2 weeks",
-      "focus": ["Fluency", "Confidence"],
-      "skills": ["speaking"],
-      "resources": ["speaking_simulator_part_1"]
+      "focusSkills": ["Skimming", "Scanning"],
+      "iconType": "reading",
+      "resources": [
+        {
+          "id": "res_4",
+          "nodeId": "node_3",
+          "type": "practice_test",
+          "title": "Basic Reading Test",
+          "contentId": "test_01"
+        }
+      ],
+      "isCompleted": false
     }
   ]
 }
