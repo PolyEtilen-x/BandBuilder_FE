@@ -11,6 +11,9 @@ interface PracticeStore {
     
     setAnswer: (id: string, value: any) => void
     clearAnswers: () => void
+
+    startTime: number | null
+    setStartTime: (time: number | null) => void
 }
 
 export const usePracticeStore = create<PracticeStore>()(
@@ -36,7 +39,10 @@ export const usePracticeStore = create<PracticeStore>()(
                     answers: { ...state.answers, [id]: value }
                 })),
 
-            clearAnswers: () => set({ answers: {} })
+            clearAnswers: () => set({ answers: {} }),
+
+            startTime: null,
+            setStartTime: (time) => set({ startTime: time })
         }),
         {
             name: "practice-storage", 

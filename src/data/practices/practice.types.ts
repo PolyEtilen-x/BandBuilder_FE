@@ -59,3 +59,13 @@ export interface PracticeTestPreview {
   skill: IELTSComponentType;
   thumbnail?: string;
 }
+
+export interface AnswerSubmission {
+  questionId: string;
+  userAnswer: string;
+}
+
+export interface PracticeSubmitDTO {
+  answers: AnswerSubmission[];
+  timeSpentSec: number;
+}

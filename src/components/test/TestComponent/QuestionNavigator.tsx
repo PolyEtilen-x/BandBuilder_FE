@@ -1,10 +1,11 @@
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { useNavigate, useParams } from "react-router-dom"
+import { practiceApi } from "@/api/practice.api"
 
 export default function QuestionNavigator({ questionBlocks = [], examId: propExamId, currentUnit }: any) {
   const { id: urlId } = useParams()
   const examId = propExamId || urlId
-  const answers = usePracticeStore(state => state.answers)
+  const { answers, startTime, sidebar, clearAnswers } = usePracticeStore()
   const navigate = useNavigate()
 
   const parseRange = (range: string) => {
@@ -31,13 +32,34 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
     if (el) el.scrollIntoView({ behavior: "smooth", block: "center" })
   }
 
-  const handleFinish = () => {
+  const handleFinish = async () => {
     if (window.confirm("Are you sure you want to finish the test?")) {
-      navigate(`/practice/result/${examId}`, {
-        state: {
-          examData: { sections: [currentUnit] }
-        }
-      })
+      try {
+        const timeSpentSec = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
+
+        // Transform answers to API format
+        const formattedAnswers = Object.entries(answers).map(([questionId, userAnswer]) => ({
+          questionId,
+          userAnswer: String(userAnswer)
+        }))
+
+        // Call submit API
+        await practiceApi.submitSkillAnswers(examId, sidebar.skill, {
+          answers: formattedAnswers,
+          timeSpentSec
+        })
+
+        // Clear answers and navigate
+        clearAnswers()
+        navigate(`/practice/result/${examId}`, {
+          state: {
+            examData: { sections: [currentUnit] }
+          }
+        })
+      } catch (err) {
+        console.error("Submit failed:", err)
+        alert("Failed to submit test results. Please try again.")
+      }
     }
   }
 

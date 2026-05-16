@@ -9,6 +9,7 @@ import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { usePracticeSkills, useSkillPreview } from "@/hooks/usePractice"
+import { practiceApi } from "@/api/practice.api"
 import "./style.css"
 
 export default function PracticePage() {
@@ -19,7 +20,7 @@ export default function PracticePage() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
 
   // 1. Use Zustand Store for Sidebar
-  const { sidebar, setSidebar } = usePracticeStore()
+  const { sidebar, setSidebar, setStartTime } = usePracticeStore()
 
   // 2. use TanStack Query for lists Skills
   const { data: rawSkills = [], isLoading: loading } = usePracticeSkills()
@@ -54,12 +55,23 @@ export default function PracticePage() {
 
     try {
       setOpenModal(false)
+
+      // Call start API
+      await practiceApi.startSkillAttempt(selectedTest.id, sidebar.skill)
+      setStartTime(Date.now())
+
       navigate(
         `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
         { state: { mode } }
       )
     } catch (err) {
       console.error("Start exam failed:", err)
+      // Still navigate even if API fails? Or show error? 
+      // Usually better to navigate so user can still practice if it's just a tracking API.
+      navigate(
+        `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
+        { state: { mode } }
+      )
     }
   }
 
