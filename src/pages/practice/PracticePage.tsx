@@ -56,8 +56,9 @@ export default function PracticePage() {
     try {
       setOpenModal(false)
 
-      // Call start API
-      await practiceApi.startSkillAttempt(selectedTest.id, sidebar.skill)
+      // Call start API using real ID
+      const apiId = selectedTest.realId || selectedTest.id
+      await practiceApi.startSkillAttempt(apiId, sidebar.skill)
       setStartTime(Date.now())
 
       navigate(
@@ -153,8 +154,8 @@ export default function PracticePage() {
 }
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
-  const skillId = skill.skillContentId || skill.id || skill._id
-  const { data: enriched, isLoading } = useSkillPreview(skillId)
+  const skillSlug = skill.skillContentId || skill.id || skill._id
+  const { data: enriched, isLoading } = useSkillPreview(skillSlug)
 
   if (isLoading) {
     return (
@@ -171,14 +172,16 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
 
   const cards = sidebar.mode === "full"
     ? [{
-      id: skillId,
+      id: skillSlug,
+      realId: skill.id || skill._id,
       title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
       unitId: "full",
     }]
     : units.filter((u: any) => u.id === sidebar.subSection).map((u: any) => ({
-      id: skillId,
+      id: skillSlug,
+      realId: skill.id || skill._id,
       title: u.title,
       questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
       numberOfVisits: skill.numberOfVisits,
@@ -189,7 +192,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
     <>
       {cards.map((c: any) => (
         <PracticeCard
-          key={`${skillId}-${c.unitId}`}
+          key={`${skillSlug}-${c.unitId}`}
           {...c}
           progress={0}
           onClick={() => onClickTest(c)}
