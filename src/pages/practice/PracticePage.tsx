@@ -155,6 +155,11 @@ export default function PracticePage() {
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const skillSlug = skill.skillContentId || skill.id || skill._id
+  // Tìm ID thực tế (ưu tiên các trường ID của bộ đề)
+  const realId = skill.practiceTestId || skill.practiceId || skill.testId || skill.id || skill._id
+
+  console.log("DEBUG - Skill IDs:", { skillSlug, realId, originalSkill: skill });
+
   const { data: enriched, isLoading } = useSkillPreview(skillSlug)
 
   if (isLoading) {
@@ -173,7 +178,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const cards = sidebar.mode === "full"
     ? [{
       id: skillSlug,
-      realId: skill.practiceTestId || skill.id || skill._id,
+      realId: realId,
       title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
@@ -181,7 +186,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
     }]
     : units.filter((u: any) => u.id === sidebar.subSection).map((u: any) => ({
       id: skillSlug,
-      realId: skill.id || skill._id,
+      realId: realId,
       title: u.title,
       questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
       numberOfVisits: skill.numberOfVisits,
