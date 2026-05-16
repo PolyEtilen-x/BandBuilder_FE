@@ -173,7 +173,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const cards = sidebar.mode === "full"
     ? [{
       id: skillSlug,
-      realId: skill.id || skill._id,
+      realId: skill.practiceTestId || skill.id || skill._id,
       title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
