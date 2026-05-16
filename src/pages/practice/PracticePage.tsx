@@ -155,7 +155,8 @@ export default function PracticePage() {
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const skillSlug = skill.skillContentId || skill.id || skill._id
-  const realId = skill.practiceTestId || skill.practiceId || skill.testId || skill.id || skill._id
+  // Lấy ID từ mảng practiceTests[0] theo đúng cấu trúc dữ liệu thực tế
+  const realId = skill.practiceTests?.[0]?.practiceTestId || skill.testId || skill.id || skill._id
 
   console.log(`DEBUG - IDs for ${skillSlug}:`, { realId });
   console.log("RAW SKILL OBJECT:", skill);
