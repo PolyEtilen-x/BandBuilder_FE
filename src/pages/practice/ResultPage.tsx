@@ -4,6 +4,7 @@ import { usePracticeStore } from "@/services/practice/practice.store"
 import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { practiceApi } from "@/api/practice.api"
+import { useUIStore } from "@/services/ui/ui.store"
 
 import "./ResultPage.css"
 
@@ -13,6 +14,9 @@ export default function ResultPage() {
   const navigate = useNavigate()
   const answers = usePracticeStore(state => state.answers)
   const clearAnswers = usePracticeStore(state => state.clearAnswers)
+
+  // UI state hooks
+  const { t, language } = useUIStore()
 
   // Safety check for undefined ID
   useEffect(() => {
@@ -86,12 +90,14 @@ export default function ResultPage() {
     return { total, correct, wrong, skipped, score, details }
   }, [examData, answers])
 
-  if (isLoading) return <div className="loading-state">Analyzing results...</div>
+  if (isLoading) return <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
 
   if (!stats || stats.total === 0) return (
     <div className="error-state">
-      <p>No question data found to calculate score.</p>
-      <button onClick={() => navigate("/practice")} className="back-home-btn">Back to Practice</button>
+      <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
+      <button onClick={() => navigate("/practice")} className="back-home-btn cursor-pointer">
+        {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
+      </button>
     </div>
   )
 
@@ -99,11 +105,11 @@ export default function ResultPage() {
     <div className="result-page-container">
       <header className="result-header">
         <div className="result-header-content">
-          <button onClick={() => navigate(-1)} className="back-button">
+          <button onClick={() => navigate(-1)} className="back-button cursor-pointer">
             <ArrowLeft size={20} />
-            Back
+            {t("result_back")}
           </button>
-          <div className="header-title">Practice Results</div>
+          <div className="header-title">{t("result_header_title")}</div>
           <div style={{ width: 40 }}></div>
         </div>
       </header>
@@ -116,21 +122,21 @@ export default function ResultPage() {
             <div className="overview-card">
               <div className="overview-content">
                 <h1 className="overview-title">
-                  {stats.score >= 80 ? "Excellent! 🔥" : stats.score >= 50 ? "Good Job! 👍" : "Keep Trying! 💪"}
+                  {stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying")}
                 </h1>
-                <p className="overview-subtitle">You completed the practice with {stats.score}% accuracy.</p>
+                <p className="overview-subtitle">{t("result_score_subtitle")} {stats.score}% {language === "vi" ? "độ chính xác." : "accuracy."}</p>
 
                 <div className="stats-grid">
                   <div className="stat-box correct">
-                    <div className="stat-label">Correct</div>
+                    <div className="stat-label">{t("result_correct")}</div>
                     <div className="stat-value">{stats.correct}</div>
                   </div>
                   <div className="stat-box wrong">
-                    <div className="stat-label">Wrong</div>
+                    <div className="stat-label">{t("result_wrong")}</div>
                     <div className="stat-value">{stats.wrong}</div>
                   </div>
                   <div className="stat-box skipped">
-                    <div className="stat-label">Skipped</div>
+                    <div className="stat-label">{t("result_skipped")}</div>
                     <div className="stat-value">{stats.skipped}</div>
                   </div>
                 </div>
@@ -139,7 +145,7 @@ export default function ResultPage() {
 
             <div className="details-card">
               <div className="details-header">
-                <h2>Performance by Question Type</h2>
+                <h2>{t("result_perf_by_type")}</h2>
               </div>
               <div className="details-list">
                 {stats.details.map((item: any, idx: number) => (
@@ -150,13 +156,13 @@ export default function ResultPage() {
                       </div>
                       <div className="item-text">
                         <div className="item-type">{item.type.replace(/_/g, " ")}</div>
-                        <div className="item-count">{item.total} questions</div>
+                        <div className="item-count">{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
                       </div>
                     </div>
                     <div className="item-progress-container">
                       <div className="progress-text">
                         <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
-                        <div className="progress-label">Accuracy</div>
+                        <div className="progress-label">{t("result_accuracy")}</div>
                       </div>
                       <div className="progress-bar-bg">
                         <div
@@ -178,39 +184,39 @@ export default function ResultPage() {
                 <div className="analysis-icon-box">
                   <Clock size={20} color="#60a5fa" />
                 </div>
-                <div className="analysis-label">Analysis</div>
+                <div className="analysis-label">{t("result_analysis")}</div>
               </div>
 
               <div className="score-display">
                 {stats.score}<span className="score-unit">%</span>
               </div>
               <p className="analysis-text">
-                Review the explanations to understand your mistakes and improve in your next practice session!
+                {t("result_analysis_text")}
               </p>
 
               <div className="action-buttons">
                 <button
                   onClick={() => navigate(`/practice/review/${id}`)}
-                  className="primary-btn"
+                  className="primary-btn cursor-pointer"
                 >
-                  REVIEW EXPLANATION <ChevronRight size={18} />
+                  {t("result_btn_review")} <ChevronRight size={18} />
                 </button>
                 <button
                   onClick={() => {
                     clearAnswers()
                     navigate("/practice")
                   }}
-                  className="secondary-btn"
+                  className="secondary-btn cursor-pointer"
                 >
-                  PRACTICE MORE
+                  {t("result_btn_more")}
                 </button>
               </div>
             </div>
 
             <div className="tip-card">
-              <h3 className="tip-title">Tip for you 💡</h3>
+              <h3 className="tip-title">{t("result_tip_title")}</h3>
               <p className="tip-text">
-                Reviewing wrong answers is more important than doing new tasks. Spend at least 10 minutes reading the explanations.
+                {t("result_tip_text")}
               </p>
             </div>
           </div>

@@ -142,6 +142,26 @@ export type TranslationKey =
   | "upgrade_modal_success_desc"
   | "upgrade_modal_profile_btn"
 
+  // RESULT PAGE
+  | "result_back"
+  | "result_header_title"
+  | "result_score_excellent"
+  | "result_score_good"
+  | "result_score_keep_trying"
+  | "result_score_subtitle"
+  | "result_correct"
+  | "result_wrong"
+  | "result_skipped"
+  | "result_perf_by_type"
+  | "result_questions"
+  | "result_accuracy"
+  | "result_analysis"
+  | "result_analysis_text"
+  | "result_btn_review"
+  | "result_btn_more"
+  | "result_tip_title"
+  | "result_tip_text"
+
 export const translations: Record<"vi" | "en", Record<TranslationKey, string>> = {
   vi: {
     nav_roadmap: "Lộ Trình",
@@ -282,7 +302,27 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     upgrade_modal_waiting: "Hệ thống đang chờ bạn chuyển khoản...",
     upgrade_modal_success_title: "Thanh Toán Thành Công!",
     upgrade_modal_success_desc: "Tài khoản của bạn đã được nâng cấp lên VIP thành công. Bạn đã có toàn quyền trải nghiệm các tính năng cao cấp nhất.",
-    upgrade_modal_profile_btn: "Về Trang Cá Nhân"
+    upgrade_modal_profile_btn: "Về Trang Cá Nhân",
+
+    // RESULT PAGE (VI)
+    result_back: "Quay lại",
+    result_header_title: "Kết Quả Luyện Tập",
+    result_score_excellent: "Xuất Sắc! 🔥",
+    result_score_good: "Làm Tốt Lắm! 👍",
+    result_score_keep_trying: "Cố Gắng Lên! 💪",
+    result_score_subtitle: "Bạn đã hoàn thành bài thi thử với độ chính xác đạt",
+    result_correct: "Đúng",
+    result_wrong: "Sai",
+    result_skipped: "Bỏ qua",
+    result_perf_by_type: "Hiệu Suất Theo Dạng Câu Hỏi",
+    result_questions: "câu hỏi",
+    result_accuracy: "Chính xác",
+    result_analysis: "Phân Tích",
+    result_analysis_text: "Hãy xem kỹ lời giải thích chi tiết để hiểu rõ các lỗi sai và bứt phá điểm số ở những lần luyện tập tiếp theo!",
+    result_btn_review: "XEM CHI TIẾT ĐÁP ÁN",
+    result_btn_more: "LUYỆN TẬP ĐỀ KHÁC",
+    result_tip_title: "Lời khuyên dành cho bạn 💡",
+    result_tip_text: "Xem lại các câu trả lời sai quan trọng hơn nhiều so với việc làm đề mới. Hãy dành ít nhất 10 phút để đọc kỹ phần giải thích chi tiết."
   },
   en: {
     nav_roadmap: "Roadmap",
@@ -423,6 +463,26 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     upgrade_modal_waiting: "Waiting for your payment...",
     upgrade_modal_success_title: "Payment Successful!",
     upgrade_modal_success_desc: "Your account has been upgraded successfully. You can now enjoy all premium features.",
-    upgrade_modal_profile_btn: "Go to Profile"
+    upgrade_modal_profile_btn: "Go to Profile",
+
+    // RESULT PAGE (EN)
+    result_back: "Back",
+    result_header_title: "Practice Results",
+    result_score_excellent: "Excellent! 🔥",
+    result_score_good: "Good Job! 👍",
+    result_score_keep_trying: "Keep Trying! 💪",
+    result_score_subtitle: "You completed the practice with",
+    result_correct: "Correct",
+    result_wrong: "Wrong",
+    result_skipped: "Skipped",
+    result_perf_by_type: "Performance by Question Type",
+    result_questions: "questions",
+    result_accuracy: "Accuracy",
+    result_analysis: "Analysis",
+    result_analysis_text: "Review the explanations to understand your mistakes and improve in your next practice session!",
+    result_btn_review: "REVIEW EXPLANATION",
+    result_btn_more: "PRACTICE MORE",
+    result_tip_title: "Tip for you 💡",
+    result_tip_text: "Reviewing wrong answers is more important than doing new tasks. Spend at least 10 minutes reading the explanations."
   }
 }
