@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { LogOut, Settings, Award, BookOpen, Clock, TrendingUp, Calendar, CreditCard } from "lucide-react"
 import { useUserProfile } from "@/hooks/useUser"
 import EditProfileModal from "./EditProfileModal"
+import { useUIStore } from "@/services/ui/ui.store"
 import "./style.css"
 
 export default function ProfilePage() {
@@ -13,11 +14,14 @@ export default function ProfilePage() {
   const { data: profile, isLoading, error } = useUserProfile()
   const [openEditModal, setOpenEditModal] = useState(false)
 
+  // UI state hooks
+  const { t, language } = useUIStore()
+
   if (isLoading) return (
     <MainLayout>
       <div className="profile-loading">
         <div className="spinner"></div>
-        <p>Loading your profile...</p>
+        <p>{t("profile_loading")}</p>
       </div>
     </MainLayout>
   )
@@ -25,8 +29,10 @@ export default function ProfilePage() {
   if (error || !profile) return (
     <MainLayout>
       <div className="profile-error">
-        <p>Could not load profile. Please try again later.</p>
-        <button onClick={() => window.location.reload()}>Retry</button>
+        <p>{t("profile_error")}</p>
+        <button onClick={() => window.location.reload()}>
+          {language === "vi" ? "Thử lại" : "Retry"}
+        </button>
       </div>
     </MainLayout>
   )
@@ -34,10 +40,10 @@ export default function ProfilePage() {
   const { user, stats, recentActivities } = profile
 
   const statsCards = [
-    { label: "Tests Completed", value: stats.testsCompleted, icon: <BookOpen size={20} />, color: "#3b82f6" },
-    { label: "Avg. Band Score", value: stats.avgBandScore.toFixed(1), icon: <TrendingUp size={20} />, color: "#10b981" },
-    { label: "Study Streak", value: `${stats.studyStreak} Days`, icon: <Calendar size={20} />, color: "#f59e0b" },
-    { label: "Total Hours", value: `${(stats.totalStudyTime / 60).toFixed(1)}h`, icon: <Clock size={20} />, color: "#8b5cf6" },
+    { label: t("profile_stat_tests"), value: stats.testsCompleted, icon: <BookOpen size={20} />, color: "#3b82f6" },
+    { label: t("profile_stat_avg"), value: stats.avgBandScore.toFixed(1), icon: <TrendingUp size={20} />, color: "#10b981" },
+    { label: t("profile_stat_streak"), value: language === "vi" ? `${stats.studyStreak} Ngày` : `${stats.studyStreak} Days`, icon: <Calendar size={20} />, color: "#f59e0b" },
+    { label: t("profile_stat_hours"), value: `${(stats.totalStudyTime / 60).toFixed(1)}h`, icon: <Clock size={20} />, color: "#8b5cf6" },
   ]
 
   return (
@@ -63,31 +69,31 @@ export default function ProfilePage() {
                 <div className="user-name-row">
                   <h1>{user.fullName}</h1>
                   <span className={`membership-tag ${user.isPro ? 'pro' : 'basic'}`}>
-                    {user.isPro ? 'Premium' : 'Basic Plan'}
+                    {user.isPro ? t("profile_membership_pro") : t("profile_membership_basic")}
                   </span>
                 </div>
                 <p className="user-email-text">{user.email}</p>
                 <div className="user-credits-info">
                   <CreditCard size={14} />
-                  <span>{user.totalCredits - user.usedCredits} credits remaining</span>
+                  <span>{user.totalCredits - user.usedCredits} {t("profile_credits_rem")}</span>
                 </div>
               </div>
             </div>
 
             <div className="profile-header-actions">
               {!user.isPro && (
-                <button className="btn-action-primary upgrade" onClick={() => navigate("/upgrade")}>
+                <button className="btn-action-primary upgrade cursor-pointer" onClick={() => navigate("/upgrade")}>
                   <Award size={18} />
-                  Upgrade Pro
+                  {t("profile_upgrade_btn")}
                 </button>
               )}
-              <button className="btn-action-secondary" onClick={() => setOpenEditModal(true)}>
+              <button className="btn-action-secondary cursor-pointer" onClick={() => setOpenEditModal(true)}>
                 <Settings size={18} />
-                Edit Profile
+                {t("profile_edit_btn")}
               </button>
-              <button className="btn-action-outline logout" onClick={() => logout()}>
+              <button className="btn-action-outline logout cursor-pointer" onClick={() => logout()}>
                 <LogOut size={18} />
-                Sign Out
+                {t("profile_signout")}
               </button>
             </div>
           </section>
@@ -111,14 +117,14 @@ export default function ProfilePage() {
           <div className="profile-bottom-grid">
             <div className="recent-activity-card">
               <div className="card-header-row">
-                <h2>Recent Activity</h2>
-                <button className="text-btn">View History</button>
+                <h2>{t("profile_activity_title")}</h2>
+                <button className="text-btn">{t("profile_activity_view")}</button>
               </div>
 
               <div className="activity-items-list">
                 {recentActivities.length === 0 ? (
                   <div className="empty-activity">
-                    <p>No recent activity found. Start practicing to see your progress!</p>
+                    <p>{t("profile_activity_empty")}</p>
                   </div>
                 ) : (
                   recentActivities.map((activity) => (
@@ -136,7 +142,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="item-score-badge">
                         <div className="score-value">
-                          {typeof activity.score === 'object' ? 'Completed' : `Band ${activity.score}`}
+                          {typeof activity.score === 'object' ? (language === "vi" ? "Hoàn thành" : "Completed") : `Band ${activity.score}`}
                         </div>
                         <div className={`score-status ${activity.status.toLowerCase()}`}>
                           {activity.status}
@@ -150,26 +156,28 @@ export default function ProfilePage() {
 
             <div className="profile-sidebar-cards">
               <div className="account-summary-card">
-                <h3>Account Summary</h3>
+                <h3>{t("profile_summary_title")}</h3>
                 <div className="summary-row">
-                  <span>Joined on</span>
+                  <span>{t("profile_summary_joined")}</span>
                   <strong>{new Date(user.createdAt).toLocaleDateString()}</strong>
                 </div>
                 <div className="summary-row">
-                  <span>Total Practice</span>
-                  <strong>{stats.testsCompleted} sessions</strong>
+                  <span>{t("profile_summary_sessions")}</span>
+                  <strong>
+                    {stats.testsCompleted} {language === "vi" ? "phiên" : "sessions"}
+                  </strong>
                 </div>
                 <div className="summary-row">
-                  <span>Credits Used</span>
+                  <span>{t("profile_summary_credits")}</span>
                   <strong>{user.usedCredits} / {user.totalCredits}</strong>
                 </div>
               </div>
 
               <div className="pro-upsell-card">
                 <div className="upsell-icon"><Award size={32} /></div>
-                <h4>Go Premium</h4>
-                <p>Unlock detailed analytics, unlimited practice tests, and expert feedback.</p>
-                <button onClick={() => navigate("/upgrade")}>Learn More</button>
+                <h4>{t("profile_upsell_title")}</h4>
+                <p>{t("profile_upsell_desc")}</p>
+                <button className="cursor-pointer" onClick={() => navigate("/upgrade")}>{t("profile_upsell_btn")}</button>
               </div>
             </div>
           </div>

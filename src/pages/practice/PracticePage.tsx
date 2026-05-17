@@ -5,11 +5,11 @@ import PracticeSidebar from "@/components/practice/PracticeSidebar"
 import PracticeCard from "@/components/practice/PracticeCard"
 import ModeSelectModal from "@/components/SelectModal/ModeSelectModal"
 import AuthRequiredModal from "@/components/SelectModal/AuthRequiredModal"
-import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { usePracticeSkills, useSkillPreview } from "@/hooks/usePractice"
 import { practiceApi } from "@/api/practice.api"
+import { useUIStore } from "@/services/ui/ui.store"
 import "./style.css"
 
 export default function PracticePage() {
@@ -28,6 +28,9 @@ export default function PracticePage() {
   const [openModal, setOpenModal] = useState(false)
   const [showAuthModal, setShowAuthModal] = useState(false)
   const [selectedTest, setSelectedTest] = useState<any>(null)
+
+  // UI state hooks
+  const { t, language } = useUIStore()
 
   const handleClickTest = (test: any) => {
     setSelectedTest(test)
@@ -49,7 +52,7 @@ export default function PracticePage() {
     }
 
     if (!selectedTest.id || selectedTest.id === "undefined") {
-      alert("Error: Test ID is invalid. Please try another test.")
+      alert(language === "vi" ? "Lỗi: ID đề thi không hợp lệ. Vui lòng thử đề thi khác." : "Error: Test ID is invalid. Please try another test.")
       return
     }
 
@@ -67,8 +70,7 @@ export default function PracticePage() {
       )
     } catch (err) {
       console.error("Start exam failed:", err)
-      // Still navigate even if API fails? Or show error? 
-      // Usually better to navigate so user can still practice if it's just a tracking API.
+      // Navigate anyway so user can still practice if tracking API fails
       navigate(
         `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
         { state: { mode } }
@@ -92,8 +94,8 @@ export default function PracticePage() {
 
   const pageTitle =
     sidebar.mode === "full"
-      ? "Full Practice Test"
-      : getSubSectionLabel(sidebar.skill, sidebar.subSection)
+      ? (language === "vi" ? "Đề Luyện Thi Đầy Đủ" : "Full Practice Test")
+      : getSubSectionLabel(sidebar.skill, sidebar.subSection, t)
 
   return (
     <MainLayout>
@@ -115,9 +117,9 @@ export default function PracticePage() {
           </h2>
 
           {loading ? (
-            <p style={{ color: "#888" }}>Loading practice list...</p>
+            <p style={{ color: "#888" }}>{t("practice_loading")}</p>
           ) : activeSkills.length === 0 ? (
-            <p style={{ color: "#aaa", fontSize: 14 }}>No practice sessions found for this skill.</p>
+            <p style={{ color: "#aaa", fontSize: 14 }}>{t("practice_empty")}</p>
           ) : (
             <div
               style={{
@@ -155,19 +157,25 @@ export default function PracticePage() {
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const skillSlug = skill.skillContentId || skill.id || skill._id
-  // Lấy ID từ mảng practiceTests[0] theo đúng cấu trúc dữ liệu thực tế
   const realId = skill.practiceTests?.[0]?.practiceTestId || skill.testId || skill.id || skill._id
-
-  console.log(`DEBUG - IDs for ${skillSlug}:`, { realId });
-  console.log("RAW SKILL OBJECT:", skill);
-
+  
+  const { theme } = useUIStore()
   const { data: enriched, isLoading } = useSkillPreview(skillSlug)
 
   if (isLoading) {
     return (
-      <div style={{ padding: 20, border: "1px solid #eee", borderRadius: 20, background: "#f9f9f9", height: 160 }} className="animate-pulse">
-        <div style={{ height: 20, background: "#eee", borderRadius: 4, width: "70%", marginBottom: 10 }}></div>
-        <div style={{ height: 15, background: "#eee", borderRadius: 4, width: "40%" }}></div>
+      <div 
+        style={{ 
+          padding: 20, 
+          border: theme === "dark" ? "1px solid #334155" : "1px solid #eee", 
+          borderRadius: 20, 
+          background: theme === "dark" ? "rgba(15, 23, 42, 0.4)" : "#f9f9f9", 
+          height: 160 
+        }} 
+        className="animate-pulse"
+      >
+        <div style={{ height: 20, background: theme === "dark" ? "#334155" : "#eee", borderRadius: 4, width: "70%", marginBottom: 10 }}></div>
+        <div style={{ height: 15, background: theme === "dark" ? "#334155" : "#eee", borderRadius: 4, width: "40%" }}></div>
       </div>
     )
   }
@@ -208,13 +216,13 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   )
 }
 
-function getSubSectionLabel(skill: string, sub: number | null): string {
+function getSubSectionLabel(skill: string, sub: number | null, t: any): string {
   if (sub == null) return ""
   switch (skill) {
-    case "reading": return `Passage ${sub}`
-    case "listening": return `Section ${sub}`
-    case "writing": return `Task ${sub}`
-    case "speaking": return `Part ${sub}`
+    case "reading": return `${t("practice_passage")} ${sub}`
+    case "listening": return `${t("practice_section")} ${sub}`
+    case "writing": return `${t("practice_task")} ${sub}`
+    case "speaking": return `${t("practice_part")} ${sub}`
     default: return String(sub)
   }
 }

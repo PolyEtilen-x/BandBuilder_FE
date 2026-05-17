@@ -1,11 +1,11 @@
 :root {
-  font-family: system-ui, Avenir, Helvetica, Arial, Be Vietnam Pro, sans-serif ;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, Be Vietnam Pro, sans-serif ;
   line-height: 1.5;
   font-weight: 400;
 
   color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #F3F3F3;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -15,52 +15,356 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #174593;
   text-decoration: inherit;
+  transition: color 0.2s;
 }
 a:hover {
-  color: #535bf2;
+  color: #2563eb;
 }
 
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background-color: #ffffff;
+  color: #213547;
+  transition: background-color 0.3s, color 0.3s;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
+/* ────────────────────────────────────────────────────────────────────────── */
+/* GLOBAL DARK MODE OVERRIDES */
+/* ────────────────────────────────────────────────────────────────────────── */
+
+html.dark {
+  color-scheme: dark;
+  background-color: #0b0f19;
 }
 
-button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-size: 1em;
-  font-weight: 500;
-  font-family: inherit;
-  background-color: #1a1a1a;
-  cursor: pointer;
-  transition: border-color 0.25s;
-}
-button:hover {
-  border-color: #646cff;
-}
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
+html.dark body {
+  background-color: #0b0f19 !important;
+  color: #f8fafc !important;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
+/* HOME LANDING MODULE IN DARK MODE */
+.dark .bb-landing {
+  background-color: #0b0f19 !important;
+}
+
+.dark .bb-landing .section {
+  background-color: #0b0f19 !important;
+  color: #e2e8f0 !important;
+}
+
+.dark .bb-landing .bg-alt {
+  background-color: #0f172a !important; /* deep slate-900 */
+}
+
+.dark .bb-landing h1,
+.dark .bb-landing h2,
+.dark .bb-landing h3,
+.dark .bb-landing h4 {
+  color: #f8fafc !important;
+}
+
+.dark .bb-landing p,
+.dark .bb-landing .hero-sub {
+  color: #cbd5e1 !important;
+}
+
+/* Hero Section Custom Styles in Dark Mode */
+.dark .hero-inner {
+  color: #e2e8f0;
+}
+
+.dark .mock-card {
+  background: rgba(15, 23, 42, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+}
+
+.dark .mock-overall {
+  background: rgba(30, 41, 59, 0.5) !important;
+  border-color: rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .mock-crit-row,
+.dark .mock-tip {
+  color: #cbd5e1 !important;
+}
+
+/* Stats Section in Dark Mode */
+.dark .stats-strip {
+  background-color: rgba(15, 23, 42, 0.4) !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.3) !important;
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3) !important;
+}
+
+.dark .stat-value {
+  color: #38bdf8 !important; /* light sky blue */
+}
+
+.dark .stat-label {
+  color: #94a3b8 !important;
+}
+
+/* Cards grids on Home */
+.dark .tool-card,
+.dark .plan-card,
+.dark .testi-card,
+.dark .step-card,
+.dark .faq-row,
+.dark .feature-card {
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark .tool-card:hover,
+.dark .plan-card:hover,
+.dark .testi-card:hover,
+.dark .feature-card:hover {
+  background: rgba(30, 41, 59, 0.6) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.dark .plan-card.plan-popular {
+  background: linear-gradient(135deg, rgba(15, 23, 42, 0.8), rgba(30, 41, 59, 0.8)) !important;
+  border: 2px solid #6366f1 !important;
+}
+
+.dark .plan-badge {
+  background: #6366f1 !important;
+}
+
+.dark .faq-arrow {
+  color: #38bdf8 !important;
+}
+
+.dark .faq-q {
+  color: #f8fafc !important;
+}
+
+/* CTA Banner home */
+.dark .cta-banner {
+  background: linear-gradient(135deg, #090d16, #1e1b4b) !important;
+  border-top: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .cta-banner h2 {
+  color: #ffffff !important;
+}
+
+.dark .cta-banner p {
+  color: #cbd5e1 !important;
+}
+
+/* PRACTICE MODULE IN DARK MODE */
+.dark .practice-sidebar-wrap {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .sidebar-item {
+  color: #cbd5e1 !important;
+}
+
+.dark .sidebar-item:hover {
+  background: rgba(30, 41, 59, 0.5) !important;
+}
+
+.dark .sidebar-item.active {
+  background: rgba(79, 70, 229, 0.15) !important;
+  color: #818cf8 !important;
+  border-right: 3px solid #818cf8 !important;
+}
+
+.dark .practice-card {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .practice-card:hover {
+  background: rgba(30, 41, 59, 0.5) !important;
+  border-color: rgba(56, 189, 248, 0.4) !important;
+  transform: translateY(-2px);
+}
+
+.dark .practice-card-title {
+  color: #f8fafc !important;
+}
+
+.dark .practice-card-desc {
+  color: #94a3b8 !important;
+}
+
+/* PROFILE MODULE IN DARK MODE */
+.dark .profile-page-wrapper {
+  background-color: #0b0f19 !important;
+}
+
+.dark .profile-hero-card {
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .user-name-row h1 {
+  color: #f8fafc !important;
+}
+
+.dark .user-email-text,
+.dark .user-credits-info {
+  color: #cbd5e1 !important;
+}
+
+.dark .profile-stat-box {
+  background: rgba(15, 23, 42, 0.6) !important;
+  border: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .stat-box-value {
+  color: #f8fafc !important;
+}
+
+.dark .stat-box-label {
+  color: #cbd5e1 !important;
+}
+
+.dark .recent-activity-card,
+.dark .account-summary-card,
+.dark .pro-upsell-card {
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .card-header-row h2,
+.dark .recent-activity-card h2,
+.dark .account-summary-card h3,
+.dark .pro-upsell-card h4 {
+  color: #f8fafc !important;
+}
+
+.dark .activity-title {
+  color: #e2e8f0 !important;
+}
+
+.dark .activity-meta {
+  color: #94a3b8 !important;
+}
+
+.dark .summary-row {
+  border-bottom: 1px solid rgba(51, 65, 85, 0.3) !important;
+  color: #cbd5e1 !important;
+}
+
+.dark .summary-row strong {
+  color: #f8fafc !important;
+}
+
+.dark .pro-upsell-card p {
+  color: #cbd5e1 !important;
+}
+
+.dark .pro-upsell-card button {
+  background: linear-gradient(135deg, #38bdf8, #4f46e5) !important;
+  color: #0f172a !important;
+  font-weight: bold;
+}
+
+/* UPGRADE MODULE IN DARK MODE */
+.dark .upgrade-page {
+  background-color: #0b0f19 !important;
+}
+
+.dark .upgrade-header h1 {
+  color: #f8fafc !important;
+}
+
+.dark .upgrade-header p {
+  color: #cbd5e1 !important;
+}
+
+.dark .package-card {
+  background: rgba(15, 23, 42, 0.65) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+}
+
+.dark .package-card:hover {
+  border-color: rgba(56, 189, 248, 0.4) !important;
+}
+
+.dark .package-card.popular {
+  border: 2px solid #818cf8 !important;
+}
+
+.dark .package-name {
+  color: #f8fafc !important;
+}
+
+.dark .price-amount {
+  color: #38bdf8 !important;
+}
+
+.dark .price-unit {
+  color: #cbd5e1 !important;
+}
+
+.dark .package-features li {
+  color: #cbd5e1 !important;
+}
+
+.dark .btn-choose {
+  background: linear-gradient(135deg, #38bdf8, #4f46e5) !important;
+  color: #0f172a !important;
+  font-weight: 800 !important;
+}
+
+.dark .payment-overlay {
+  background: rgba(0, 0, 0, 0.75) !important;
+}
+
+.dark .payment-modal {
+  background: #0f172a !important;
+  border: 1px solid rgba(51, 65, 85, 0.6) !important;
+  color: #f8fafc !important;
+}
+
+.dark .payment-info {
+  background: rgba(15, 23, 42, 0.8) !important;
+  border: 1px solid rgba(51, 65, 85, 0.4) !important;
+}
+
+.dark .info-label {
+  color: #94a3b8 !important;
+}
+
+.dark .info-value {
+  color: #f8fafc !important;
+}
+
+.dark .copy-btn {
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(51, 65, 85, 0.4) !important;
+  color: #38bdf8 !important;
+}
+
+.dark .payment-status-box {
+  background: rgba(15, 23, 42, 0.5) !important;
+  border-color: rgba(51, 65, 85, 0.4) !important;
+  color: #e2e8f0 !important;
+}
+
+/* MATERIALS PAGES IN DARK MODE */
+.dark .vocab-container,
+.dark .grammar-container {
+  background: #0b0f19 !important;
+  color: #f8fafc !important;
+}
+
+.dark .subject-card,
+.dark .topic-box,
+.dark .flashcard-deck {
+  background: rgba(15, 23, 42, 0.7) !important;
+  border: 1px solid rgba(51, 65, 85, 0.5) !important;
+  color: #f8fafc !important;
 }
