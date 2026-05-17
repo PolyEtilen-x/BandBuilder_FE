@@ -4,13 +4,13 @@ import { motion } from "framer-motion"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import { useGenerateRoadmap } from "@/hooks/useRoadmap"
 import { LearningType } from "@/types/roadmap.types"
-import { 
-  ChevronRight, 
-  Target, 
-  GraduationCap, 
-  BookOpen, 
-  Mic, 
-  Headphones, 
+import {
+  ChevronRight,
+  Target,
+  GraduationCap,
+  BookOpen,
+  Mic,
+  Headphones,
   PenTool,
   Sparkles,
   Compass,
@@ -22,7 +22,7 @@ export default function RoadmapSetupPage() {
   const [learningType, setLearningType] = useState<LearningType>("ielts")
   const [currentLevel, setCurrentLevel] = useState("5.0")
   const [targetLevel, setTargetLevel] = useState("6.5")
-  
+
   const [skills, setSkills] = useState({
     speaking: "5.0",
     reading: "5.0",
@@ -50,7 +50,7 @@ export default function RoadmapSetupPage() {
         <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-rose-200/30 rounded-full blur-[100px] pointer-events-none"></div>
 
         <div className="max-w-3xl w-full relative z-10">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-10"
@@ -67,11 +67,11 @@ export default function RoadmapSetupPage() {
             </p>
           </motion.div>
 
-          <motion.form 
+          <motion.form
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.15 }}
-            onSubmit={handleSubmit} 
+            onSubmit={handleSubmit}
             className="bg-white/80 backdrop-blur-xl rounded-[32px] border border-slate-200/80 shadow-2xl shadow-slate-200/50 p-8 md:p-12 space-y-8"
           >
             {/* LEARNING PATH SELECTION */}
@@ -83,15 +83,13 @@ export default function RoadmapSetupPage() {
                 <button
                   type="button"
                   onClick={() => setLearningType("ielts")}
-                  className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center relative group ${
-                    learningType === "ielts" 
-                      ? "border-indigo-600 bg-indigo-50/50 text-indigo-700 shadow-md shadow-indigo-100/30" 
-                      : "border-slate-100 bg-slate-50/50 text-slate-500 hover:border-slate-200"
-                  }`}
+                  className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center relative group ${learningType === "ielts"
+                    ? "border-indigo-600 bg-indigo-50/50 text-indigo-700 shadow-md shadow-indigo-100/30"
+                    : "border-slate-100 bg-slate-50/50 text-slate-500 hover:border-slate-200"
+                    }`}
                 >
-                  <div className={`p-3 rounded-xl transition-all ${
-                    learningType === "ielts" ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-600"
-                  }`}>
+                  <div className={`p-3 rounded-xl transition-all ${learningType === "ielts" ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-600"
+                    }`}>
                     <GraduationCap size={22} />
                   </div>
                   <span className="font-extrabold text-sm block">IELTS Academic</span>
@@ -101,15 +99,13 @@ export default function RoadmapSetupPage() {
                 <button
                   type="button"
                   onClick={() => setLearningType("general")}
-                  className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center relative group ${
-                    learningType === "general" 
-                      ? "border-indigo-600 bg-indigo-50/50 text-indigo-700 shadow-md shadow-indigo-100/30" 
-                      : "border-slate-100 bg-slate-50/50 text-slate-500 hover:border-slate-200"
-                  }`}
+                  className={`flex flex-col items-center gap-3 p-5 rounded-2xl border-2 transition-all text-center relative group ${learningType === "general"
+                    ? "border-indigo-600 bg-indigo-50/50 text-indigo-700 shadow-md shadow-indigo-100/30"
+                    : "border-slate-100 bg-slate-50/50 text-slate-500 hover:border-slate-200"
+                    }`}
                 >
-                  <div className={`p-3 rounded-xl transition-all ${
-                    learningType === "general" ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-600"
-                  }`}>
+                  <div className={`p-3 rounded-xl transition-all ${learningType === "general" ? "bg-indigo-600 text-white" : "bg-slate-200 text-slate-600"
+                    }`}>
                     <BookOpen size={22} />
                   </div>
                   <span className="font-extrabold text-sm block">General English</span>
@@ -125,7 +121,7 @@ export default function RoadmapSetupPage() {
                   <Target size={14} className="text-indigo-600" /> 2. Current Baseline Level
                 </label>
                 <div className="relative">
-                  <select 
+                  <select
                     value={currentLevel}
                     onChange={(e) => setCurrentLevel(e.target.value)}
                     className="w-full h-14 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-2xl px-4 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none cursor-pointer"
@@ -143,7 +139,7 @@ export default function RoadmapSetupPage() {
                   <Sparkles size={14} className="text-indigo-600" /> 3. Desired Milestone Goal
                 </label>
                 <div className="relative">
-                  <select 
+                  <select
                     value={targetLevel}
                     onChange={(e) => setTargetLevel(e.target.value)}
                     className="w-full h-14 bg-slate-50 hover:bg-slate-100/80 border border-slate-200/50 rounded-2xl px-4 font-bold text-indigo-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition-all appearance-none cursor-pointer"
@@ -175,7 +171,7 @@ export default function RoadmapSetupPage() {
                     <div className="relative">
                       <select
                         value={value}
-                        onChange={(e) => setSkills({...skills, [skill]: e.target.value})}
+                        onChange={(e) => setSkills({ ...skills, [skill]: e.target.value })}
                         className="w-full h-10 bg-white border border-slate-200/50 rounded-xl px-2.5 font-bold text-slate-700 text-xs focus:outline-none focus:ring-2 focus:ring-indigo-500 cursor-pointer appearance-none"
                       >
                         {(learningType === "ielts" ? ieltsBands : cefrLevels).map(l => (
@@ -190,8 +186,8 @@ export default function RoadmapSetupPage() {
             </div>
 
             {/* SUBMIT ENGINE ACTION */}
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               disabled={isPending}
               className="w-full h-16 bg-gradient-to-r from-slate-900 to-indigo-950 hover:from-black hover:to-indigo-900 text-white rounded-2xl font-black text-base shadow-lg shadow-indigo-950/20 transition-all flex items-center justify-center gap-3 active:scale-[0.98] cursor-pointer mt-4"
             >
