@@ -1,9 +1,11 @@
 // src/pages/call/CallWithAiPage.tsx
 
 import { useState, useEffect, useRef } from "react"
-import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Award, ShieldAlert, CheckCircle, RefreshCw, MessageSquare } from "lucide-react"
+import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Award, ShieldAlert, CheckCircle, RefreshCw, MessageSquare, Server, Cpu } from "lucide-react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import { useUIStore } from "@/services/ui/ui.store"
+import { useSpeakingStore } from "@/services/speaking/speaking.store"
+import { useAudioCall } from "@/hooks/useAudioCall"
 import "./style.css"
 
 type ExaminerVoice = {
@@ -23,10 +25,11 @@ const EXAMINER_VOICES: ExaminerVoice[] = [
 type DialogueTurn = {
   sender: "ai" | "user"
   text: string
+  isPartial?: boolean
 }
 
 const SIMULATED_CONVO: DialogueTurn[] = [
-  { sender: "ai", text: "Hello! Welcome to the AI speaking practice room. My name is your examiner. Can you tell me your full name, please?" },
+  { sender: "ai", text: "Hello! Welcome to the AI speaking practice room. My name is Sophia. Can you tell me your full name, please?" },
   { sender: "user", text: "Hello. My name is Minh, and I am preparing for my IELTS exam next month." },
   { sender: "ai", text: "Great, Minh. Let's start with Part 1. Do you work or study at the moment?" },
   { sender: "user", text: "Currently, I am a university student majoring in Computer Science. It is quite challenging but very interesting!" },
@@ -36,87 +39,146 @@ const SIMULATED_CONVO: DialogueTurn[] = [
 ]
 
 export default function CallWithAiPage() {
-  const { theme: themeState, language } = useUIStore()
+  const { language } = useUIStore()
 
-  // State controls
+  // 1. Live Socket speaking store hook
+  const {
+    isConnected,
+    callState: liveState,
+    selectedVoiceId,
+    dialogue: liveDialogue,
+    timer: liveTimer,
+    isMuted,
+    isSpeakerOn,
+    overallBand: liveBand,
+    metrics: liveMetrics,
+    corrections: liveCorrections,
+    initSocket,
+    startCall: startLiveCall,
+    stopRecording: stopLiveRecording,
+    hangUp: hangUpLive,
+    setMuted,
+    setSpeakerOn,
+    incrementTimer,
+    resetStore
+  } = useSpeakingStore()
+
+  // Initialize socket on mount
+  useEffect(() => {
+    initSocket()
+    return () => {
+      resetStore()
+    }
+  }, [initSocket, resetStore])
+
+  // 2. Real-time microphone and VAD recorder hook
+  const { isRecording, rmsVolume } = useAudioCall()
+
+  // 3. Fallback Offline Simulation states
   const [selectedVoice, setSelectedVoice] = useState<ExaminerVoice>(EXAMINER_VOICES[0])
-  const [callState, setCallState] = useState<"idle" | "calling" | "active" | "feedback">("idle")
-  const [isMuted, setIsMuted] = useState(false)
-  const [isSpeakerOn, setIsSpeakerOn] = useState(true)
-  const [timer, setTimer] = useState(0)
+  const [simState, setSimState] = useState<"idle" | "calling" | "active" | "feedback">("idle")
+  const [simDialogue, setSimDialogue] = useState<DialogueTurn[]>([])
+  const [simTimer, setSimTimer] = useState(0)
 
-  // Dialogue simulation
-  const [dialogue, setDialogue] = useState<DialogueTurn[]>([])
-  const [currentTurnIdx, setCurrentTurnIdx] = useState(0)
-  
   const timerRef = useRef<NodeJS.Timeout | null>(null)
-  const dialogueRef = useRef<NodeJS.Timeout | null>(null)
+  const simDialogueRef = useRef<NodeJS.Timeout | null>(null)
   const chatEndRef = useRef<HTMLDivElement | null>(null)
 
   // Auto-scroll chat transcripts
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" })
-  }, [dialogue])
+  }, [liveDialogue, simDialogue])
 
-  // Timer runner
+  // Active call duration runner
   useEffect(() => {
-    if (callState === "active") {
+    const activeState = isConnected ? liveState : simState
+    if (activeState === "active") {
       timerRef.current = setInterval(() => {
-        setTimer((prev) => prev + 1)
+        if (isConnected) {
+          incrementTimer()
+        } else {
+          setSimTimer((prev) => prev + 1)
+        }
       }, 1000)
     } else {
       if (timerRef.current) clearInterval(timerRef.current)
-      setTimer(0)
+      setSimTimer(0)
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [callState])
+  }, [callStateSelector(), isConnected, liveState, simState, incrementTimer])
 
-  // Dialogue progression simulator
+  // Dialogue simulation (Offline Fallback only)
   useEffect(() => {
-    if (callState === "active") {
+    if (!isConnected && simState === "active") {
       // Print first prompt immediately
-      setDialogue([SIMULATED_CONVO[0]])
-      setCurrentTurnIdx(1)
+      setSimDialogue([SIMULATED_CONVO[0]])
 
       const triggerNextTurn = (idx: number) => {
         if (idx >= SIMULATED_CONVO.length) {
-          // Finish convo after a slight delay
-          dialogueRef.current = setTimeout(() => {
-            handleEndCall()
+          simDialogueRef.current = setTimeout(() => {
+            setSimState("feedback")
           }, 4000)
           return
         }
 
-        dialogueRef.current = setTimeout(() => {
-          setDialogue((prev) => [...prev, SIMULATED_CONVO[idx]])
-          setCurrentTurnIdx(idx + 1)
+        simDialogueRef.current = setTimeout(() => {
+          setSimDialogue((prev) => [...prev, SIMULATED_CONVO[idx]])
           triggerNextTurn(idx + 1)
         }, 5000) // 5s gap per turn
       }
 
       triggerNextTurn(1)
     } else {
-      if (dialogueRef.current) clearTimeout(dialogueRef.current)
-      setDialogue([])
-      setCurrentTurnIdx(0)
+      if (simDialogueRef.current) clearTimeout(simDialogueRef.current)
+      setSimDialogue([])
     }
 
     return () => {
-      if (dialogueRef.current) clearTimeout(dialogueRef.current)
+      if (simDialogueRef.current) clearTimeout(simDialogueRef.current)
     }
-  }, [callState])
+  }, [simState, isConnected])
 
-  const handleStartCall = () => {
-    setCallState("calling")
-    setTimeout(() => {
-      setCallState("active")
-    }, 2500) // 2.5 seconds dialing phase
+  // --- Dynamic selectors based on connection ---
+  function callStateSelector() {
+    return isConnected ? liveState : simState
   }
 
+  const activeState = callStateSelector()
+  const activeDialogue = isConnected ? liveDialogue : simDialogue
+  const activeTimer = isConnected ? liveTimer : simTimer
+  const activeVoice = isConnected
+    ? (EXAMINER_VOICES.find(v => v.id === selectedVoiceId) || selectedVoice)
+    : selectedVoice
+
+  // Start Call Handler
+  const handleStartCall = () => {
+    if (isConnected) {
+      startLiveCall(selectedVoice.id)
+    } else {
+      setSimState("calling")
+      setTimeout(() => {
+        setSimState("active")
+      }, 2500)
+    }
+  }
+
+  // End Call / Hang Up
   const handleEndCall = () => {
-    setCallState("feedback")
+    if (isConnected) {
+      stopLiveRecording()
+    } else {
+      setSimState("feedback")
+    }
+  }
+
+  const handleHangUp = () => {
+    if (isConnected) {
+      hangUpLive()
+    } else {
+      setSimState("idle")
+    }
   }
 
   const formatTime = (secs: number) => {
@@ -125,160 +187,163 @@ export default function CallWithAiPage() {
     return `${m}:${s}`
   }
 
+  // Live RMS equalizer scaling (adds reactive animation when user speaks)
+  const baseScale = isConnected && isRecording ? Math.min(1 + rmsVolume * 9, 3.5) : 1
+
   return (
     <MainLayout>
       <div className="call-container">
-        
+
         {/* IDLE/PRE-CALL DASHBOARD */}
-        {callState === "idle" && (
+        {activeState === "idle" && (
           <div className="call-card">
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "16px" }}>
-              <span style={{ background: "#eff6ff", color: "#2563eb", padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: 700 }}>
-                {language === "vi" ? "MỚI" : "NEW FEATURE"}
-              </span>
-              <span style={{ fontSize: "14px", color: "#64748b", fontWeight: 500 }}>
-                IELTS Speaking Realtime Simulator
-              </span>
+            <div className="call-header-meta">
+              <div className="call-tag-group">
+                <span className="call-badge-new">
+                  {language === "vi" ? "MỚI" : "NEW FEATURE"}
+                </span>
+                <span className="call-subtitle">
+                  IELTS Speaking Realtime Simulator
+                </span>
+              </div>
+
+              {/* Connection Status Indicators */}
+              <div className="call-status-indicator">
+                {isConnected ? (
+                  <span className="call-status-online">
+                    <Server size={14} /> Live Gateway Online
+                  </span>
+                ) : (
+                  <span className="call-status-simulated">
+                    <Cpu size={14} /> Simulated Mode Active
+                  </span>
+                )}
+              </div>
             </div>
 
-            <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#1e293b", marginBottom: "8px" }}>
+            <h1 className="call-title">
               {language === "vi" ? "Phòng Luyện Nói Call with AI" : "Call with AI Speaking Coach"}
             </h1>
-            
-            <p style={{ color: "#64748b", fontSize: "15px", lineHeight: "1.6", marginBottom: "30px" }}>
-              {language === "vi" 
+
+            <p className="call-desc">
+              {language === "vi"
                 ? "Luyện kỹ năng phản xạ nói IELTS mặt đối mặt trực tuyến với Giám khảo AI. Nhận ngay điểm số Band Score và phân tích chi tiết các lỗi phát âm, từ vựng, ngữ pháp tức thì."
                 : "Practice your IELTS Speaking face-to-face online with our advanced AI Examiner. Get your dynamic Band Score, pronunciation analysis, and detailed grammatical feedback instantly."
               }
             </p>
 
-            <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", marginBottom: "10px" }}>
+            <h2 className="call-section-title">
               {language === "vi" ? "1. Chọn Giọng Giám Khảo AI" : "1. Select AI Examiner Voice"}
             </h2>
 
             <div className="voice-grid">
               {EXAMINER_VOICES.map((voice) => (
-                <div 
+                <div
                   key={voice.id}
                   className={`voice-card ${selectedVoice.id === voice.id ? "selected" : ""}`}
                   onClick={() => setSelectedVoice(voice)}
                 >
-                  <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-                    <div style={{
-                      width: "40px",
-                      height: "40px",
-                      borderRadius: "50%",
-                      background: "linear-gradient(135deg, #3b82f6, #60a5fa)",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#fff",
-                      fontWeight: 700,
-                      fontSize: "16px"
-                    }}>
+                  <div className="voice-card-header">
+                    <div className="voice-card-avatar">
                       {voice.avatar}
                     </div>
                     <div>
-                      <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#1e293b" }}>{voice.name}</h3>
-                      <span style={{ fontSize: "11px", color: "#64748b", fontWeight: 500 }}>{voice.accent}</span>
+                      <h3 className="voice-card-name">{voice.name}</h3>
+                      <span className="voice-card-accent">{voice.accent}</span>
                     </div>
                   </div>
-                  <p style={{ fontSize: "12px", color: "#64748b", lineHeight: "1.5" }}>{voice.description}</p>
+                  <p className="correction-explanation">{voice.description}</p>
                 </div>
               ))}
             </div>
 
-            <div style={{ marginTop: "40px", display: "flex", justifyContent: "center" }}>
+            <div className="call-start-wrapper">
               <button
                 onClick={handleStartCall}
                 style={{
-                  background: "linear-gradient(135deg, #2563eb, #1d4ed8)",
-                  color: "#fff",
-                  padding: "16px 36px",
-                  borderRadius: "16px",
-                  fontSize: "16px",
-                  fontWeight: 700,
-                  border: "none",
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  boxShadow: "0 10px 25px -5px rgba(37, 99, 235, 0.4)",
-                  transition: "all 0.2s"
+                  background: isConnected
+                    ? "linear-gradient(135deg, #10b981, #059669)"
+                    : "linear-gradient(135deg, #2563eb, #1d4ed8)"
                 }}
-                className="hover:scale-[1.02] active:scale-[0.98]"
+                className="btn-start-call hover:scale-[1.02] active:scale-[0.98]"
               >
                 <Phone size={18} />
-                {language === "vi" ? "Bắt Đầu Gọi Giám Khảo" : "Start Speaking Call"}
+                {isConnected
+                  ? (language === "vi" ? "Gọi Giám Khảo (Live WebSocket)" : "Call AI (Live Gateway)")
+                  : (language === "vi" ? "Gọi Thử Giả Lập (Simulate)" : "Start Simulated Practice")
+                }
               </button>
             </div>
           </div>
         )}
 
         {/* DIALING STATE */}
-        {callState === "calling" && (
+        {activeState === "calling" && (
           <div className="call-card active-call-theme">
             <div className="pulse-circle">
               <div className="pulse-ring-1"></div>
               <div className="pulse-ring-2"></div>
               <div className="avatar-ring">
-                <div className="avatar-inner">{selectedVoice.avatar}</div>
+                <div className="avatar-inner">{activeVoice.avatar}</div>
               </div>
             </div>
-            
-            <h2 style={{ fontSize: "24px", fontWeight: 800, color: "#fff", marginBottom: "8px" }}>
-              {selectedVoice.name}
+
+            <h2 className="dial-title">
+              {activeVoice.name}
             </h2>
-            <p style={{ color: "#94a3b8", fontSize: "14px", fontWeight: 500, letterSpacing: "0.05em", animation: "pulse 1.5s infinite" }}>
-              {language === "vi" ? "ĐANG KẾT NỐI..." : "DIALING SECURE LINK..."}
+            <p className="dial-status">
+              {language === "vi" ? "ĐANG KẾT NỐI HỆ THỐNG..." : "DIALING SECURE LINK..."}
             </p>
 
-            <div className="controls-panel" style={{ marginTop: "60px" }}>
-              <button onClick={() => setCallState("idle")} className="btn-circle btn-hangup">
+            <div className="controls-panel dial-controls">
+              <button onClick={handleHangUp} className="btn-circle btn-hangup">
                 <PhoneOff size={24} />
               </button>
             </div>
           </div>
         )}
 
-        {/* ACTIVE simulated call */}
-        {callState === "active" && (
+        {/* ACTIVE Voice Call screen */}
+        {activeState === "active" && (
           <div className="call-card active-call-theme">
-            <div style={{ display: "flex", justifyContent: "space-between", width: "100%", alignItems: "center", marginBottom: "20px" }}>
-              <span style={{ fontSize: "14px", color: "#10b981", fontWeight: 700, display: "flex", alignItems: "center", gap: "6px" }}>
-                <span style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#10b981", display: "inline-block" }}></span>
-                {language === "vi" ? "CUỘC GỌI HOẠT ĐỘNG" : "CALL ACTIVE"}
+            <div className="call-active-header">
+              <span className="call-active-status" style={{ color: isRecording ? "#10b981" : "#64748b" }}>
+                <span className={`call-active-indicator ${isRecording ? "recording" : ""}`} style={{ background: isRecording ? "#10b981" : "#64748b" }}></span>
+                {isConnected
+                  ? (isRecording ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") : (language === "vi" ? "AI ĐANG NÓI/CHỜ..." : "WAITING..."))
+                  : (language === "vi" ? "MÔ PHỎNG HOẠT ĐỘNG" : "SIMULATED CALL ACTIVE")
+                }
               </span>
-              <span style={{ fontSize: "16px", fontWeight: 700, color: "#fff", background: "rgba(255,255,255,0.08)", padding: "4px 12px", borderRadius: "8px" }}>
-                {formatTime(timer)}
+              <span className="call-active-timer">
+                {formatTime(activeTimer)}
               </span>
             </div>
 
-            <div className="pulse-circle" style={{ width: "110px", height: "110px", marginBottom: "16px" }}>
+            <div className="pulse-circle pulse-circle-mini">
               <div className="pulse-ring-1"></div>
-              <div className="avatar-ring" style={{ width: "80px", height: "80px" }}>
-                <div className="avatar-inner" style={{ fontSize: "24px" }}>{selectedVoice.avatar}</div>
+              <div className="avatar-ring avatar-ring-mini">
+                <div className="avatar-inner avatar-inner-mini">{activeVoice.avatar}</div>
               </div>
             </div>
 
-            <h3 style={{ fontSize: "20px", fontWeight: 800, color: "#fff" }}>{selectedVoice.name}</h3>
-            <span style={{ fontSize: "12px", color: "#94a3b8", fontWeight: 500 }}>{selectedVoice.accent}</span>
+            <h3 className="caller-name">{activeVoice.name}</h3>
+            <span className="caller-accent">{activeVoice.accent}</span>
 
-            {/* Audio pulse bars */}
+            {/* Audio equalizers reacting to live voice volume */}
             <div className="voice-wave">
-              <div className="wave-bar"></div>
-              <div className="wave-bar"></div>
-              <div className="wave-bar"></div>
-              <div className="wave-bar"></div>
-              <div className="wave-bar"></div>
+              <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 0.7})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+              <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 1.5})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+              <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 2.3})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+              <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 1.3})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+              <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 0.8})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
             </div>
 
-            {/* Live Transcript Dialogues */}
+            {/* Scrolling transcript dialogues */}
             <div className="transcript-box">
-              {dialogue.map((turn, index) => (
+              {activeDialogue.map((turn, index) => (
                 <div key={index} className={`chat-bubble ${turn.sender}`}>
-                  <strong style={{ fontSize: "11px", display: "block", marginBottom: "2px", opacity: 0.8 }}>
-                    {turn.sender === "ai" ? selectedVoice.name : (language === "vi" ? "BẠN" : "YOU")}
+                  <strong className="bubble-author">
+                    {turn.sender === "ai" ? activeVoice.name : (language === "vi" ? "BẠN" : "YOU")}
                   </strong>
                   {turn.text}
                 </div>
@@ -286,10 +351,10 @@ export default function CallWithAiPage() {
               <div ref={chatEndRef} />
             </div>
 
-            {/* Controls */}
+            {/* Call Controls */}
             <div className="controls-panel">
-              <button 
-                onClick={() => setIsMuted(!isMuted)} 
+              <button
+                onClick={() => setMuted(!isMuted)}
                 className={`btn-circle btn-mute ${isMuted ? "active" : ""}`}
                 title={isMuted ? "Unmute Mic" : "Mute Mic"}
               >
@@ -300,8 +365,8 @@ export default function CallWithAiPage() {
                 <PhoneOff size={22} />
               </button>
 
-              <button 
-                onClick={() => setIsSpeakerOn(!isSpeakerOn)} 
+              <button
+                onClick={() => setSpeakerOn(!isSpeakerOn)}
                 className={`btn-circle btn-mute ${!isSpeakerOn ? "active" : ""}`}
                 title={isSpeakerOn ? "Turn off Speaker" : "Turn on Speaker"}
               >
@@ -311,137 +376,195 @@ export default function CallWithAiPage() {
           </div>
         )}
 
+        {/* THINKING STATE (WAITING FOR AI EVALUATION) */}
+        {activeState === "thinking" && (
+          <div className="call-card active-call-theme">
+            <div className="pulse-circle pulse-circle-thinking">
+              <div className="avatar-ring avatar-ring-thinking">
+                <div className="avatar-inner avatar-inner-thinking">
+                  <RefreshCw size={36} className="animate-spin spinner-thinking" />
+                </div>
+              </div>
+            </div>
+
+            <h2 className="thinking-title">
+              {language === "vi" ? "AI Đang Chấm Điểm..." : "AI Grading Speech..."}
+            </h2>
+            <p className="thinking-desc">
+              {language === "vi"
+                ? "Giám khảo đang phân tích cách phát âm, ngữ pháp và lập biểu đồ phản hồi chi tiết cho bạn."
+                : "The examiner is analyzing your pronunciation, grammar, and building your speech report."
+              }
+            </p>
+          </div>
+        )}
+
         {/* FEEDBACK PERFORMANCE REPORT */}
-        {callState === "feedback" && (
-          <div className="call-card" style={{ maxWidth: "850px" }}>
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: "20px", borderBottom: "1px solid #f1f5f9", paddingBottom: "24px", marginBottom: "24px" }}>
+        {activeState === "feedback" && (
+          <div className="call-card call-card-report">
+            <div className="report-header">
               <div>
-                <span style={{ background: "#ecfdf5", color: "#059669", padding: "6px 12px", borderRadius: "8px", fontSize: "12px", fontWeight: 700, display: "inline-block", marginBottom: "10px" }}>
+                <span className="report-badge">
                   {language === "vi" ? "ĐÃ HOÀN THÀNH" : "EVALUATION COMPLETE"}
                 </span>
-                <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#1e293b" }}>
+                <h1 className="report-title">
                   {language === "vi" ? "Báo Cáo Đánh Giá IELTS Speaking" : "IELTS Speaking Report Card"}
                 </h1>
-                <p style={{ color: "#64748b", fontSize: "14px", marginTop: "4px" }}>
-                  {language === "vi" ? `Giám khảo luyện nói: ${selectedVoice.name}` : `AI Speaking Examiner: ${selectedVoice.name}`}
+                <p className="report-subtitle">
+                  {language === "vi" ? `Giám khảo luyện nói: ${activeVoice.name}` : `AI Speaking Examiner: ${activeVoice.name}`}
                 </p>
               </div>
 
               {/* Glowing Overall Score Badges */}
-              <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-                <div style={{ textAlign: "right" }}>
-                  <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.05em" }}>
+              <div className="report-band-group">
+                <div className="report-band-label-box">
+                  <span className="report-band-label">
                     {language === "vi" ? "ĐIỂM SỐ CHUNG" : "OVERALL BAND"}
                   </span>
-                  <div style={{ fontSize: "14px", fontWeight: 700, color: "#059669" }}>
-                    {language === "vi" ? "Khá Tốt" : "Good Progress"}
+                  <div className="report-band-status">
+                    {isConnected ? (liveBand >= 7.0 ? (language === "vi" ? "Xuất Sắc" : "Excellent") : (language === "vi" ? "Khá Tốt" : "Keep Improving")) : (language === "vi" ? "Khá Tốt" : "Good Progress")}
                   </div>
                 </div>
-                <div className="metric-badge">7.5</div>
+                <div className="metric-badge">{isConnected ? liveBand : 7.5}</div>
               </div>
             </div>
 
             {/* Sub criteria ratings out of 9 */}
-            <h2 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", marginBottom: "16px" }}>
-              {language === "vi" ? "Tiêu Chí Chấm Điểm Chi Tiết" : "Core Grading Criteria breakdown"}
+            <h2 className="report-section-title">
+              {language === "vi" ? "Tiêu Chỉ Chấm Điểm Chi Tiết" : "Core Grading Criteria breakdown"}
             </h2>
             <div className="sub-metric-grid">
               <div className="sub-metric-card">
-                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, display: "block" }}>Fluency & Coherence</span>
-                <div className="sub-metric-score">7.5</div>
+                <span className="metric-label">Fluency & Coherence</span>
+                <div className="sub-metric-score">{isConnected ? liveMetrics.fluency : 7.5}</div>
               </div>
               <div className="sub-metric-card">
-                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, display: "block" }}>Lexical Resource</span>
-                <div className="sub-metric-score">7.0</div>
+                <span className="metric-label">Lexical Resource</span>
+                <div className="sub-metric-score">{isConnected ? liveMetrics.lexical : 7.0}</div>
               </div>
               <div className="sub-metric-card">
-                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, display: "block" }}>Grammatical Range</span>
-                <div className="sub-metric-score">7.5</div>
+                <span className="metric-label">Grammatical Range</span>
+                <div className="sub-metric-score">{isConnected ? liveMetrics.grammar : 7.5}</div>
               </div>
               <div className="sub-metric-card">
-                <span style={{ fontSize: "12px", color: "#64748b", fontWeight: 600, display: "block" }}>Pronunciation</span>
-                <div className="sub-metric-score">8.0</div>
+                <span className="metric-label">Pronunciation</span>
+                <div className="sub-metric-score">{isConnected ? liveMetrics.pronunciation : 8.0}</div>
               </div>
             </div>
 
             {/* Detailed Grammatical and Lexical corrections */}
-            <div style={{ marginTop: "40px", background: "#f8fafc", borderRadius: "20px", padding: "24px", border: "1px solid #f1f5f9" }}>
-              <h3 style={{ fontSize: "16px", fontWeight: 700, color: "#1e293b", marginBottom: "16px", display: "flex", alignItems: "center", gap: "8px" }}>
+            <div className="corrections-container">
+              <h3 className="corrections-title">
                 <Award size={18} style={{ color: "#3b82f6" }} />
                 {language === "vi" ? "Đánh Giá & Nhận Xét Lỗi Sai Từ AI" : "AI Corrections & Vocabulary Polish"}
               </h3>
 
-              <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                <div style={{ borderLeft: "4px solid #f43f5e", paddingLeft: "16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <ShieldAlert size={15} style={{ color: "#ef4444" }} />
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#991b1b" }}>
-                      {language === "vi" ? "Lỗi Ngữ Pháp/Cách dùng từ" : "Grammar / Word Choice Correction"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "13.5px", color: "#475569", margin: "4px 0" }}>
-                    <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"I use technology almost every hour."</em>
-                  </p>
-                  <p style={{ fontSize: "13.5px", color: "#059669" }}>
-                    <strong>{language === "vi" ? "Gợi ý sửa đổi:" : "Correction:"}</strong> <em>"I use technology on an hourly basis."</em>
-                  </p>
-                  <span style={{ fontSize: "12px", color: "#64748b" }}>
-                    {language === "vi" ? "-> Tránh lặp cấu trúc đơn giản, giúp câu nói tự nhiên và trang trọng hơn." : "-> More native and formal phrasing."}
-                  </span>
-                </div>
+              <div className="corrections-list">
+                {isConnected && liveCorrections.length > 0 ? (
+                  liveCorrections.map((corr, idx) => (
+                    <div
+                      key={idx}
+                      className="correction-item"
+                      style={{
+                        borderLeft: `4px solid ${corr.type === "grammar" ? "#f43f5e" : corr.type === "vocab" ? "#3b82f6" : "#10b981"
+                          }`
+                      }}
+                    >
+                      <div className="correction-header">
+                        {corr.type === "grammar" && <ShieldAlert size={15} style={{ color: "#ef4444" }} />}
+                        {corr.type === "vocab" && <MessageSquare size={15} style={{ color: "#3b82f6" }} />}
+                        {corr.type === "positive" && <CheckCircle size={15} style={{ color: "#10b981" }} />}
+                        <span style={{
+                          fontSize: "13px",
+                          fontWeight: 700,
+                          color: corr.type === "grammar" ? "#991b1b" : corr.type === "vocab" ? "#1e40af" : "#065f46"
+                        }}>
+                          {corr.type === "grammar"
+                            ? (language === "vi" ? "Lỗi Ngữ Pháp / Cách dùng từ" : "Grammar Correction")
+                            : corr.type === "vocab"
+                              ? (language === "vi" ? "Nâng Cấp Từ Vựng" : "Lexical Upgrade")
+                              : (language === "vi" ? "Ưu Điểm Phát Âm" : "Speech Highlight")
+                          }
+                        </span>
+                      </div>
+                      {corr.original && (
+                        <p className="correction-original">
+                          <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"{corr.original}"</em>
+                        </p>
+                      )}
+                      {corr.correction && (
+                        <p className="correction-fixed">
+                          <strong>{language === "vi" ? "Đề xuất sửa:" : "Correction:"}</strong> <em>"{corr.correction}"</em>
+                        </p>
+                      )}
+                      <p className="correction-explanation">
+                        {corr.explanation}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  // Static Fallback analysis when offline
+                  <>
+                    <div className="correction-item" style={{ borderLeft: "4px solid #f43f5e" }}>
+                      <div className="correction-header">
+                        <ShieldAlert size={15} style={{ color: "#ef4444" }} />
+                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#991b1b" }}>
+                          {language === "vi" ? "Lỗi Ngữ Pháp / Cách dùng từ" : "Grammar / Word Choice Correction"}
+                        </span>
+                      </div>
+                      <p className="correction-original">
+                        <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"I use technology almost every hour."</em>
+                      </p>
+                      <p className="correction-fixed">
+                        <strong>{language === "vi" ? "Gợi ý sửa đổi:" : "Correction:"}</strong> <em>"I use technology on an hourly basis."</em>
+                      </p>
+                      <span className="correction-explanation">
+                        {language === "vi" ? "-> Tránh lặp cấu trúc đơn giản, giúp câu nói tự nhiên và trang trọng hơn." : "-> More native and formal phrasing."}
+                      </span>
+                    </div>
 
-                <div style={{ borderLeft: "4px solid #3b82f6", paddingLeft: "16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <MessageSquare size={15} style={{ color: "#3b82f6" }} />
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#1e40af" }}>
-                      {language === "vi" ? "Nâng Cấp Từ Vựng (Lexical Polish)" : "Advanced Vocabulary Suggestion"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "13.5px", color: "#475569", margin: "4px 0" }}>
-                    <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"programming requires a laptop..."</em>
-                  </p>
-                  <p style={{ fontSize: "13.5px", color: "#059669" }}>
-                    <strong>{language === "vi" ? "Nâng cấp lên:" : "Upgrade to:"}</strong> <em>"programming demands constant access to a laptop and robust high-speed internet connectivity."</em>
-                  </p>
-                </div>
+                    <div className="correction-item" style={{ borderLeft: "4px solid #3b82f6" }}>
+                      <div className="correction-header">
+                        <MessageSquare size={15} style={{ color: "#3b82f6" }} />
+                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#1e40af" }}>
+                          {language === "vi" ? "Nâng Cấp Từ Vựng (Lexical Polish)" : "Advanced Vocabulary Suggestion"}
+                        </span>
+                      </div>
+                      <p className="correction-original">
+                        <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"programming requires a laptop..."</em>
+                      </p>
+                      <p className="correction-fixed">
+                        <strong>{language === "vi" ? "Nâng cấp lên:" : "Upgrade to:"}</strong> <em>"programming demands constant access to a laptop and robust high-speed internet connectivity."</em>
+                      </p>
+                    </div>
 
-                <div style={{ borderLeft: "4px solid #10b981", paddingLeft: "16px" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
-                    <CheckCircle size={15} style={{ color: "#10b981" }} />
-                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#065f46" }}>
-                      {language === "vi" ? "Điểm Tốt Tích Cực" : "Positive Highlights"}
-                    </span>
-                  </div>
-                  <p style={{ fontSize: "13.5px", color: "#475569", margin: "4px 0" }}>
-                    {language === "vi" 
-                      ? "Phát âm rất lưu loát các âm ghép. Sử dụng tốt cụm từ 'challenging but very interesting' giúp mạch văn tự nhiên."
-                      : "Great pronunciation of consonant clusters. Using transitional structures like 'challenging but very interesting' keeps the coherence level high."
-                    }
-                  </p>
-                </div>
+                    <div className="correction-item" style={{ borderLeft: "4px solid #10b981" }}>
+                      <div className="correction-header">
+                        <CheckCircle size={15} style={{ color: "#10b981" }} />
+                        <span style={{ fontSize: "13px", fontWeight: 700, color: "#065f46" }}>
+                          {language === "vi" ? "Điểm Tốt Tích Cực" : "Positive Highlights"}
+                        </span>
+                      </div>
+                      <p className="correction-original">
+                        {language === "vi"
+                          ? "Phát âm rất lưu loát các âm ghép. Sử dụng tốt cụm từ 'challenging but very interesting' giúp mạch văn tự nhiên."
+                          : "Great pronunciation of consonant clusters. Using transitional structures like 'challenging but very interesting' keeps the coherence level high."
+                        }
+                      </p>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
 
             {/* Restart tools */}
-            <div style={{ display: "flex", gap: "16px", marginTop: "32px", justifyContent: "flex-end" }}>
+            <div className="report-actions">
               <button
-                onClick={() => setCallState("idle")}
-                style={{
-                  background: "#f1f5f9",
-                  color: "#1e293b",
-                  border: "none",
-                  padding: "12px 24px",
-                  borderRadius: "12px",
-                  fontSize: "14px",
-                  fontWeight: 700,
-                  cursor: "pointer",
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "8px"
-                }}
+                onClick={handleHangUp}
+                className="btn-restart-call"
               >
                 <RefreshCw size={16} />
-                {language === "vi" ? "Luyện Tập Lại" : "Practice Again"}
+                {language === "vi" ? "Quay Lại Trang Chủ" : "Start Over"}
               </button>
             </div>
           </div>
