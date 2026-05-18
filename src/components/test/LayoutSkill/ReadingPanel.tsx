@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react"
 import { useDictionary } from "@/services/dictionary/useDictionary"
 import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
+import { useHighlight } from "@/services/highlight/useHighlight"
+import { getAbsoluteOffsets, normalizeAbsoluteOffsets } from "@/services/highlight/selection.utils"
+import { renderHighlightedText } from "@/services/highlight/render.utils"
 
 type ToolType = "highlight" | "note" | "dict"
 
@@ -10,45 +13,46 @@ type Props = {
 }
 
 export default function ReadingPanel({ passage, activeTool }: Props) {
-
   const { dict, loading, lookup, close, save } = useDictionary()
   const [manuallyClosed, setManuallyClosed] = useState(false)
+
+  const passageId = passage?.id || passage?.title || "default-passage"
+  const { highlights, addHighlight, removeHighlight } = useHighlight(passageId)
 
   // Reset manuallyClosed when tool changes
   useEffect(() => {
     setManuallyClosed(false)
   }, [activeTool])
 
-  const handleMouseUp = () => {
-    if (activeTool !== "dict") return
-
+  const handleParagraphMouseUp = (
+    e: React.MouseEvent<HTMLParagraphElement>,
+    pIndex: number,
+    paraText: string
+  ) => {
     const selection = window.getSelection()
     if (!selection || selection.rangeCount === 0) return
 
-    let range = selection.getRangeAt(0)
-    range = expandRangeToWord(range)
+    const range = selection.getRangeAt(0)
+    const container = e.currentTarget
 
-    const text = range.toString().trim()
-    if (!text) return
+    const offsets = getAbsoluteOffsets(container, range)
+    if (!offsets) return
 
-    const sentence = getSentenceFromText(text)
-    lookup(text, sentence)
-    setManuallyClosed(false)
-  }
+    const normalized = normalizeAbsoluteOffsets(
+      paraText,
+      offsets.startOffset,
+      offsets.endOffset
+    )
+    if (!normalized) return
 
-  const expandRangeToWord = (range: Range): Range => {
-    const startNode = range.startContainer
-    const endNode = range.endContainer
-    if (startNode.nodeType !== 3 || endNode.nodeType !== 3) return range
-    const text = startNode.textContent || ""
-    let start = range.startOffset
-    let end = range.endOffset
-    while (start > 0 && /\w/.test(text[start - 1])) start--
-    while (end < text.length && /\w/.test(text[end])) end++
-    const newRange = document.createRange()
-    newRange.setStart(startNode, start)
-    newRange.setEnd(endNode, end)
-    return newRange
+    if (activeTool === "highlight") {
+      addHighlight(pIndex, normalized.start, normalized.end, normalized.text)
+      selection.removeAllRanges()
+    } else if (activeTool === "dict") {
+      const sentence = getSentenceFromText(normalized.text)
+      lookup(normalized.text, sentence)
+      setManuallyClosed(false)
+    }
   }
 
   const getSentenceFromText = (word: string) => {
@@ -71,7 +75,6 @@ export default function ReadingPanel({ passage, activeTool }: Props) {
         color: "#1a1a1a",
         position: "relative"
       }}
-      onMouseUp={handleMouseUp}
     >
       <h1 style={{
         color: "#000",
@@ -97,8 +100,20 @@ export default function ReadingPanel({ passage, activeTool }: Props) {
       <div className="reading-content-wrapper" style={{ position: "relative" }}>
         {passage?.content?.split("\n\n").map((para: string, pIndex: number) => (
           <div key={pIndex} style={{ display: "flex", marginBottom: "24px", position: "relative" }}>
-            <p style={{ margin: 0, textAlign: "justify", width: "100%" }}>
-              {para}
+            <p
+              onMouseUp={(e) => handleParagraphMouseUp(e, pIndex, para)}
+              style={{
+                margin: 0,
+                textAlign: "justify",
+                width: "100%",
+                userSelect: "text"
+              }}
+            >
+              {renderHighlightedText(
+                para,
+                highlights.filter((hl) => hl.paraIndex === pIndex),
+                removeHighlight
+              )}
             </p>
           </div>
         ))}
