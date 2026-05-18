@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { PracticeTestDTO } from "@/data/practices/practice.types";
 
 export const usePracticeTest = () => {
-  const { id } = useParams<{ id: string }>();
+  const { id, skill } = useParams<{ id: string; skill: string }>();
   const location = useLocation();
   const [searchParams] = useSearchParams();
 
@@ -14,13 +14,27 @@ export const usePracticeTest = () => {
   const unitNumber = rawUnit === "full" ? null : Number(rawUnit || 1);
 
   const { data: test, isLoading, error } = useQuery({
-    queryKey: ["practice-test", id],
+    queryKey: ["practice-test", id, skill],
     queryFn: async () => {
       if (!id) throw new Error("Test ID is required");
-      const res = await practiceApi.getSkillPreview(id);
-      return res.data;
+      const res = await practiceApi.getTestSessionContent(id);
+
+      const skillItem = res.data.skills?.find(
+        (s: any) => s.skillType.toLowerCase() === skill?.toLowerCase()
+      );
+
+      if (!skillItem) {
+        throw new Error(`Skill "${skill}" not found in this test session`);
+      }
+
+      return {
+        ...res.data,
+        audioUrl: skillItem.audioUrl,
+        source: skillItem.source,
+        content: skillItem.content,
+      };
     },
-    enabled: !!id,
+    enabled: !!id && !!skill,
     staleTime: 1000 * 60 * 5, // 5 minutes
   });
 
@@ -32,14 +46,14 @@ export const usePracticeTest = () => {
 
     if (isReading && test.content.passages) {
       return (
-        test.content.passages.find((p) => p.passage_number === unitNumber) ||
+        test.content.passages.find((p: any) => p.passage_number === unitNumber) ||
         test.content.passages[0]
       );
     }
 
     if (isListening && test.content.sections) {
       return (
-        test.content.sections.find((s) => s.section === unitNumber) ||
+        test.content.sections.find((s: any) => s.section === unitNumber) ||
         test.content.sections[0]
       );
     }

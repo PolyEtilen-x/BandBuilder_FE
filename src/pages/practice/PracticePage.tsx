@@ -51,7 +51,8 @@ export default function PracticePage() {
       return
     }
 
-    if (!selectedTest.id || selectedTest.id === "undefined") {
+    const practiceTestId = selectedTest.practiceTestId
+    if (!practiceTestId || practiceTestId === "undefined") {
       alert(language === "vi" ? "Lỗi: ID đề thi không hợp lệ. Vui lòng thử đề thi khác." : "Error: Test ID is invalid. Please try another test.")
       return
     }
@@ -59,22 +60,38 @@ export default function PracticePage() {
     try {
       setOpenModal(false)
 
-      // Call start API using real ID
-      const apiId = selectedTest.realId || selectedTest.id
-      await practiceApi.startSkillAttempt(apiId, sidebar.skill)
+      let testId: string;
+      try {
+        // 1. Start overall Test session (POST /practice/tests/:practiceTestId/start)
+        const startRes = await practiceApi.startTestSession(practiceTestId)
+        testId = startRes.data.testId
+      } catch (err: any) {
+        // Handle case where a test is already in progress (Conflict 409)
+        const errorMessage = err?.response?.data?.message || "";
+        const match = errorMessage.match(/testId:\s*([a-fA-F0-9-]+)/) || errorMessage.match(/testId:\s*([^)]+)/);
+        if (err?.response?.status === 409 && match && match[1]) {
+          testId = match[1];
+          console.log("Resuming existing test session:", testId);
+        } else {
+          throw err;
+        }
+      }
+
+      // 2. Fetch session details (GET /practice/:testId)
+      await practiceApi.getTestSessionContent(testId)
+
+      // 3. Start skill attempt within the session (POST /practice/tests/:testId/skills/:skillType/start)
+      await practiceApi.startSkillAttempt(testId, sidebar.skill)
+      
       setStartTime(Date.now())
 
       navigate(
-        `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
+        `/practice/${sidebar.skill}/test/${testId}?unit=${selectedTest.unitId}`,
         { state: { mode } }
       )
     } catch (err) {
       console.error("Start exam failed:", err)
-      // Navigate anyway so user can still practice if tracking API fails
-      navigate(
-        `/practice/${sidebar.skill}/test/${selectedTest.id}?unit=${selectedTest.unitId}`,
-        { state: { mode } }
-      )
+      alert(language === "vi" ? "Lỗi khi bắt đầu bài thi. Vui lòng thử lại." : "Failed to start the exam. Please try again.")
     }
   }
 
@@ -157,7 +174,7 @@ export default function PracticePage() {
 
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const skillSlug = skill.skillContentId || skill.id || skill._id
-  const realId = skill.practiceTests?.[0]?.practiceTestId || skill.testId || skill.id || skill._id
+  const practiceTestId = skill.practiceTests?.[0]?.practiceTestId || skill.testId || skill.id || skill._id
   
   const { theme } = useUIStore()
   const { data: enriched, isLoading } = useSkillPreview(skillSlug)
@@ -187,7 +204,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const cards = sidebar.mode === "full"
     ? [{
       id: skillSlug,
-      realId: realId,
+      practiceTestId: practiceTestId,
       title: enriched.source || skill.title,
       questions: units.flatMap((u: any) => u.questionBlocks?.flatMap((b: any) => b.questions || []) || []).length,
       numberOfVisits: skill.numberOfVisits,
@@ -195,7 +212,7 @@ function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
     }]
     : units.filter((u: any) => u.id === sidebar.subSection).map((u: any) => ({
       id: skillSlug,
-      realId: realId,
+      practiceTestId: practiceTestId,
       title: u.title,
       questions: u.questionBlocks?.flatMap((b: any) => b.questions || [])?.length || 0,
       numberOfVisits: skill.numberOfVisits,

@@ -18,5 +18,11 @@ export const practiceApi = {
     apiClient.post(`/practice/tests/${testId}/skills/${skillType.toLowerCase()}/start`),
 
   submitSkillAnswers: (testId: string, skillType: string, data: PracticeSubmitDTO) =>
-    apiClient.post(`/practice/tests/${testId}/skills/${skillType.toLowerCase()}/submit`, data)
+    apiClient.post(`/practice/tests/${testId}/skills/${skillType.toLowerCase()}/submit`, data),
+
+  startTestSession: (practiceTestId: string) =>
+    apiClient.post<{ testId: string }>(`/practice/tests/${practiceTestId}/start`),
+
+  getTestSessionContent: (testId: string) =>
+    apiClient.get<any>(`/practice/${testId}`)
 }
