@@ -125,20 +125,11 @@ export default function PracticePage() {
 
   return (
     <MainLayout>
-      <div
-        style={{
-          display: "flex",
-          gap: 30,
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "30px 20px",
-          alignItems: "flex-start",
-        }}
-      >
+      <div className="practice-container">
         <PracticeSidebar />
 
         <div style={{ flex: 1, minWidth: 0 }}>
-          <h2 style={{ marginBottom: 24, fontSize: 20, fontWeight: 700 }}>
+          <h2 className="practice-title">
             {sidebar.skill.charAt(0).toUpperCase() + sidebar.skill.slice(1)} — {pageTitle}
           </h2>
 

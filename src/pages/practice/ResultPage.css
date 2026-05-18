@@ -109,39 +109,57 @@
   flex-direction: column;
 }
 
-.stat-box.correct { 
-  background: #ecfdf5; 
-  border: 1px solid #10b981; 
+.stat-box.correct {
+  background: #ecfdf5;
+  border: 1px solid #10b981;
 }
-.stat-box.correct .stat-label { color: #059669; }
-.stat-box.correct .stat-value { color: #047857; }
 
-.stat-box.wrong { 
-  background: #fff1f2; 
-  border: 1px solid #f43f5e; 
+.stat-box.correct .stat-label {
+  color: #059669;
 }
-.stat-box.wrong .stat-label { color: #e11d48; }
-.stat-box.wrong .stat-value { color: #be123c; }
 
-.stat-box.skipped { 
-  background: #f8fafc; 
-  border: 1px solid #cbd5e1; 
+.stat-box.correct .stat-value {
+  color: #047857;
 }
-.stat-box.skipped .stat-label { color: #64748b; }
-.stat-box.skipped .stat-value { color: #334155; }
 
-.stat-label { 
-  font-size: 11px; 
-  font-weight: 800; 
-  text-transform: uppercase; 
-  margin-bottom: 4px; 
+.stat-box.wrong {
+  background: #fff1f2;
+  border: 1px solid #f43f5e;
+}
+
+.stat-box.wrong .stat-label {
+  color: #e11d48;
+}
+
+.stat-box.wrong .stat-value {
+  color: #be123c;
+}
+
+.stat-box.skipped {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+}
+
+.stat-box.skipped .stat-label {
+  color: #64748b;
+}
+
+.stat-box.skipped .stat-value {
+  color: #334155;
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin-bottom: 4px;
   letter-spacing: 0.05em;
-  opacity: 0.9; 
+  opacity: 0.9;
 }
 
-.stat-value { 
-  font-size: 32px; 
-  font-weight: 900; 
+.stat-value {
+  font-size: 32px;
+  font-weight: 900;
 }
 
 /* DETAILS SECTION */
@@ -453,4 +471,163 @@
   .result-main {
     padding: 24px 16px 0;
   }
+}
+
+/* --- Dark Mode Cosmic Navy Overrides --- */
+.dark .result-page-container {
+  background-color: #060814;
+}
+
+.dark .result-header {
+  background: #0f132a;
+  border-bottom: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.dark .back-button {
+  color: #94a3b8;
+}
+
+.dark .back-button:hover {
+  color: #38bdf8;
+}
+
+.dark .overview-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark .overview-title {
+  color: #ffffff;
+}
+
+.dark .overview-subtitle {
+  color: #cbd5e1;
+}
+
+.dark .stat-box.correct {
+  background: rgba(16, 185, 129, 0.10);
+  border-color: #10b981;
+}
+
+.dark .stat-box.correct .stat-label {
+  color: #34d399;
+}
+
+.dark .stat-box.correct .stat-value {
+  color: #10b981;
+}
+
+.dark .stat-box.wrong {
+  background: rgba(244, 63, 94, 0.10);
+  border-color: #f43f5e;
+}
+
+.dark .stat-box.wrong .stat-label {
+  color: #fb7185;
+}
+
+.dark .stat-box.wrong .stat-value {
+  color: #f43f5e;
+}
+
+.dark .stat-box.skipped {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .stat-box.skipped .stat-label {
+  color: #94a3b8;
+}
+
+.dark .stat-box.skipped .stat-value {
+  color: #ffffff;
+}
+
+.dark .details-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+}
+
+.dark .details-header {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.1);
+}
+
+.dark .details-header h2 {
+  color: #ffffff;
+}
+
+.dark .details-item {
+  border-bottom: 1px solid rgba(59, 130, 246, 0.05);
+}
+
+.dark .details-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dark .item-icon {
+  background: rgba(255, 255, 255, 0.05);
+  color: #38bdf8;
+}
+
+.dark .item-type {
+  color: #ffffff;
+}
+
+.dark .progress-percent {
+  color: #ffffff;
+}
+
+.dark .progress-bar-bg {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .progress-bar-fill {
+  background: #38bdf8;
+}
+
+.dark .analysis-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5);
+}
+
+.dark .score-unit {
+  color: #38bdf8;
+}
+
+.dark .analysis-text {
+  color: #cbd5e1;
+}
+
+.dark .primary-btn {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .primary-btn:hover {
+  background: #60a5fa;
+}
+
+.dark .secondary-btn {
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff;
+}
+
+.dark .secondary-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.dark .tip-card {
+  background: rgba(56, 189, 248, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.2);
+}
+
+.dark .tip-title {
+  color: #38bdf8;
+}
+
+.dark .tip-text {
+  color: #cbd5e1;
 }

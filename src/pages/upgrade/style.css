@@ -254,3 +254,122 @@
     padding: 24px;
   }
 }
+
+/* --- Dark Mode Cosmic Navy Theme --- */
+.dark .upgrade-page {
+  background: #060814;
+}
+
+.dark .upgrade-header h1 {
+  color: #ffffff;
+}
+
+.dark .upgrade-header p {
+  color: #cbd5e1;
+}
+
+.dark .package-card {
+  background: #0f132a;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+  border: 2px solid rgba(59, 130, 246, 0.15);
+}
+
+.dark .package-card:hover {
+  border-color: #38bdf8;
+  box-shadow: 0 12px 35px rgba(56, 189, 248, 0.2);
+}
+
+.dark .package-card.popular {
+  border-color: #38bdf8;
+  background: linear-gradient(to bottom, #0f132a, #161c3d);
+}
+
+.dark .popular-badge {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .package-name {
+  color: #ffffff;
+}
+
+.dark .price-amount {
+  color: #38bdf8;
+}
+
+.dark .price-unit {
+  color: #94a3b8;
+}
+
+.dark .package-features li {
+  color: #cbd5e1;
+}
+
+.dark .check-icon {
+  background: rgba(16, 185, 129, 0.15);
+  color: #34d399;
+}
+
+.dark .btn-choose {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.dark .package-card.popular .btn-choose {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .btn-choose:hover {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .payment-modal {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+}
+
+.dark .payment-modal h2 {
+  color: #ffffff;
+}
+
+.dark .payment-modal p {
+  color: #cbd5e1 !important;
+}
+
+.dark .qr-container {
+  background: #060814;
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.dark .payment-info {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark .info-label {
+  color: #94a3b8;
+}
+
+.dark .info-value {
+  color: #ffffff;
+}
+
+.dark .info-value span, .dark .info-value button {
+  color: #38bdf8 !important;
+}
+
+.dark .copy-btn {
+  color: #38bdf8;
+}
+
+.dark .payment-status-box {
+  background: rgba(56, 189, 248, 0.1);
+  color: #38bdf8;
+}
+
+.dark .loader {
+  border-color: #38bdf8;
+  border-bottom-color: transparent;
+}

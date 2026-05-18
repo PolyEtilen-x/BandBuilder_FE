@@ -683,3 +683,214 @@
     width: 100%;
   }
 }
+
+/* --- Dark Mode Cosmic Navy Overrides --- */
+.dark .profile-page-wrapper {
+  background-color: #060814;
+}
+
+.dark .profile-hero-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+}
+
+.dark .user-avatar-img {
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.dark .pro-badge-icon {
+  border-color: #0f132a;
+}
+
+.dark .user-meta-info h1 {
+  color: #ffffff;
+}
+
+.dark .user-email-text {
+  color: #cbd5e1;
+}
+
+.dark .user-credits-info {
+  color: #38bdf8;
+}
+
+.dark .membership-tag.basic {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+}
+
+.dark .btn-action-primary.upgrade {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .btn-action-primary.upgrade:hover {
+  background: #60a5fa;
+}
+
+.dark .btn-action-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+.dark .btn-action-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.dark .btn-action-outline {
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #94a3b8;
+}
+
+.dark .btn-action-outline.logout:hover {
+  border-color: rgba(239, 68, 68, 0.3);
+  color: #f87171;
+  background: rgba(239, 68, 68, 0.1);
+}
+
+.dark .profile-stat-box {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.dark .stat-box-value {
+  color: #ffffff;
+}
+
+.dark .stat-box-label {
+  color: #94a3b8;
+}
+
+.dark .recent-activity-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.dark .card-header-row h2 {
+  color: #ffffff;
+}
+
+.dark .text-btn {
+  color: #38bdf8;
+}
+
+.dark .activity-list-item {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.dark .activity-list-item:hover {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.dark .activity-title {
+  color: #ffffff;
+}
+
+.dark .activity-meta {
+  color: #94a3b8;
+}
+
+.dark .score-value {
+  color: #ffffff;
+}
+
+.dark .account-summary-card {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+.dark .account-summary-card h3 {
+  color: #ffffff;
+}
+
+.dark .summary-row span {
+  color: #cbd5e1;
+}
+
+.dark .summary-row strong {
+  color: #ffffff;
+}
+
+.dark .pro-upsell-card {
+  background: linear-gradient(135deg, #0f2d61 0%, #060814 100%);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.dark .pro-upsell-card button {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .pro-upsell-card button:hover {
+  background: #60a5fa;
+}
+
+.dark .spinner {
+  border-color: rgba(255, 255, 255, 0.1);
+  border-top-color: #38bdf8;
+}
+
+/* Edit Modal Dark Mode */
+.dark .modal-container {
+  background: #0f132a;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.6);
+}
+
+.dark .modal-close {
+  background: rgba(255, 255, 255, 0.05);
+  color: #94a3b8;
+}
+
+.dark .modal-close:hover {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+}
+
+.dark .modal-title {
+  color: #ffffff;
+}
+
+.dark .modal-subtitle {
+  color: #cbd5e1;
+}
+
+.dark .form-group label {
+  color: #ffffff;
+}
+
+.dark .form-group input {
+  background: #060814;
+  border-color: rgba(59, 130, 246, 0.2);
+  color: #ffffff;
+}
+
+.dark .form-group input:focus {
+  border-color: #38bdf8;
+  background: #0f132a;
+  box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.15);
+}
+
+.dark .btn-cancel {
+  background: rgba(255, 255, 255, 0.05);
+  color: #cbd5e1;
+}
+
+.dark .btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+}
+
+.dark .btn-save {
+  background: #38bdf8;
+  color: #060814;
+}
+
+.dark .btn-save:hover {
+  background: #60a5fa;
+}

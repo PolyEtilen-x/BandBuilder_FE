@@ -48,36 +48,6 @@ const SKILL_CONFIG: Record<
 
 const SKILLS: SkillKey[] = ["reading", "listening", "writing", "speaking"]
 
-// ── Styles ─────────────────────────────────────────────────────
-const radio: React.CSSProperties = {
-  accentColor: "#174593",
-  width: 16,
-  height: 16,
-  cursor: "pointer",
-  flexShrink: 0,
-}
-
-const rowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  padding: "5px 0",
-  cursor: "pointer",
-  fontSize: 14,
-  color: "#333",
-}
-
-const subRowStyle: React.CSSProperties = {
-  display: "flex",
-  alignItems: "center",
-  gap: 8,
-  padding: "4px 0",
-  cursor: "pointer",
-  fontSize: 13,
-  color: "#555",
-  marginLeft: 24,
-}
-
 export default function PracticeSidebar() {
   const { sidebar, setSidebar } = usePracticeStore()
   const { skill: activeSkill, mode, subSection } = sidebar
@@ -110,7 +80,7 @@ export default function PracticeSidebar() {
   }
 
   return (
-    <div style={{ width: 260, flexShrink: 0 }}>
+    <div className="practice-sidebar" style={{ width: 260, flexShrink: 0 }}>
       {SKILLS.map((s) => {
         const cfg = SKILL_CONFIG[s]
         const isActive = s === activeSkill
@@ -118,52 +88,26 @@ export default function PracticeSidebar() {
         return (
           <div
             key={s}
-            style={{
-              border: isActive ? "2px solid #174593" : "1px solid #e0e0e0",
-              borderRadius: 16,
-              padding: "12px 16px",
-              marginBottom: 12,
-              background: isActive ? "#f0f7ff" : "#fff",
-              transition: "all 0.15s ease",
-            }}
+            className={`sidebar-skill-block ${isActive ? "active" : ""}`}
           >
             {/* ── Skill header ── */}
             <div
               onClick={() => handleSelectSkill(s)}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 8,
-                marginBottom: 10,
-                cursor: "pointer",
-                userSelect: "none",
-              }}
+              className="sidebar-skill-header"
             >
-              <span
-                style={{
-                  color: isActive ? "#174593" : "#888",
-                  display: "flex",
-                  alignItems: "center",
-                }}
-              >
+              <span className="sidebar-skill-icon">
                 {cfg.icon}
               </span>
-              <span
-                style={{
-                  fontWeight: 600,
-                  fontSize: 15,
-                  color: isActive ? "#174593" : "#444",
-                }}
-              >
+              <span className="sidebar-skill-label">
                 {cfg.label}
               </span>
             </div>
 
             {/* ── Bài lẻ ── */}
-            <label style={rowStyle}>
+            <label className="sidebar-row">
               <input
                 type="radio"
-                style={radio}
+                className="sidebar-radio"
                 checked={isActive && mode === "single"}
                 onChange={() => handleMode(s, "single")}
               />
@@ -175,10 +119,10 @@ export default function PracticeSidebar() {
                 {cfg.subSections.map((label, i) => {
                   const idx = i + 1
                   return (
-                    <label key={idx} style={subRowStyle}>
+                    <label key={idx} className="sidebar-sub-row">
                       <input
                         type="radio"
-                        style={radio}
+                        className="sidebar-radio"
                         checked={subSection === idx}
                         onChange={() => handleSubSection(idx)}
                       />
@@ -191,10 +135,10 @@ export default function PracticeSidebar() {
 
             {/* ── Full test ── */}
             {cfg.hasFull && (
-              <label style={rowStyle}>
+              <label className="sidebar-row">
                 <input
                   type="radio"
-                  style={radio}
+                  className="sidebar-radio"
                   checked={isActive && mode === "full"}
                   onChange={() => handleMode(s, "full")}
                 />
