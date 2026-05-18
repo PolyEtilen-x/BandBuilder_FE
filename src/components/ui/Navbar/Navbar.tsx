@@ -17,7 +17,7 @@ export default function Navbar() {
     const logout = useAuthStore((s) => s.logout)
     const { data: profile } = useUserProfile(!!user)
     const displayUser = profile?.user || user
-    
+
     // i18n and Dark Mode hooks
     const { language, theme: themeState, toggleLanguage, toggleTheme, t } = useUIStore()
 
@@ -153,30 +153,9 @@ export default function Navbar() {
 
                 {/* CONTROLS AREA (DESKTOP SETTINGS + ACCOUNT) */}
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
-                    
-                    {/* Dark/Light Toggler */}
-                    <button 
-                        onClick={() => toggleTheme()}
-                        style={{
-                            background: "transparent",
-                            border: "none",
-                            cursor: "pointer",
-                            padding: "0.5rem",
-                            display: "flex",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            color: themeState === "dark" ? "#facc15" : "#475569",
-                            borderRadius: "50%",
-                            transition: "background 0.2s"
-                        }}
-                        className="hover:bg-slate-100 dark:hover:bg-slate-800"
-                        title={themeState === "dark" ? "Switch to Light Mode" : "Switch to Dark Mode"}
-                    >
-                        {themeState === "dark" ? <Sun size={18} /> : <Moon size={18} />}
-                    </button>
 
                     {/* Language Switcher Widget */}
-                    <button 
+                    <button
                         onClick={() => toggleLanguage()}
                         style={{
                             background: themeState === "dark" ? "#1e293b" : "#f1f5f9",
@@ -225,10 +204,10 @@ export default function Navbar() {
                                     overflow: "hidden"
                                 }}>
                                     {displayUser?.avatarUrl ? (
-                                        <img 
-                                            src={displayUser.avatarUrl} 
-                                            alt={displayUser.fullName || "User Avatar"} 
-                                            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                                        <img
+                                            src={displayUser.avatarUrl}
+                                            alt={displayUser.fullName || "User Avatar"}
+                                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
                                         />
                                     ) : (
                                         (displayUser?.fullName || displayUser?.email || "U").charAt(0).toUpperCase()

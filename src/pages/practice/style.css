@@ -89,7 +89,7 @@
 }
 
 /* --- Practice Container & Layout --- */
-.practice-container {
+.practice-page-container {
   display: flex;
   gap: 30px;
   max-width: 1200px;
@@ -106,7 +106,7 @@
 }
 
 @media (max-width: 768px) {
-  .practice-container {
+  .practice-page-container {
     flex-direction: column;
     padding: 20px 16px;
     gap: 20px;

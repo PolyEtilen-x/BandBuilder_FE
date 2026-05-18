@@ -1,4 +1,7 @@
 .practice-container {
+  width: 100% !important;
+  max-width: 100% !important;
+  margin: 0 !important;
   height: 100vh;
   display: flex;
   flex-direction: column;

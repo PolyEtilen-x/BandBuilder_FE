@@ -125,7 +125,7 @@ export default function PracticePage() {
 
   return (
     <MainLayout>
-      <div className="practice-container">
+      <div className="practice-page-container">
         <PracticeSidebar />
 
         <div style={{ flex: 1, minWidth: 0 }}>
