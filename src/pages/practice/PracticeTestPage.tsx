@@ -17,18 +17,18 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
     if (isLoading) return <PracticeSkeleton />
 
     if (error) return (
-        <div className="flex items-center justify-center h-screen flex-col gap-4">
-            <h2 className="text-xl font-semibold text-red-600">Failed to load test</h2>
-            <p className="text-gray-500">{(error as Error).message}</p>
-            <button onClick={() => window.location.reload()} className="px-4 py-2 bg-blue-600 text-white rounded-lg">
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh", flexDirection: "column", gap: "16px" }}>
+            <h2 style={{ fontSize: "20px", fontWeight: "600", color: "#dc2626" }}>Failed to load test</h2>
+            <p style={{ color: "#6b7280" }}>{(error as Error).message}</p>
+            <button onClick={() => window.location.reload()} style={{ padding: "8px 16px", backgroundColor: "#2563eb", color: "#ffffff", borderRadius: "8px", border: "none", cursor: "pointer" }}>
                 Try Again
             </button>
         </div>
     )
 
     if (!test || !currentUnit) return (
-        <div className="flex items-center justify-center h-screen">
-            <p className="text-gray-500">No data found for this test.</p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+            <p style={{ color: "#6b7280" }}>No data found for this test.</p>
         </div>
     )
 

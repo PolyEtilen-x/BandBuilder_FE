@@ -39,37 +39,37 @@ body {
 
 html.dark {
   color-scheme: dark;
-  background-color: #0f172a;
-  /* Mobile background */
+  background-color: #060814;
+  /* Premium Cosmic Navy background */
 }
 
 html.dark body {
-  background-color: #0f172a !important;
-  /* Mobile background */
+  background-color: #060814 !important;
+  /* Premium Cosmic Navy background */
   color: #f8fafc !important;
   /* Mobile text */
 }
 
 /* HOME LANDING MODULE IN DARK MODE */
 .dark .bb-landing {
-  background-color: #0f172a !important;
+  background-color: #060814 !important;
 }
 
 .dark .bb-landing .section {
-  background-color: #0f172a !important;
+  background-color: #060814 !important;
   color: #e2e8f0 !important;
 }
 
 .dark .bb-landing .bg-alt {
-  background-color: #1e293b !important;
-  /* Mobile backgroundAlt / card */
+  background-color: #0b0e20 !important;
+  /* Cosmic Navy Card Alt */
 }
 
 .dark .bb-landing h1,
 .dark .bb-landing h2,
 .dark .bb-landing h3,
 .dark .bb-landing h4 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .bb-landing p,
@@ -83,16 +83,16 @@ html.dark body {
 }
 
 .dark .mock-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
-  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5) !important;
+  background: #0f132a !important;
+  /* Cosmic Navy main card */
+  border: 1px solid rgba(59, 130, 246, 0.15) !important;
+  /* Glowing indigo border */
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.6) !important;
 }
 
 .dark .mock-overall {
-  background: rgba(15, 23, 42, 0.5) !important;
-  border-color: #334155 !important;
+  background: rgba(6, 8, 20, 0.6) !important;
+  border-color: rgba(59, 130, 246, 0.15) !important;
 }
 
 .dark .mock-crit-row,
@@ -102,14 +102,14 @@ html.dark body {
 
 /* Stats Section in Dark Mode */
 .dark .stats-strip {
-  background-color: rgba(30, 41, 59, 0.4) !important;
-  border-top: 1px solid #334155 !important;
-  border-bottom: 1px solid #334155 !important;
+  background-color: rgba(15, 19, 42, 0.5) !important;
+  border-top: 1px solid #1c2345 !important;
+  border-bottom: 1px solid #1c2345 !important;
 }
 
 .dark .stat-value {
-  color: #3b82f6 !important;
-  /* Mobile primary / tint */
+  color: #38bdf8 !important;
+  /* High contrast Sky tint */
 }
 
 .dark .stat-label {
@@ -124,23 +124,23 @@ html.dark body {
 .dark .step-card,
 .dark .faq-row,
 .dark .feature-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3) !important;
+  background: #0f132a !important;
+  /* Cosmic Navy card */
+  border: 1px solid #1c2345 !important;
+  /* Sleek borders */
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4) !important;
 }
 
 .dark .tool-card:hover,
 .dark .plan-card:hover,
 .dark .testi-card:hover,
 .dark .feature-card:hover {
-  background: rgba(30, 41, 59, 0.8) !important;
+  background: #131936 !important;
   border-color: #3b82f6 !important;
 }
 
 .dark .plan-card.plan-popular {
-  background: linear-gradient(135deg, #1e293b, rgba(30, 41, 59, 0.9)) !important;
+  background: linear-gradient(135deg, #0f132a, #131936) !important;
   border: 2px solid #3b82f6 !important;
 }
 
@@ -153,13 +153,13 @@ html.dark body {
 }
 
 .dark .faq-q {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 /* CTA Banner home */
 .dark .cta-banner {
-  background: linear-gradient(135deg, #0f172a, #1e293b) !important;
-  border-top: 1px solid #334155 !important;
+  background: linear-gradient(135deg, #060814, #0f132a) !important;
+  border-top: 1px solid #1c2345 !important;
 }
 
 .dark .cta-banner h2 {
@@ -172,10 +172,9 @@ html.dark body {
 
 /* PRACTICE MODULE IN DARK MODE */
 .dark .practice-sidebar-wrap {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  /* Cosmic Navy sidebar */
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .sidebar-item {
@@ -183,30 +182,28 @@ html.dark body {
 }
 
 .dark .sidebar-item:hover {
-  background: rgba(15, 23, 42, 0.4) !important;
+  background: rgba(6, 8, 20, 0.5) !important;
 }
 
 .dark .sidebar-item.active {
   background: rgba(59, 130, 246, 0.15) !important;
-  color: #3b82f6 !important;
+  color: #38bdf8 !important;
   border-right: 3px solid #3b82f6 !important;
 }
 
 .dark .practice-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .practice-card:hover {
-  background: rgba(30, 41, 59, 0.8) !important;
+  background: #131936 !important;
   border-color: #3b82f6 !important;
   transform: translateY(-2px);
 }
 
 .dark .practice-card-title {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .practice-card-desc {
@@ -215,18 +212,17 @@ html.dark body {
 
 /* PROFILE MODULE IN DARK MODE */
 .dark .profile-page-wrapper {
-  background-color: #0f172a !important;
+  background-color: #060814 !important;
 }
 
 .dark .profile-hero-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3) !important;
 }
 
 .dark .user-name-row h1 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .user-email-text,
@@ -235,14 +231,12 @@ html.dark body {
 }
 
 .dark .profile-stat-box {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .stat-box-value {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .stat-box-label {
@@ -252,17 +246,15 @@ html.dark body {
 .dark .recent-activity-card,
 .dark .account-summary-card,
 .dark .pro-upsell-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .card-header-row h2,
 .dark .recent-activity-card h2,
 .dark .account-summary-card h3,
 .dark .pro-upsell-card h4 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .activity-title {
@@ -274,12 +266,12 @@ html.dark body {
 }
 
 .dark .summary-row {
-  border-bottom: 1px solid #334155 !important;
+  border-bottom: 1px solid #1c2345 !important;
   color: #cbd5e1 !important;
 }
 
 .dark .summary-row strong {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .pro-upsell-card p {
@@ -287,18 +279,18 @@ html.dark body {
 }
 
 .dark .pro-upsell-card button {
-  background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+  background: linear-gradient(135deg, #38bdf8, #3b82f6) !important;
   color: #ffffff !important;
   font-weight: bold;
 }
 
 /* UPGRADE MODULE IN DARK MODE */
 .dark .upgrade-page {
-  background-color: #0f172a !important;
+  background-color: #060814 !important;
 }
 
 .dark .upgrade-header h1 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .upgrade-header p {
@@ -306,10 +298,8 @@ html.dark body {
 }
 
 .dark .package-card {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .package-card:hover {
@@ -321,11 +311,11 @@ html.dark body {
 }
 
 .dark .package-name {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .price-amount {
-  color: #3b82f6 !important;
+  color: #38bdf8 !important;
 }
 
 .dark .price-unit {
@@ -337,27 +327,24 @@ html.dark body {
 }
 
 .dark .btn-choose {
-  background: linear-gradient(135deg, #60a5fa, #3b82f6) !important;
+  background: linear-gradient(135deg, #38bdf8, #3b82f6) !important;
   color: #ffffff !important;
   font-weight: 800 !important;
 }
 
 .dark .payment-overlay {
-  background: rgba(0, 0, 0, 0.75) !important;
+  background: rgba(0, 0, 0, 0.8) !important;
 }
 
 .dark .payment-modal {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
-  color: #f8fafc !important;
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
+  color: #ffffff !important;
 }
 
 .dark .payment-info {
-  background: #0f172a !important;
-  /* Mobile bg */
-  border: 1px solid #334155 !important;
+  background: #060814 !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .info-label {
@@ -365,46 +352,44 @@ html.dark body {
 }
 
 .dark .info-value {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .copy-btn {
-  background: #1e293b !important;
-  border: 1px solid #334155 !important;
-  color: #3b82f6 !important;
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
+  color: #38bdf8 !important;
 }
 
 .dark .payment-status-box {
-  background: rgba(15, 23, 42, 0.5) !important;
-  border-color: #334155 !important;
+  background: rgba(6, 8, 20, 0.6) !important;
+  border-color: #1c2345 !important;
   color: #e2e8f0 !important;
 }
 
 /* MATERIALS PAGES IN DARK MODE */
 .dark .vocab-container,
 .dark .grammar-container {
-  background: #0f172a !important;
-  color: #f8fafc !important;
+  background: #060814 !important;
+  color: #ffffff !important;
 }
 
 .dark .subject-card,
 .dark .topic-box,
 .dark .flashcard-deck {
-  background: #1e293b !important;
-  /* Mobile card */
-  border: 1px solid #334155 !important;
-  /* Mobile border */
-  color: #f8fafc !important;
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
+  color: #ffffff !important;
 }
 
 /* PRACTICE RESULT PAGE IN DARK MODE */
 .dark .result-page-container {
-  background-color: #0f172a !important;
+  background-color: #060814 !important;
 }
 
 .dark .result-header {
-  background-color: #1e293b !important;
-  border-bottom: 1px solid #334155 !important;
+  background-color: #0f132a !important;
+  border-bottom: 1px solid #1c2345 !important;
 }
 
 .dark .back-button {
@@ -412,17 +397,17 @@ html.dark body {
 }
 
 .dark .back-button:hover {
-  color: #3b82f6 !important;
+  color: #38bdf8 !important;
 }
 
 .dark .overview-card,
 .dark .details-card {
-  background: #1e293b !important;
-  border-color: #334155 !important;
+  background: #0f132a !important;
+  border-color: #1c2345 !important;
 }
 
 .dark .overview-title {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .overview-subtitle {
@@ -430,8 +415,8 @@ html.dark body {
 }
 
 .dark .stat-box.skipped {
-  background: rgba(15, 23, 42, 0.4) !important;
-  border-color: #334155 !important;
+  background: rgba(6, 8, 20, 0.5) !important;
+  border-color: #1c2345 !important;
 }
 
 .dark .stat-box.skipped .stat-label {
@@ -439,32 +424,32 @@ html.dark body {
 }
 
 .dark .stat-box.skipped .stat-value {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .details-header {
-  border-bottom: 1px solid #334155 !important;
+  border-bottom: 1px solid #1c2345 !important;
 }
 
 .dark .details-header h2 {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .details-item {
-  border-bottom: 1px solid #334155 !important;
+  border-bottom: 1px solid #1c2345 !important;
 }
 
 .dark .details-item:hover {
-  background: rgba(30, 41, 59, 0.6) !important;
+  background: #131936 !important;
 }
 
 .dark .item-icon {
-  background: rgba(15, 23, 42, 0.6) !important;
-  color: #3b82f6 !important;
+  background: rgba(6, 8, 20, 0.7) !important;
+  color: #38bdf8 !important;
 }
 
 .dark .item-type {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .item-count {
@@ -472,11 +457,11 @@ html.dark body {
 }
 
 .dark .progress-percent {
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .progress-bar-bg {
-  background: #0f172a !important;
+  background: #060814 !important;
 }
 
 .dark .progress-bar-fill {
@@ -484,8 +469,8 @@ html.dark body {
 }
 
 .dark .analysis-card {
-  background: #1e293b !important;
-  border: 1px solid #334155 !important;
+  background: #0f132a !important;
+  border: 1px solid #1c2345 !important;
 }
 
 .dark .analysis-text {
@@ -498,12 +483,12 @@ html.dark body {
 }
 
 .dark .primary-btn:hover {
-  background: #60a5fa !important;
+  background: #38bdf8 !important;
 }
 
 .dark .secondary-btn {
   background: rgba(255, 255, 255, 0.05) !important;
-  color: #f8fafc !important;
+  color: #ffffff !important;
 }
 
 .dark .secondary-btn:hover {
@@ -511,11 +496,11 @@ html.dark body {
 }
 
 .dark .tip-card {
-  background: rgba(59, 130, 246, 0.1) !important;
-  border-color: rgba(59, 130, 246, 0.2) !important;
+  background: rgba(59, 130, 246, 0.15) !important;
+  border-color: rgba(59, 130, 246, 0.25) !important;
 }
 
 .dark .tip-title,
 .dark .tip-text {
-  color: #60a5fa !important;
+  color: #38bdf8 !important;
 }

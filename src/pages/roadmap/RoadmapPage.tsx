@@ -137,36 +137,36 @@ export default function RoadmapPage() {
   if (isLoading) {
     return (
       <MainLayout>
-        <div className="bg-slate-50 dark:bg-slate-950 min-h-screen relative overflow-hidden transition-colors duration-300">
+        <div className="roadmap-page-bg">
           <div className="glowing-bg-mesh"></div>
           <div className="roadmap-container relative z-10">
             {/* Header Skeleton */}
-            <div className="mb-12">
-              <div className="h-6 w-36 skeleton-pulse rounded-md mb-4"></div>
-              <div className="h-10 w-96 skeleton-pulse rounded-lg mb-4"></div>
-              <div className="h-5 w-full max-w-2xl skeleton-pulse rounded-md"></div>
+            <div style={{ marginBottom: "48px" }}>
+              <div className="skeleton-pulse rounded-md mb-4" style={{ height: "24px", width: "144px" }}></div>
+              <div className="skeleton-pulse rounded-lg mb-4" style={{ height: "40px", width: "384px" }}></div>
+              <div className="skeleton-pulse rounded-md" style={{ height: "20px", width: "100%", maxWidth: "672px" }}></div>
             </div>
 
             {/* Dashboard Cards Skeleton */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+            <div className="roadmap-dashboard-grid">
               {[...Array(4)].map((_, i) => (
-                <div key={i} className="bg-white/80 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 rounded-2xl p-6 h-28 skeleton-pulse"></div>
+                <div key={i} className="roadmap-dashboard-card skeleton-pulse" style={{ height: "112px" }}></div>
               ))}
             </div>
 
             {/* Content Skeleton */}
             <div className="roadmap-layout">
               {/* Timeline skeleton */}
-              <div className="space-y-6">
+              <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
                 {[...Array(3)].map((_, i) => (
-                  <div key={i} className="flex gap-6 items-start">
-                    <div className="w-8 h-8 rounded-full skeleton-pulse flex-shrink-0 mt-3"></div>
-                    <div className="bg-white/80 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 rounded-3xl p-6 h-40 w-full skeleton-pulse"></div>
+                  <div key={i} className="roadmap-skeleton-item">
+                    <div className="roadmap-skeleton-dot skeleton-pulse"></div>
+                    <div className="roadmap-skeleton-card skeleton-pulse"></div>
                   </div>
                 ))}
               </div>
               {/* Detail panel skeleton */}
-              <div className="bg-white/80 dark:bg-slate-900/60 border border-slate-100 dark:border-slate-800 rounded-3xl p-8 h-[500px] skeleton-pulse"></div>
+              <div className="detail-panel skeleton-pulse" style={{ height: "500px" }}></div>
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@ export default function RoadmapPage() {
 
   return (
     <MainLayout>
-      <div className="bg-slate-50 dark:bg-slate-950 min-h-screen relative overflow-hidden transition-colors duration-300">
+      <div className="roadmap-page-bg">
         {/* Soft background decor mesh */}
         <div className="glowing-bg-mesh"></div>
 
@@ -184,102 +184,102 @@ export default function RoadmapPage() {
           {/* HEADER NAV */}
           <button 
             onClick={() => navigate('/roadmap')}
-            className="group flex items-center gap-2 text-slate-500 hover:text-slate-900 dark:text-slate-400 dark:hover:text-slate-200 transition-colors font-bold text-sm mb-6 cursor-pointer"
+            className="roadmap-header-nav"
           >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            <ArrowLeft size={16} className="roadmap-nav-arrow" />
             {t("roadmap_back")}
           </button>
 
           {/* MAIN HEADER WITH METRICS */}
-          <div className="mb-12">
-            <div className="flex items-center gap-3 text-indigo-600 dark:text-indigo-400 font-extrabold text-sm uppercase tracking-wider mb-3">
-              <Sparkles size={16} className="animate-pulse" />
+          <div style={{ marginBottom: "48px" }}>
+            <div className="roadmap-hero-badge">
+              <Sparkles size={16} className="roadmap-nav-arrow" />
               {t("roadmap_sub")}
             </div>
-            <h1 className="text-4xl md:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight mb-4">
+            <h1 className="roadmap-main-title">
               {roadmap.title}
             </h1>
-            <p className="text-slate-500 dark:text-slate-400 text-lg max-w-2xl leading-relaxed">
+            <p className="roadmap-main-desc">
               {roadmap.description}
             </p>
           </div>
 
           {/* DYNAMIC PROGRESS DASHBOARD CARD GRID */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
+          <div className="roadmap-dashboard-grid">
             {/* Metric 1 */}
-            <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition-colors">
-              <div className="p-4 bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 rounded-2xl">
+            <div className="roadmap-dashboard-card">
+              <div className="roadmap-dashboard-icon-wrap indigo">
                 <Layers size={22} />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                <span className="roadmap-dashboard-label">
                   {t("roadmap_duration")}
                 </span>
-                <span className="text-lg font-black text-slate-800 dark:text-slate-200">{roadmap.estimatedDuration}</span>
+                <span className="roadmap-dashboard-val">{roadmap.estimatedDuration}</span>
               </div>
             </div>
 
             {/* Metric 2 */}
-            <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition-colors">
-              <div className="p-4 bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 rounded-2xl">
+            <div className="roadmap-dashboard-card">
+              <div className="roadmap-dashboard-icon-wrap emerald">
                 <CheckCircle2 size={22} />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                <span className="roadmap-dashboard-label">
                   {t("roadmap_completion")}
                 </span>
-                <span className="text-lg font-black text-slate-800 dark:text-slate-200">
+                <span className="roadmap-dashboard-val">
                   {completedNodes}/{totalNodes} {t("roadmap_stages")}
                 </span>
               </div>
             </div>
 
             {/* Metric 3 */}
-            <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition-colors">
-              <div className="p-4 bg-blue-50 dark:bg-blue-950/50 text-blue-600 dark:text-blue-400 rounded-2xl">
+            <div className="roadmap-dashboard-card">
+              <div className="roadmap-dashboard-icon-wrap blue">
                 <GraduationCap size={22} />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                <span className="roadmap-dashboard-label">
                   {t("roadmap_current_level")}
                 </span>
-                <span className="text-lg font-black text-slate-800 dark:text-slate-200">Band {roadmap.currentLevel}</span>
+                <span className="roadmap-dashboard-val">Band {roadmap.currentLevel}</span>
               </div>
             </div>
 
             {/* Metric 4 */}
-            <div className="bg-white/70 dark:bg-slate-900/40 backdrop-blur-md border border-slate-200/60 dark:border-slate-800/60 rounded-3xl p-6 shadow-sm flex items-center gap-4 transition-colors">
-              <div className="p-4 bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 rounded-2xl">
+            <div className="roadmap-dashboard-card">
+              <div className="roadmap-dashboard-icon-wrap amber">
                 <Star size={22} />
               </div>
               <div>
-                <span className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider block">
+                <span className="roadmap-dashboard-label">
                   {t("roadmap_target_level")}
                 </span>
-                <span className="text-lg font-black text-indigo-600 dark:text-indigo-400">Band {roadmap.targetLevel}</span>
+                <span className="roadmap-dashboard-val target">Band {roadmap.targetLevel}</span>
               </div>
             </div>
           </div>
 
           {/* PROGRESS PERCENT BAR */}
-          <div className="bg-white/80 dark:bg-slate-900/50 border border-slate-200/50 dark:border-slate-800/50 rounded-3xl p-6 mb-12 shadow-sm flex flex-col md:flex-row items-center gap-6 transition-colors">
-            <div className="flex-1 w-full">
-              <div className="flex justify-between items-center mb-2">
-                <span className="text-sm font-bold text-slate-700 dark:text-slate-350">{t("roadmap_gauge")}</span>
-                <span className="text-sm font-black text-indigo-600 dark:text-indigo-400">
+          <div className="roadmap-progress-card">
+            <div className="roadmap-progress-details">
+              <div className="roadmap-progress-text-row">
+                <span className="roadmap-progress-title">{t("roadmap_gauge")}</span>
+                <span className="roadmap-progress-percent">
                   {progressPercent}% {t("roadmap_unlocked")}
                 </span>
               </div>
-              <div className="w-full bg-slate-100 dark:bg-slate-800 h-3.5 rounded-full overflow-hidden">
+              <div className="roadmap-progress-bar-bg">
                 <motion.div 
                   initial={{ width: 0 }}
                   animate={{ width: `${progressPercent}%` }}
                   transition={{ duration: 1, ease: "easeOut" }}
-                  className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-emerald-500 rounded-full"
+                  className="roadmap-progress-bar-fill"
                 />
               </div>
             </div>
-            <div className="px-6 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 rounded-2xl text-xs font-extrabold text-indigo-700 dark:text-indigo-300 uppercase tracking-wider transition-colors">
+            <div className="roadmap-progress-badge">
               {progressPercent === 100 ? t("roadmap_mastery") : t("roadmap_keep_momentum")}
             </div>
           </div>

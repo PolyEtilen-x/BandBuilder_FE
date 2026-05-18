@@ -19,6 +19,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
+  gap: 24px;
   margin-bottom: 32px;
 }
 
@@ -122,6 +124,7 @@
 .profile-header-actions {
   display: flex;
   gap: 12px;
+  flex-wrap: wrap;
 }
 
 /* BUTTONS */
@@ -135,6 +138,7 @@
   gap: 8px;
   border: none;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s;
 }
 
@@ -161,6 +165,7 @@
   gap: 8px;
   font-weight: 700;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s;
 }
 
@@ -183,6 +188,7 @@
   align-items: center;
   gap: 8px;
   cursor: pointer;
+  white-space: nowrap;
   transition: all 0.2s;
 }
 
