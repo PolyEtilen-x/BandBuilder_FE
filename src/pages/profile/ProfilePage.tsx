@@ -128,7 +128,12 @@ export default function ProfilePage() {
                   </div>
                 ) : (
                   recentActivities.map((activity) => (
-                    <div key={activity.id} className="activity-list-item">
+                    <div 
+                      key={activity.id} 
+                      className="activity-list-item cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors"
+                      onClick={() => navigate(`/practice/result/${activity.id}?type=attempt&skill=${activity.skill.toLowerCase()}`)}
+                      style={{ cursor: "pointer", transition: "background 0.2s" }}
+                    >
                       <div className="item-main-info">
                         <div className={`skill-indicator ${activity.skill.toLowerCase()}`}>
                           {activity.skill.charAt(0)}

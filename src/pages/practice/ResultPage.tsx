@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
@@ -13,7 +13,11 @@ export default function ResultPage() {
   const location = useLocation()
   const { id } = useParams()
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const { answers, clearAnswers, sidebar } = usePracticeStore()
+
+  const isDirectAttempt = searchParams.get("type") === "attempt"
+  const attemptSkill = searchParams.get("skill")
 
   // UI state hooks
   const { t, language } = useUIStore()
@@ -32,18 +36,19 @@ export default function ResultPage() {
   const { data: testSession, isLoading: isLoadingSession } = useQuery({
     queryKey: ["test-session", id],
     queryFn: () => practiceApi.getTestSessionContent(id!).then((res: any) => res.data),
-    enabled: !!id && id !== "undefined",
+    enabled: !isDirectAttempt && !!id && id !== "undefined",
     staleTime: 1000 * 60 * 5,
   })
 
   // 2. Extract attemptId for the active skill
   const attemptId = useMemo(() => {
+    if (isDirectAttempt) return id || null;
     if (!testSession || !testSession.skills) return null;
     const activeSkillItem = testSession.skills.find(
-      (s: any) => s.skillType.toLowerCase() === sidebar.skill?.toLowerCase()
+      (s: any) => s.skillType.toLowerCase() === (sidebar.skill || attemptSkill)?.toLowerCase()
     );
     return activeSkillItem?.attemptId || null;
-  }, [testSession, sidebar.skill]);
+  }, [id, isDirectAttempt, testSession, sidebar.skill, attemptSkill]);
 
   // 3. Fetch detailed Graded attempt data (GET /user/attempts/:attemptId)
   const { data: attemptDetail, isLoading: isLoadingDetail } = useQuery({
@@ -53,7 +58,7 @@ export default function ResultPage() {
     staleTime: 1000 * 60 * 5,
   })
 
-  const isLoading = isLoadingSession || (!!attemptId && isLoadingDetail)
+  const isLoading = (!isDirectAttempt && isLoadingSession) || (!!attemptId && isLoadingDetail)
 
   // Normalize data for fallback
   const examData = useMemo(() => {
@@ -76,7 +81,7 @@ export default function ResultPage() {
 
       const details = [
         {
-          type: attemptDetail.skill || sidebar.skill || "Questions",
+          type: attemptDetail.skill || sidebar.skill || attemptSkill || "Questions",
           total,
           correct
         }
@@ -131,7 +136,7 @@ export default function ResultPage() {
     const score = total > 0 ? Math.round((correct / total) * 100) : 0
 
     return { total, correct, wrong, skipped, score, isBand: false, details }
-  }, [attemptDetail, examData, answers, sidebar.skill])
+  }, [attemptDetail, examData, answers, sidebar.skill, attemptSkill])
 
   if (isLoading) return <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
 
@@ -153,7 +158,6 @@ export default function ResultPage() {
             {t("result_back")}
           </button>
           <div className="header-title">{t("result_header_title")}</div>
-          <div style={{ width: 40 }}></div>
         </div>
       </header>
 
@@ -224,6 +228,73 @@ export default function ResultPage() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* DETAILED ANSWERS KEY */}
+            <div className="details-card" style={{ marginTop: "24px" }}>
+              <div className="details-header" style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", marginBottom: "20px" }}>
+                <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                {attemptDetail ? (
+                  (attemptDetail.answers || []).map((ans: any, idx: number) => (
+                    <div key={idx} style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                      padding: "16px 20px",
+                      borderRadius: "16px",
+                      background: ans.isCorrect === true ? "#f0fdf4" : ans.isCorrect === false ? "#fef2f2" : "#f8fafc",
+                      border: `1px solid ${ans.isCorrect === true ? "#bbf7d0" : ans.isCorrect === false ? "#fecaca" : "#e2e8f0"}`,
+                      transition: "all 0.2s"
+                    }}>
+                      <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
+                        <div style={{
+                          width: "36px",
+                          height: "36px",
+                          borderRadius: "50%",
+                          background: ans.isCorrect === true ? "#22c55e" : ans.isCorrect === false ? "#ef4444" : "#94a3b8",
+                          color: "#fff",
+                          display: "flex",
+                          justifyContent: "center",
+                          alignItems: "center",
+                          fontWeight: 800,
+                          fontSize: "14px"
+                        }}>
+                          {idx + 1}
+                        </div>
+                        <div>
+                          <div style={{ fontSize: "14px", fontWeight: 700, color: "#1e293b", textTransform: "capitalize" }}>
+                            {language === "vi" ? `Câu hỏi: ${ans.questionId.replace(/_/g, " ")}` : `Question: ${ans.questionId.replace(/_/g, " ")}`}
+                          </div>
+                          <div style={{ fontSize: "13px", color: "#64748b", marginTop: "4px" }}>
+                            {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
+                            <span style={{ fontWeight: 700, color: ans.isCorrect === true ? "#15803d" : ans.isCorrect === false ? "#b91c1c" : "#475569" }}>
+                              {ans.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style={{ textAlign: "right" }}>
+                        <div style={{ fontSize: "13px", color: "#64748b" }}>
+                          {language === "vi" ? "Đáp án đúng: " : "Correct Answer: "}
+                          <span style={{ fontWeight: 800, color: "#1e293b" }}>{ans.correctAnswer || "N/A"}</span>
+                        </div>
+                        {ans.timeSpentSec != null && (
+                          <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                            ⏱️ {ans.timeSpentSec}s
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>
+                    {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
+                  </p>
+                )}
               </div>
             </div>
           </div>

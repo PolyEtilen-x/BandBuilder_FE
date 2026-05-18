@@ -176,3 +176,14 @@
   from { transform: translate(-50%, 100%); opacity: 0; }
   to { transform: translate(-50%, 0); opacity: 1; }
 }
+
+/* Custom Highlight selection styles when activeTool is highlight */
+.highlight-active ::selection {
+  background: rgba(253, 224, 71, 0.8) !important;
+  color: #000000 !important;
+}
+
+.highlight-active::selection {
+  background: rgba(253, 224, 71, 0.8) !important;
+  color: #000000 !important;
+}

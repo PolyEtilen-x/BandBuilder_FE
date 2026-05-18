@@ -5,7 +5,9 @@ import { apiClient } from "@/api/apiClient.api"
 type User = {
     userId: string
     email: string
-    //and more data
+    avatarUrl?: string
+    fullName?: string
+    name?: string
 }
 
 type AuthState = {

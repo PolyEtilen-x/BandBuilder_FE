@@ -218,9 +218,18 @@ export default function Navbar() {
                                     justifyContent: "center",
                                     alignItems: "center",
                                     fontSize: 14,
-                                    fontWeight: 800
+                                    fontWeight: 800,
+                                    overflow: "hidden"
                                 }}>
-                                    {user?.email?.charAt(0).toUpperCase()}
+                                    {user?.avatarUrl ? (
+                                        <img 
+                                            src={user.avatarUrl} 
+                                            alt={user.fullName || "User Avatar"} 
+                                            style={{ width: "100%", height: "100%", objectFit: "cover" }} 
+                                        />
+                                    ) : (
+                                        (user?.fullName || user?.email || "U").charAt(0).toUpperCase()
+                                    )}
                                 </div>
                                 <span className="hidden md:inline">{t("nav_account")}</span>
                             </Link>

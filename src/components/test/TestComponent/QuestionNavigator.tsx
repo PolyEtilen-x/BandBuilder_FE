@@ -44,10 +44,19 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
         }))
 
         // Call submit API
-        await practiceApi.submitSkillAnswers(examId, sidebar.skill, {
-          answers: formattedAnswers,
-          timeSpentSec
-        })
+        try {
+          await practiceApi.submitSkillAnswers(examId, sidebar.skill, {
+            answers: formattedAnswers,
+            timeSpentSec
+          })
+        } catch (err: any) {
+          // If already submitted (409 Conflict), we can proceed to the Result Page since the backend already has their submission
+          if (err?.response?.status === 409) {
+            console.log("Answers already submitted on server, proceeding to Result Page.");
+          } else {
+            throw err;
+          }
+        }
 
         // Clear answers and navigate
         clearAnswers()

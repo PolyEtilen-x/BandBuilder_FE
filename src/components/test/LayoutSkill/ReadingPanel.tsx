@@ -61,6 +61,7 @@ export default function ReadingPanel({ passage, activeTool }: Props) {
 
   return (
     <article
+      className={activeTool === "highlight" ? "highlight-active" : ""}
       style={{
         padding: "40px 50px",
         height: "100%",

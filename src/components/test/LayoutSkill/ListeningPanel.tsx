@@ -22,6 +22,7 @@ export default function ListeningPanel({ section, activeTool }: Props) {
 
     return (
         <div
+            className={activeTool === "highlight" ? "highlight-active" : ""}
             style={{ padding: "40px", height: "100%", overflowY: "auto", backgroundColor: "#fff" }}
             onMouseUp={handleMouseUp}
         >
