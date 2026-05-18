@@ -80,7 +80,17 @@ export default function PracticePage() {
       await practiceApi.getTestSessionContent(testId)
 
       // 3. Start skill attempt within the session (POST /practice/tests/:testId/skills/:skillType/start)
-      await practiceApi.startSkillAttempt(testId, sidebar.skill)
+      try {
+        await practiceApi.startSkillAttempt(testId, sidebar.skill)
+      } catch (err: any) {
+        // If it's 409 Conflict (e.g. attempt already exists or was already submitted),
+        // we can safely proceed to the test screen to let them view or review it.
+        if (err?.response?.status === 409) {
+          console.log("Skill attempt already started or submitted, proceeding to test screen.");
+        } else {
+          throw err;
+        }
+      }
 
       setStartTime(Date.now())
 
