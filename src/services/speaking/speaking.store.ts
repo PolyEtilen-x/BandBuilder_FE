@@ -50,7 +50,7 @@ export type SpeakingState = {
   incrementTimer: () => void
 }
 
-const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost"
+const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:3000"
 
 export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   socket: null,
