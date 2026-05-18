@@ -17,29 +17,6 @@
   --transition:0.22s ease;
 }
 
-.dark {
-  --white:     #060814;
-  --bg-alt:    #0f132a;
-  --dark:      #ffffff;
-  --dark-2:    #161c3d;
-  --text:      #f1f5f9;
-  --text-muted:#94a3b8;
-  --border:    rgba(59, 130, 246, 0.15);
-  --shadow:    0 4px 24px rgba(0, 0, 0, 0.5);
-  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.7);
-  --secondary: #3b82f6;
-  --third:     #60a5fa;
-}
-
-.dark .hero {
-  background: linear-gradient(135deg, #060814 0%, #0c0f24 50%, #172554 100%);
-}
-
-.dark .cta-banner {
-  background: linear-gradient(135deg, #1e3a8a 0%, #060814 100%);
-}
-
-
 /* ── Reset & base ───────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 

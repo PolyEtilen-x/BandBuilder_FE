@@ -1,7 +1,7 @@
 .login-popup {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgba(0, 0, 0, 0.5);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -88,45 +88,6 @@
   flex-shrink: 0;
 }
 
-/* --- Dark Mode Overrides for Practice Page & Sidebar --- */
-.dark .sidebar-skill-block {
-  border: 1px solid rgba(59, 130, 246, 0.15);
-  background: #0f132a;
-}
-
-.dark .sidebar-skill-block.active {
-  border: 2px solid #38bdf8;
-  background: rgba(56, 189, 248, 0.08);
-}
-
-.dark .sidebar-skill-icon {
-  color: #64748b;
-}
-
-.dark .sidebar-skill-block.active .sidebar-skill-icon {
-  color: #38bdf8;
-}
-
-.dark .sidebar-skill-label {
-  color: #94a3b8;
-}
-
-.dark .sidebar-skill-block.active .sidebar-skill-label {
-  color: #ffffff;
-}
-
-.dark .sidebar-row {
-  color: #cbd5e1;
-}
-
-.dark .sidebar-sub-row {
-  color: #94a3b8;
-}
-
-.dark .sidebar-radio {
-  accent-color: #38bdf8;
-}
-
 /* --- Practice Container & Layout --- */
 .practice-container {
   display: flex;
@@ -144,17 +105,13 @@
   color: #1e293b;
 }
 
-.dark .practice-title {
-  color: #ffffff;
-}
-
 @media (max-width: 768px) {
   .practice-container {
     flex-direction: column;
     padding: 20px 16px;
     gap: 20px;
   }
-  
+
   .practice-sidebar {
     width: 100% !important;
   }
