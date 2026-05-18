@@ -30,6 +30,11 @@ apiClient.interceptors.response.use(
 
     if (status !== 401) throw error
 
+    const isLoggedIn = localStorage.getItem("bandbuilder-logged-in") === "true"
+    if (!isLoggedIn) {
+      throw error
+    }
+
     if (originalRequest.url.includes("/auth/refresh")) {
       throw error
     }

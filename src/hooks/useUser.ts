@@ -2,7 +2,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { userApi } from "@/api/user.api"
 import { UpdateProfileRequest } from "@/data/user/user.types"
 
-export const useUserProfile = () => {
+export const useUserProfile = (enabled: boolean = true) => {
   return useQuery({
     queryKey: ["user-profile"],
     queryFn: async () => {
@@ -10,6 +10,7 @@ export const useUserProfile = () => {
       return res.data
     },
     staleTime: 1000 * 60 * 5, // 5 minutes
+    enabled,
   })
 }
 

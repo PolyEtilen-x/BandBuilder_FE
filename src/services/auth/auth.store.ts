@@ -31,12 +31,19 @@ export const useAuthStore = create<AuthState>((set) => ({
         try {
             const user = await getCurrentUser()
 
+            if (user) {
+                localStorage.setItem("bandbuilder-logged-in", "true")
+            } else {
+                localStorage.removeItem("bandbuilder-logged-in")
+            }
+
             set({
                 user,
                 isAuthenticated: !!user,
                 isLoading: false
             })
         } catch {
+            localStorage.removeItem("bandbuilder-logged-in")
             set({
                 user: null,
                 isAuthenticated: false,
@@ -46,6 +53,11 @@ export const useAuthStore = create<AuthState>((set) => ({
     },
 
     setUser: (user) => {
+        if (user) {
+            localStorage.setItem("bandbuilder-logged-in", "true")
+        } else {
+            localStorage.removeItem("bandbuilder-logged-in")
+        }
         set({
             user,
             isAuthenticated: !!user
@@ -58,6 +70,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         } catch (e) {
             console.log("logout error:", e)
         } finally {
+            localStorage.removeItem("bandbuilder-logged-in")
             set({ user: null, isAuthenticated: false })
             window.location.href = "/"
         }

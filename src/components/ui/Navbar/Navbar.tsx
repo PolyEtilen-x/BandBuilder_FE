@@ -7,6 +7,7 @@ import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { useAuthStore } from "@/services/auth/auth.store"
 import { useUIStore } from "@/services/ui/ui.store"
 import { Sun, Moon, Globe, LogOut } from "lucide-react"
+import { useUserProfile } from "@/hooks/useUser"
 
 export default function Navbar() {
     const [active, setActive] = useState<number | null>(null)
@@ -14,6 +15,8 @@ export default function Navbar() {
 
     const user = useAuthStore((s) => s.user)
     const logout = useAuthStore((s) => s.logout)
+    const { data: profile } = useUserProfile(!!user)
+    const displayUser = profile?.user || user
     
     // i18n and Dark Mode hooks
     const { language, theme: themeState, toggleLanguage, toggleTheme, t } = useUIStore()
@@ -80,7 +83,7 @@ export default function Navbar() {
                 }}
             >
                 {/* LOGO */}
-                <Link to="/" style={{ display: "flex", alignItems: "center" }}>
+                <Link to="/" style={{ display: "flex", alignItems: "center", flexShrink: 0 }}>
                     <img src={logo} style={{ width: "2.8rem" }} alt="Logo" />
                 </Link>
 
@@ -88,7 +91,7 @@ export default function Navbar() {
                 <div className="desktop-menu"
                     style={{
                         display: "flex",
-                        gap: "2rem",
+                        gap: "1.25rem",
                         position: "relative"
                     }}
                 >
@@ -149,7 +152,7 @@ export default function Navbar() {
                 </div>
 
                 {/* CONTROLS AREA (DESKTOP SETTINGS + ACCOUNT) */}
-                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem", flexShrink: 0 }}>
                     
                     {/* Dark/Light Toggler */}
                     <button 
@@ -221,14 +224,14 @@ export default function Navbar() {
                                     fontWeight: 800,
                                     overflow: "hidden"
                                 }}>
-                                    {user?.avatarUrl ? (
+                                    {displayUser?.avatarUrl ? (
                                         <img 
-                                            src={user.avatarUrl} 
-                                            alt={user.fullName || "User Avatar"} 
+                                            src={displayUser.avatarUrl} 
+                                            alt={displayUser.fullName || "User Avatar"} 
                                             style={{ width: "100%", height: "100%", objectFit: "cover" }} 
                                         />
                                     ) : (
-                                        (user?.fullName || user?.email || "U").charAt(0).toUpperCase()
+                                        (displayUser?.fullName || displayUser?.email || "U").charAt(0).toUpperCase()
                                     )}
                                 </div>
                                 <span className="hidden md:inline">{t("nav_account")}</span>

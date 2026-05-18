@@ -2,6 +2,8 @@ import MainLayout from "@/components/layout/MainLayout/MainLayout";
 import { useState, useEffect, useRef } from "react";
 import { useUIStore } from "@/services/ui/ui.store";
 import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { paymentApi } from "@/api/payment.api";
 import "./style.css";
 
 /* ── Types ─────────────────────────────────────────── */
@@ -413,6 +415,37 @@ export default function Home() {
   const { language } = useUIStore();
   const data = getLocalizedData(language);
 
+  // 1. Fetch real packages from Server
+  const { data: serverPackages = [] } = useQuery({
+    queryKey: ["payment-packages"],
+    queryFn: async () => {
+      const res = await paymentApi.getPackages()
+      return res.data
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+
+  // 2. Map Server packages to landing page pricing structure
+  const dynamicPlans = serverPackages.length > 0 ? serverPackages.map((pkg) => {
+    return {
+      name: pkg.name,
+      price: pkg.priceVnd ? pkg.priceVnd.toLocaleString() + " VND" : "0 VND",
+      period: language === "vi" ? "trọn gói" : "one-time",
+      popular: pkg.name.toLowerCase().includes("pro"),
+      features: language === "vi" ? [
+        `${pkg.credits} lượt chấm điểm AI cao cấp`,
+        "Phân tích phản hồi chi tiết theo tiêu chí IELTS",
+        "Trình giả lập Speaking AI tương tác trực tiếp",
+        pkg.bonusCredit > 0 ? `Tặng thêm ${pkg.bonusCredit} lượt chấm điểm` : "Không giới hạn cập nhật đề thi thử"
+      ] : [
+        `${pkg.credits} high-grade AI evaluations`,
+        "Deep feedback breakdown on criteria",
+        "Realistic interactive Speaking simulator",
+        pkg.bonusCredit > 0 ? `Bonus ${pkg.bonusCredit} credits included` : "Access to weekly mock test updates"
+      ]
+    };
+  }) : data.plans;
+
   return (
     <MainLayout>
       <main className="bb-landing">
@@ -422,7 +455,7 @@ export default function Home() {
         <FeaturesSection features={data.features} />
         <HowItWorks steps={data.steps} />
         <TestimonialsSection testimonials={data.testimonials} />
-        <PricingSection plans={data.plans} />
+        <PricingSection plans={dynamicPlans} />
         <FaqSection faqs={data.faqs} />
         <CtaBanner />
       </main>
