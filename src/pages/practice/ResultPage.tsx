@@ -4,6 +4,7 @@ import { usePracticeStore } from "@/services/practice/practice.store"
 import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { practiceApi } from "@/api/practice.api"
+import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 
 import "./ResultPage.css"
@@ -12,8 +13,7 @@ export default function ResultPage() {
   const location = useLocation()
   const { id } = useParams()
   const navigate = useNavigate()
-  const answers = usePracticeStore(state => state.answers)
-  const clearAnswers = usePracticeStore(state => state.clearAnswers)
+  const { answers, clearAnswers, sidebar } = usePracticeStore()
 
   // UI state hooks
   const { t, language } = useUIStore()
@@ -28,20 +28,63 @@ export default function ResultPage() {
   // Get data from state or fetch new if refreshed
   const stateData = location.state?.examData
 
-  const { data: fetchedTest, isLoading } = useQuery({
-    queryKey: ["practice-test", id],
-    queryFn: () => practiceApi.getSkillPreview(id!).then(res => res.data),
-    enabled: !stateData && !!id && id !== "undefined"
+  // 1. Fetch entire Test Session Details (GET /practice/:testId)
+  const { data: testSession, isLoading: isLoadingSession } = useQuery({
+    queryKey: ["test-session", id],
+    queryFn: () => practiceApi.getTestSessionContent(id!).then((res: any) => res.data),
+    enabled: !!id && id !== "undefined",
+    staleTime: 1000 * 60 * 5,
   })
 
-  // Normalize data
+  // 2. Extract attemptId for the active skill
+  const attemptId = useMemo(() => {
+    if (!testSession || !testSession.skills) return null;
+    const activeSkillItem = testSession.skills.find(
+      (s: any) => s.skillType.toLowerCase() === sidebar.skill?.toLowerCase()
+    );
+    return activeSkillItem?.attemptId || null;
+  }, [testSession, sidebar.skill]);
+
+  // 3. Fetch detailed Graded attempt data (GET /user/attempts/:attemptId)
+  const { data: attemptDetail, isLoading: isLoadingDetail } = useQuery({
+    queryKey: ["attempt-detail", attemptId],
+    queryFn: () => userApi.getAttemptDetail(attemptId!).then((res: any) => res.data),
+    enabled: !!attemptId,
+    staleTime: 1000 * 60 * 5,
+  })
+
+  const isLoading = isLoadingSession || (!!attemptId && isLoadingDetail)
+
+  // Normalize data for fallback
   const examData = useMemo(() => {
     if (stateData) return stateData
-    if (fetchedTest) return fetchedTest
     return null
-  }, [stateData, fetchedTest])
+  }, [stateData])
 
   const stats = useMemo(() => {
+    if (attemptDetail) {
+      const serverAnswers = attemptDetail.answers || []
+      const total = serverAnswers.length
+      const correct = serverAnswers.filter((a: any) => a.isCorrect === true).length
+      const wrong = serverAnswers.filter((a: any) => a.isCorrect === false).length
+      const skipped = serverAnswers.filter((a: any) => !a.userAnswer).length
+
+      // Calculate score: percentage for standard quizzes, band score for IELTS
+      const rawScore = total > 0 ? Math.round((correct / total) * 100) : 0
+      const score = attemptDetail.bandScore != null ? attemptDetail.bandScore : rawScore
+      const isBand = attemptDetail.bandScore != null && attemptDetail.bandScore <= 9
+
+      const details = [
+        {
+          type: attemptDetail.skill || sidebar.skill || "Questions",
+          total,
+          correct
+        }
+      ]
+
+      return { total, correct, wrong, skipped, score, isBand, details }
+    }
+
     if (!examData) return null
 
     let total = 0
@@ -87,8 +130,8 @@ export default function ResultPage() {
     const wrong = total - correct - skipped
     const score = total > 0 ? Math.round((correct / total) * 100) : 0
 
-    return { total, correct, wrong, skipped, score, details }
-  }, [examData, answers])
+    return { total, correct, wrong, skipped, score, isBand: false, details }
+  }, [attemptDetail, examData, answers, sidebar.skill])
 
   if (isLoading) return <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
 
@@ -122,9 +165,17 @@ export default function ResultPage() {
             <div className="overview-card">
               <div className="overview-content">
                 <h1 className="overview-title">
-                  {stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying")}
+                  {stats.isBand
+                    ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
+                    : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
+                  }
                 </h1>
-                <p className="overview-subtitle">{t("result_score_subtitle")} {stats.score}% {language === "vi" ? "độ chính xác." : "accuracy."}</p>
+                <p className="overview-subtitle">
+                  {stats.isBand
+                    ? `${language === "vi" ? "Kết quả bài thi đạt Band Score:" : "Achieved Band Score:"} ${stats.score}`
+                    : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác." : "accuracy."}`
+                  }
+                </p>
 
                 <div className="stats-grid">
                   <div className="stat-box correct">
@@ -188,7 +239,7 @@ export default function ResultPage() {
               </div>
 
               <div className="score-display">
-                {stats.score}<span className="score-unit">%</span>
+                {stats.score}{stats.isBand ? <span className="score-unit" style={{ fontSize: "1.8rem", marginLeft: 6 }}>Band</span> : <span className="score-unit">%</span>}
               </div>
               <p className="analysis-text">
                 {t("result_analysis_text")}

@@ -46,7 +46,6 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
       localStorage.setItem("practice_mode", selected)
 
       await onStart(selected)
-      console.log("AFTER onStart")
     } finally {
       setLoading(false)
     }
@@ -100,7 +99,6 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
         <button
           className="modal-button"
           onClick={() => {
-            console.log("BUTTON CLICKED")
             handleStart()
           }}
           disabled={loading}

@@ -6,5 +6,8 @@ export const userApi = {
     apiClient.get<UserProfileDTO>("/user/profile"),
 
   updateProfile: (data: UpdateProfileRequest) =>
-    apiClient.patch<UserProfileDTO["user"]>("/user/profile", data)
+    apiClient.patch<UserProfileDTO["user"]>("/user/profile", data),
+
+  getAttemptDetail: (attemptId: string) =>
+    apiClient.get<any>(`/user/attempts/${attemptId}`)
 }

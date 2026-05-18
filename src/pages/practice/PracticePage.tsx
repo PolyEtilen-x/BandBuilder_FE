@@ -71,7 +71,6 @@ export default function PracticePage() {
         const match = errorMessage.match(/testId:\s*([a-fA-F0-9-]+)/) || errorMessage.match(/testId:\s*([^)]+)/);
         if (err?.response?.status === 409 && match && match[1]) {
           testId = match[1];
-          console.log("Resuming existing test session:", testId);
         } else {
           throw err;
         }
@@ -82,7 +81,7 @@ export default function PracticePage() {
 
       // 3. Start skill attempt within the session (POST /practice/tests/:testId/skills/:skillType/start)
       await practiceApi.startSkillAttempt(testId, sidebar.skill)
-      
+
       setStartTime(Date.now())
 
       navigate(
@@ -175,20 +174,20 @@ export default function PracticePage() {
 function SkillCardGroup({ skill, sidebar, onClickTest }: any) {
   const skillSlug = skill.skillContentId || skill.id || skill._id
   const practiceTestId = skill.practiceTests?.[0]?.practiceTestId || skill.testId || skill.id || skill._id
-  
+
   const { theme } = useUIStore()
   const { data: enriched, isLoading } = useSkillPreview(skillSlug)
 
   if (isLoading) {
     return (
-      <div 
-        style={{ 
-          padding: 20, 
-          border: theme === "dark" ? "1px solid #334155" : "1px solid #eee", 
-          borderRadius: 20, 
-          background: theme === "dark" ? "rgba(15, 23, 42, 0.4)" : "#f9f9f9", 
-          height: 160 
-        }} 
+      <div
+        style={{
+          padding: 20,
+          border: theme === "dark" ? "1px solid #334155" : "1px solid #eee",
+          borderRadius: 20,
+          background: theme === "dark" ? "rgba(15, 23, 42, 0.4)" : "#f9f9f9",
+          height: 160
+        }}
         className="animate-pulse"
       >
         <div style={{ height: 20, background: theme === "dark" ? "#334155" : "#eee", borderRadius: 4, width: "70%", marginBottom: 10 }}></div>
