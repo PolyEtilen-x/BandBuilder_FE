@@ -9,6 +9,8 @@ export type TranslationKey =
   | "nav_upgrade"
   | "nav_register"
   | "nav_logout"
+  | "nav_call_ai"
+  | "nav_speaking_coach"
   
   // Roadmap Onboarding Setup
   | "setup_title"
@@ -173,6 +175,8 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     nav_upgrade: "Nâng Cấp VIP",
     nav_register: "Đăng Ký",
     nav_logout: "Đăng Xuất",
+    nav_call_ai: "Call with AI",
+    nav_speaking_coach: "AI Speaking Coach",
 
     setup_title: "Kiến Tạo Lộ Trình Học",
     setup_subtitle: "Cung cấp thông tin năng lực hiện tại và mục tiêu của bạn để hệ thống AI vẽ nên con đường tối ưu và ngắn nhất.",
@@ -334,6 +338,8 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     nav_upgrade: "Upgrade VIP",
     nav_register: "Register",
     nav_logout: "Logout",
+    nav_call_ai: "Call with AI",
+    nav_speaking_coach: "AI Speaking Coach",
 
     setup_title: "Map Out Your Journey",
     setup_subtitle: "Answer a few questions to build a personalized study timeline tailored to your current performance and milestone goals.",

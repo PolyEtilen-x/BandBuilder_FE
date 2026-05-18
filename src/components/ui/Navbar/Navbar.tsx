@@ -30,6 +30,8 @@ export default function Navbar() {
                 return t("nav_materials")
             case "Study Plan":
                 return t("nav_roadmap")
+            case "Call with AI":
+                return t("nav_call_ai")
             default:
                 return label
         }
@@ -52,6 +54,8 @@ export default function Navbar() {
                 return t("nav_grammar")
             case "Learning Roadmap":
                 return t("nav_roadmap")
+            case "AI Speaking Coach":
+                return t("nav_speaking_coach")
             default:
                 return label
         }
@@ -213,7 +217,7 @@ export default function Navbar() {
                                         (displayUser?.fullName || displayUser?.email || "U").charAt(0).toUpperCase()
                                     )}
                                 </div>
-                                <span className="hidden md:inline">{t("nav_account")}</span>
+                                <span className="hidden md:inline">{displayUser?.fullName || displayUser?.email || "User"}</span>
                             </Link>
 
                             <button

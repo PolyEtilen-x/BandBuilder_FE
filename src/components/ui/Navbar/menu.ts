@@ -10,9 +10,9 @@ const menu = [
   },
 
   {
-    label: "IELTS Mock Test",
+    label: "Call with AI",
     dropdown: [
-      { label: "Full IELTS Test", path: "/mock-test" }
+      { label: "AI Speaking Coach", path: "/call-with-ai" }
     ]
   },
 
