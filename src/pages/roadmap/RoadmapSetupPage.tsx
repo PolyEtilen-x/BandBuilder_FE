@@ -31,7 +31,7 @@ export default function RoadmapSetupPage() {
     writing: "5.0"
   })
 
-  const { mutate: generateRoadmap, isPending } = useGenerateRoadmap()
+  const { isPending } = useGenerateRoadmap()
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()

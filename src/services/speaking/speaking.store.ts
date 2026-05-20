@@ -144,6 +144,20 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       })
     })
 
+    // Listen for synthesized voice audio streaming
+    socket.on("tts_audio", (data: { audio: string }) => {
+      console.log("Received synthesized TTS audio buffer chunk. Playing...")
+      try {
+        const audioUrl = `data:audio/mp3;base64,${data.audio}`
+        const audio = new Audio(audioUrl)
+        audio.play().catch(err => {
+          console.error("Browser audio playback blocked or failed:", err)
+        })
+      } catch (err) {
+        console.error("Failed to construct or play HTML5 Audio player:", err)
+      }
+    })
+
     set({ socket })
   },
 

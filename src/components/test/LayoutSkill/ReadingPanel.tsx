@@ -21,7 +21,10 @@ export default function ReadingPanel({ passage, activeTool }: Props) {
 
   // Reset manuallyClosed when tool changes
   useEffect(() => {
-    setManuallyClosed(false)
+    const timer = setTimeout(() => {
+      setManuallyClosed(false)
+    }, 0)
+    return () => clearTimeout(timer)
   }, [activeTool])
 
   const handleParagraphMouseUp = (

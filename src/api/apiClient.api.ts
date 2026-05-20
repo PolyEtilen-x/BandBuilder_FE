@@ -1,4 +1,5 @@
 import axios from "axios"
+import { getCookie } from "@/utils/cookie"
 
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
@@ -6,18 +7,7 @@ export const apiClient = axios.create({
   withCredentials: true
 })
 
-let isRefreshing = false
-let refreshSubscribers: (() => void)[] = []
-
-function subscribeTokenRefresh(cb: () => void) {
-  refreshSubscribers.push(cb)
-}
-
-function onRefreshed() {
-  refreshSubscribers.forEach((cb) => cb())
-  refreshSubscribers = []
-}
-let refreshPromise: Promise<any> | null = null
+let refreshPromise: Promise<unknown> | null = null
 
 apiClient.interceptors.response.use(
   (res) => res,
@@ -30,7 +20,7 @@ apiClient.interceptors.response.use(
 
     if (status !== 401) throw error
 
-    const isLoggedIn = localStorage.getItem("bandbuilder-logged-in") === "true"
+    const isLoggedIn = getCookie("bandbuilder-logged-in") === "true"
     if (!isLoggedIn) {
       throw error
     }

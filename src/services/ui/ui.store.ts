@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { translations, TranslationKey } from "./translations"
+import { getCookie, setCookie } from "@/utils/cookie"
 
 type LanguageType = "vi" | "en"
 type ThemeType = "light" | "dark"
@@ -7,7 +8,7 @@ type ThemeType = "light" | "dark"
 interface UIState {
   language: LanguageType
   theme: ThemeType
-  
+
   setLanguage: (lang: LanguageType) => void
   toggleLanguage: () => void
   setTheme: (theme: ThemeType) => void
@@ -17,16 +18,16 @@ interface UIState {
 
 // Read initial values from localStorage or default settings
 const getInitialLanguage = (): LanguageType => {
-  const stored = localStorage.getItem("bandbuilder-lang")
+  const stored = getCookie("bandbuilder-lang")
   if (stored === "vi" || stored === "en") return stored
-  
+
   // Default to Vietnamese if browser is in VI, otherwise English
   const navLang = navigator.language.toLowerCase()
   return navLang.startsWith("vi") ? "vi" : "en"
 }
 
 const getInitialTheme = (): ThemeType => {
-  const stored = localStorage.getItem("bandbuilder-theme")
+  const stored = getCookie("bandbuilder-theme")
   if (stored === "light" || stored === "dark") {
     // Initial DOM side-effect trigger
     if (stored === "dark") {
@@ -36,7 +37,7 @@ const getInitialTheme = (): ThemeType => {
     }
     return stored
   }
-  
+
   // Check system setting preferences
   const preferDark = window.matchMedia("(prefers-color-scheme: dark)").matches
   const theme = preferDark ? "dark" : "light"
@@ -53,18 +54,18 @@ export const useUIStore = create<UIState>((set, get) => ({
   theme: getInitialTheme(),
 
   setLanguage: (lang) => {
-    localStorage.setItem("bandbuilder-lang", lang)
+    setCookie("bandbuilder-lang", lang, 365)
     set({ language: lang })
   },
 
   toggleLanguage: () => {
     const nextLang = get().language === "vi" ? "en" : "vi"
-    localStorage.setItem("bandbuilder-lang", nextLang)
+    setCookie("bandbuilder-lang", nextLang, 365)
     set({ language: nextLang })
   },
 
   setTheme: (theme) => {
-    localStorage.setItem("bandbuilder-theme", theme)
+    setCookie("bandbuilder-theme", theme, 365)
     if (theme === "dark") {
       document.documentElement.classList.add("dark")
     } else {
@@ -75,7 +76,7 @@ export const useUIStore = create<UIState>((set, get) => ({
 
   toggleTheme: () => {
     const nextTheme = get().theme === "light" ? "dark" : "light"
-    localStorage.setItem("bandbuilder-theme", nextTheme)
+    setCookie("bandbuilder-theme", nextTheme, 365)
     if (nextTheme === "dark") {
       document.documentElement.classList.add("dark")
     } else {

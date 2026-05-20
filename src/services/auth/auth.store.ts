@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { getCurrentUser } from "./auth.service"
 import { apiClient } from "@/api/apiClient.api"
+import { setCookie, deleteCookie } from "@/utils/cookie"
 
 type User = {
     userId: string
@@ -32,9 +33,9 @@ export const useAuthStore = create<AuthState>((set) => ({
             const user = await getCurrentUser()
 
             if (user) {
-                localStorage.setItem("bandbuilder-logged-in", "true")
+                setCookie("bandbuilder-logged-in", "true", 7)
             } else {
-                localStorage.removeItem("bandbuilder-logged-in")
+                deleteCookie("bandbuilder-logged-in")
             }
 
             set({
@@ -43,7 +44,7 @@ export const useAuthStore = create<AuthState>((set) => ({
                 isLoading: false
             })
         } catch {
-            localStorage.removeItem("bandbuilder-logged-in")
+            deleteCookie("bandbuilder-logged-in")
             set({
                 user: null,
                 isAuthenticated: false,
@@ -54,9 +55,9 @@ export const useAuthStore = create<AuthState>((set) => ({
 
     setUser: (user) => {
         if (user) {
-            localStorage.setItem("bandbuilder-logged-in", "true")
+            setCookie("bandbuilder-logged-in", "true", 7)
         } else {
-            localStorage.removeItem("bandbuilder-logged-in")
+            deleteCookie("bandbuilder-logged-in")
         }
         set({
             user,
@@ -70,7 +71,7 @@ export const useAuthStore = create<AuthState>((set) => ({
         } catch (e) {
             console.log("logout error:", e)
         } finally {
-            localStorage.removeItem("bandbuilder-logged-in")
+            deleteCookie("bandbuilder-logged-in")
             set({ user: null, isAuthenticated: false })
             window.location.href = "/"
         }

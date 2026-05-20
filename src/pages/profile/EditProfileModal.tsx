@@ -18,8 +18,11 @@ export default function EditProfileModal({ open, onClose, initialData }: Props) 
 
   useEffect(() => {
     if (open) {
-      setFullName(initialData.fullName)
-      setAvatarUrl(initialData.avatarUrl)
+      const timer = setTimeout(() => {
+        setFullName(initialData.fullName)
+        setAvatarUrl(initialData.avatarUrl)
+      }, 0)
+      return () => clearTimeout(timer)
     }
   }, [open, initialData])
 

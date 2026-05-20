@@ -51,7 +51,7 @@ export function useAudioCall() {
     }
   }, [isMuted])
 
-  const startRecordingLoop = async () => {
+  async function startRecordingLoop() {
     try {
       cleanupAudio() // Ensure previous resources are fully freed
       
@@ -136,13 +136,13 @@ export function useAudioCall() {
     }
   }
 
-  const stopRecordingLoop = () => {
+  function stopRecordingLoop() {
     setIsRecording(false)
     setRmsVolume(0)
     cleanupAudio()
   }
 
-  const cleanupAudio = () => {
+  function cleanupAudio() {
     if (silenceTimerRef.current) {
       clearTimeout(silenceTimerRef.current)
       silenceTimerRef.current = null

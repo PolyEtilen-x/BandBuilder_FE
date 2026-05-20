@@ -10,6 +10,7 @@ import { usePracticeStore } from "@/services/practice/practice.store"
 import { usePracticeSkills, useSkillPreview } from "@/hooks/usePractice"
 import { practiceApi } from "@/api/practice.api"
 import { useUIStore } from "@/services/ui/ui.store"
+import { setCookie } from "@/utils/cookie"
 import "./style.css"
 
 export default function PracticePage() {
@@ -43,7 +44,7 @@ export default function PracticePage() {
     if (!isAuthenticated) {
       // 1. Save current path to return after login
       const currentPath = location.pathname + location.search
-      localStorage.setItem("redirectAfterLogin", currentPath)
+      setCookie("redirectAfterLogin", currentPath, 1)
 
       // 2. Hide mode select and show login required modal
       setOpenModal(false)

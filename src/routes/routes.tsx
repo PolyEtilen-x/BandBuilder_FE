@@ -1,11 +1,11 @@
-import Home from "@/pages/home/home"
 import { lazy } from "react"
+const Home = lazy(() => import("@/pages/home/home"))
 const PracticePage = lazy(() => import("@/pages/practice/PracticePage"))
-import PracticeTestPage from "@/pages/practice/PracticeTestPage"
+const PracticeTestPage = lazy(() => import("@/pages/practice/PracticeTestPage"))
 const CallWithAiPage = lazy(() => import("@/pages/call/CallWithAiPage"))
-import LoginSuccess from "@/pages/loginsuccess"
-import VocabPage from "@/pages/materials/VocabPage"
-import GrammarPage from "@/pages/materials/GrammarPage"
+const LoginSuccess = lazy(() => import("@/pages/loginsuccess"))
+const VocabPage = lazy(() => import("@/pages/materials/VocabPage"))
+const GrammarPage = lazy(() => import("@/pages/materials/GrammarPage"))
 import { ProtectedRoute } from "@/guard/route.guard"
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))

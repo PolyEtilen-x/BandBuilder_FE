@@ -90,9 +90,9 @@ export default function CallWithAiPage() {
   }, [liveDialogue, simDialogue])
 
   // Active call duration runner
+  const activeStateForTimer = callStateSelector()
   useEffect(() => {
-    const activeState = isConnected ? liveState : simState
-    if (activeState === "active") {
+    if (activeStateForTimer === "active") {
       timerRef.current = setInterval(() => {
         if (isConnected) {
           incrementTimer()
@@ -102,18 +102,22 @@ export default function CallWithAiPage() {
       }, 1000)
     } else {
       if (timerRef.current) clearInterval(timerRef.current)
-      setSimTimer(0)
+      setTimeout(() => {
+        setSimTimer(0)
+      }, 0)
     }
     return () => {
       if (timerRef.current) clearInterval(timerRef.current)
     }
-  }, [callStateSelector(), isConnected, liveState, simState, incrementTimer])
+  }, [activeStateForTimer, isConnected, liveState, simState, incrementTimer])
 
   // Dialogue simulation (Offline Fallback only)
   useEffect(() => {
     if (!isConnected && simState === "active") {
       // Print first prompt immediately
-      setSimDialogue([SIMULATED_CONVO[0]])
+      setTimeout(() => {
+        setSimDialogue([SIMULATED_CONVO[0]])
+      }, 0)
 
       const triggerNextTurn = (idx: number) => {
         if (idx >= SIMULATED_CONVO.length) {
@@ -132,7 +136,9 @@ export default function CallWithAiPage() {
       triggerNextTurn(1)
     } else {
       if (simDialogueRef.current) clearTimeout(simDialogueRef.current)
-      setSimDialogue([])
+      setTimeout(() => {
+        setSimDialogue([])
+      }, 0)
     }
 
     return () => {

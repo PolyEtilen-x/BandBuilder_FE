@@ -1,7 +1,7 @@
-import { ReactNode, useEffect } from "react"
+import { ReactNode } from "react"
 import { Navigate, useLocation } from "react-router-dom"
 import { useAuthStore } from "@/services/auth/auth.store"
-import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
+import { setCookie } from "@/utils/cookie"
 
 interface Props {
     children: ReactNode
@@ -17,7 +17,7 @@ export const ProtectedRoute = ({ children }: Props) => {
 
     if (!isAuthenticated) {
         // save state before login, after login will redirect to this state
-        localStorage.setItem("redirectAfterLogin", location.pathname + location.search)
+        setCookie("redirectAfterLogin", location.pathname + location.search, 1)
 
         return <Navigate to="/" state={{ from: location, triggerLogin: true }} replace />
     }

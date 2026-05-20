@@ -15,15 +15,19 @@ export function useHighlight(passageId: string) {
     const key = `bandbuilder-highlights-${passageId}`;
     const stored = localStorage.getItem(key);
 
-    if (stored) {
-      try {
-        setHighlights(JSON.parse(stored));
-      } catch (err) {
-        console.error("Failed to parse stored highlights:", err);
+    const timer = setTimeout(() => {
+      if (stored) {
+        try {
+          setHighlights(JSON.parse(stored));
+        } catch (err) {
+          console.error("Failed to parse stored highlights:", err);
+        }
+      } else {
+        setHighlights([]);
       }
-    } else {
-      setHighlights([]);
-    }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, [passageId]);
 
   // Persistence handler

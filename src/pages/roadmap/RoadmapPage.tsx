@@ -123,7 +123,10 @@ export default function RoadmapPage() {
     if (roadmap && roadmap.nodes && roadmap.nodes.length > 0) {
       const exists = roadmap.nodes.find(n => n.id === selectedNode?.id)
       if (!exists) {
-        setSelectedNode(roadmap.nodes[0])
+        const timer = setTimeout(() => {
+          setSelectedNode(roadmap.nodes[0])
+        }, 0)
+        return () => clearTimeout(timer)
       }
     }
   }, [roadmap, selectedNode])

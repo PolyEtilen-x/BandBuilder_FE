@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { X } from "lucide-react"
+import { getCookie, setCookie } from "@/utils/cookie"
 import "./style.css"
 
 type Mode = "exam" | "practice"
@@ -32,7 +33,7 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
-    const saved = localStorage.getItem("practice_mode")
+    const saved = getCookie("practice_mode")
     if (saved === "exam" || saved === "practice") {
       setSelected(saved)
     }
@@ -43,7 +44,7 @@ export default function ModeSelectModal({ open, onClose, onStart }: Props) {
     try {
       setLoading(true)
 
-      localStorage.setItem("practice_mode", selected)
+      setCookie("practice_mode", selected, 30)
 
       await onStart(selected)
     } finally {

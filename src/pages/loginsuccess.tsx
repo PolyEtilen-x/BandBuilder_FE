@@ -1,6 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "@/services/auth/auth.store"
+import { getCookie, deleteCookie } from "@/utils/cookie"
 
 export default function LoginSuccess() {
   const navigate = useNavigate()
@@ -11,19 +12,19 @@ export default function LoginSuccess() {
 
   useEffect(() => {
     initAuth()
-  }, [])
+  }, [initAuth])
 
   useEffect(() => {
     if (isLoading) return
 
     if (isAuthenticated) {
-      const redirectPath = localStorage.getItem("redirectAfterLogin") || "/"
+      const redirectPath = getCookie("redirectAfterLogin") || "/"
       console.log("Login success, redirecting to:", redirectPath)
 
-      localStorage.removeItem("redirectAfterLogin")
+      deleteCookie("redirectAfterLogin")
       navigate(redirectPath, { replace: true })
     }
-  }, [isAuthenticated, isLoading])
+  }, [isAuthenticated, isLoading, navigate])
 
   return <p>Logging in...</p>
 }
