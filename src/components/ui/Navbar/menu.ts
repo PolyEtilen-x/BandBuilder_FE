@@ -2,28 +2,31 @@ const menu = [
   {
     label: "IELTS Practice",
     dropdown: [
-      { label: "Practice IELTS Reading", path: "/practice/reading" },
-      { label: "Practice IELTS Listening", path: "/practice/listening" },
-      { label: "Practice IELTS Writing", path: "/practice/writing" },
-      { label: "Practice IELTS Speaking", path: "/practice/speaking" },
+      { label: "Practice IELTS Reading", path: "/practice-ielts/reading" },
+      { label: "Practice IELTS Listening", path: "/practice-ielts/listening" },
+      { label: "Practice IELTS Writing", path: "/practice-ielts/writing" },
+      { label: "Practice IELTS Speaking", path: "/practice-ielts/speaking" },
     ]
   },
 
   {
-    label: "Call with AI",
+    label: "General Practice",
     dropdown: [
-      { label: "AI Speaking Coach", path: "/call-with-ai" }
+      { label: "Pronunciation Practice", path: "/practice-general/pronunciation-practice" },
+      { label: "Sample Writings", path: "/practice-general/sample-writings" },
+      { label: "Call with AI", path: "/practice-general/call-with-ai" }
     ]
   },
 
   {
-    label: "IELTS Materials",
+    label: "Materials",
     dropdown: [
       { label: "Vocabulary", path: "/materials/vocabulary" },
       { label: "Grammar", path: "/materials/grammar" },
       { label: "IELTS Tips", path: "/materials/tips" }
     ]
   },
+
   {
     label: "Study Plan",
     dropdown: [
