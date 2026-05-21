@@ -1,4 +1,4 @@
-export type TranslationKey = 
+export type TranslationKey =
   // Navbar
   | "nav_roadmap"
   | "nav_practice"
@@ -11,7 +11,7 @@ export type TranslationKey =
   | "nav_logout"
   | "nav_call_ai"
   | "nav_speaking_coach"
-  
+
   // Roadmap Onboarding Setup
   | "setup_title"
   | "setup_subtitle"
@@ -30,7 +30,7 @@ export type TranslationKey =
   | "setup_writing"
   | "setup_btn_generate"
   | "setup_generating"
-  
+
   // Roadmap Page
   | "roadmap_back"
   | "roadmap_sub"
@@ -49,7 +49,7 @@ export type TranslationKey =
   | "roadmap_lessons_resources"
   | "roadmap_launch_practice"
   | "roadmap_review_tasks"
-  
+
   // Skills & Resources common
   | "skill_speaking"
   | "skill_listening"
@@ -269,7 +269,7 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     profile_loading: "Đang tải hồ sơ học tập của bạn...",
     profile_error: "Không thể tải hồ sơ. Vui lòng tải lại trang hoặc thử lại sau.",
     profile_membership_basic: "Tài Khoản Cơ Bản",
-    profile_membership_pro: "Thành Viên Premium VIP",
+    profile_membership_pro: "Thành Viên Premium",
     profile_credits_rem: "lượt đánh giá AI còn lại",
     profile_upgrade_btn: "Nâng Cấp Pro",
     profile_edit_btn: "Chỉnh Sửa Hồ Sơ",
@@ -431,8 +431,8 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     // PROFILE PAGE (EN)
     profile_loading: "Loading your profile...",
     profile_error: "Could not load profile. Please try again later.",
-    profile_membership_basic: "Basic Plan",
-    profile_membership_pro: "Premium VIP Plan",
+    profile_membership_basic: "Basic",
+    profile_membership_pro: "Premium VIP",
     profile_credits_rem: "credits remaining",
     profile_upgrade_btn: "Upgrade Pro",
     profile_edit_btn: "Edit Profile",

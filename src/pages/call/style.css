@@ -7,7 +7,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  font-family: 'Poppins', sans-serif;
 }
 
 /* Glassmorphism Dashboard Card */
@@ -344,6 +343,7 @@
     transform: scale(1);
     opacity: 0.8;
   }
+
   100% {
     transform: scale(2.2);
     opacity: 0;
@@ -441,15 +441,42 @@
   animation: bounceWave 1.2s infinite ease-in-out alternate;
 }
 
-.wave-bar:nth-child(1) { animation-delay: 0.1s; background: #60a5fa; }
-.wave-bar:nth-child(2) { animation-delay: 0.3s; background: #3b82f6; height: 18px; }
-.wave-bar:nth-child(3) { animation-delay: 0.5s; background: #10b981; height: 26px; }
-.wave-bar:nth-child(4) { animation-delay: 0.2s; background: #3b82f6; height: 14px; }
-.wave-bar:nth-child(5) { animation-delay: 0.4s; background: #60a5fa; }
+.wave-bar:nth-child(1) {
+  animation-delay: 0.1s;
+  background: #60a5fa;
+}
+
+.wave-bar:nth-child(2) {
+  animation-delay: 0.3s;
+  background: #3b82f6;
+  height: 18px;
+}
+
+.wave-bar:nth-child(3) {
+  animation-delay: 0.5s;
+  background: #10b981;
+  height: 26px;
+}
+
+.wave-bar:nth-child(4) {
+  animation-delay: 0.2s;
+  background: #3b82f6;
+  height: 14px;
+}
+
+.wave-bar:nth-child(5) {
+  animation-delay: 0.4s;
+  background: #60a5fa;
+}
 
 @keyframes bounceWave {
-  0% { transform: scaleY(1); }
-  100% { transform: scaleY(3.5); }
+  0% {
+    transform: scaleY(1);
+  }
+
+  100% {
+    transform: scaleY(3.5);
+  }
 }
 
 /* Dialogue Transcript Panel */
