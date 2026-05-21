@@ -7,7 +7,7 @@ import {
   type PronunciationTopicDetailDto,
   type PronunciationVocabDto,
 } from "@/api/practiceGeneral.api"
-import "./Pronunciatione.css"
+import "./Pronunciation.css"
 
 // ── Sub-components ─────────────────────────────────────────────────────────
 
