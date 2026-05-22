@@ -96,7 +96,7 @@ export default function PracticePage() {
       setStartTime(Date.now())
 
       navigate(
-        `/practice/${sidebar.skill}/test/${testId}?unit=${selectedTest.unitId}`,
+        `/practice-ielts/${sidebar.skill}/test/${testId}?unit=${selectedTest.unitId}`,
         { state: { mode } }
       )
     } catch (err) {

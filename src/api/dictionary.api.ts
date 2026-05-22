@@ -11,6 +11,7 @@ export interface DictionaryResult {
   translation: string
   isSaved: boolean
   dateSaved: string | null
+  exampleTranslation?: string
 }
 
 export async function getDictionary(word: string, sentence?: string): Promise<DictionaryResult> {
