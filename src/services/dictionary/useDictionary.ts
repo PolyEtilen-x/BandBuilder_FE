@@ -13,6 +13,23 @@ export interface UseDictionaryReturn {
 }
 
 /**
+ * Helper to translate English text to Vietnamese using the Google Translate API
+ */
+async function translateToVietnamese(text: string): Promise<string> {
+  if (!text || text === "N/A" || text === "No example found in database" || !text.trim()) return ""
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(text)}`
+    const res = await fetch(url)
+    if (!res.ok) return ""
+    const data = await res.json()
+    return data[0]?.map((segment: any) => segment[0]).filter(Boolean).join("") || ""
+  } catch (error) {
+    console.error("Failed to translate dictionary example:", error)
+    return ""
+  }
+}
+
+/**
  * Hook to lookup dictionary definitions (Server State via TanStack Query)
  * and manage saved words list (Client State via Zustand store).
  */
@@ -24,9 +41,15 @@ export function useDictionary(): UseDictionaryReturn {
   // Use TanStack Query to manage and cache server-side dictionary queries
   const { data, isFetching } = useQuery<DictionaryResult>({
     queryKey: ["dictionary", searchParams?.word, searchParams?.sentence],
-    queryFn: () => {
+    queryFn: async () => {
       if (!searchParams?.word) throw new Error("No word provided")
-      return getDictionary(searchParams.word, searchParams.sentence)
+      const result = await getDictionary(searchParams.word, searchParams.sentence)
+      
+      // On-the-fly translation of the dictionary example sentence
+      if (result.example && result.example !== "N/A" && result.example !== "No example found in database") {
+        result.exampleTranslation = await translateToVietnamese(result.example)
+      }
+      return result
     },
     enabled: !!searchParams?.word,
     staleTime: 5 * 60 * 1000, // Cache dictionary responses for 5 minutes
@@ -43,7 +66,11 @@ export function useDictionary(): UseDictionaryReturn {
 
   const save = (): void => {
     if (!data) return
-    addWord(data)
+    if (isSaved) {
+      removeWord(data.word)
+    } else {
+      addWord(data)
+    }
   }
 
   const remove = (word: string): void => {

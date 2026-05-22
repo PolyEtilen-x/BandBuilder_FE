@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react"
+import { useState, useEffect, ReactElement } from "react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
+import GeneralPracticeSidebar from "@/components/general_practice/GeneralPracticeSidebar"
 import {
   getWritingSampleTopics,
   getWritingSampleTopicDetail,
@@ -13,14 +14,14 @@ import "./SampleWritings.css"
 // ── Constants ──────────────────────────────────────────────────────────────
 
 const BAND_COLORS: Record<string, { bg: string; border: string; text: string }> = {
-  "6": { bg: "#1c1917", border: "#78716c", text: "#d6d3d1" },
-  "7": { bg: "#0c1a2e", border: "#3b82f6", text: "#bfdbfe" },
-  "8": { bg: "#0d1f0d", border: "#22c55e", text: "#bbf7d0" },
+  "6": { bg: "#f9fafb", border: "#e5e7eb", text: "#4b5563" },
+  "7": { bg: "#eff6ff", border: "#bfdbfe", text: "#1e40af" },
+  "8": { bg: "#ecfdf5", border: "#a7f3d0", text: "#065f46" },
 }
 
 function getBandColor(score: number) {
   const key = String(Math.floor(score))
-  return BAND_COLORS[key] ?? { bg: "#1e1b4b", border: "#6366f1", text: "#e0e7ff" }
+  return BAND_COLORS[key] ?? { bg: "#f5f3ff", border: "#ddd6fe", text: "#5b21b6" }
 }
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -35,7 +36,7 @@ function TaskTypeTab({
   label: string
   id: string
   onClick: () => void
-}): React.ReactElement {
+}): ReactElement {
   return (
     <button
       id={id}
@@ -53,7 +54,7 @@ function TopicCard({
 }: {
   topic: WritingSampleTopicListItemDto
   onSelect: (id: string) => void
-}): React.ReactElement {
+}): ReactElement {
   return (
     <button
       id={`writing-topic-${topic.id}`}
@@ -76,7 +77,7 @@ function TopicCard({
   )
 }
 
-function EssayCard({ essay }: { essay: WritingEssayDto }): React.ReactElement {
+function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
   const [showTranslation, setShowTranslation] = useState(false)
   const colors = getBandColor(essay.bandScore)
 
@@ -96,7 +97,7 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): React.ReactElement {
         <span className="sw-essay-card__band-label" style={{ color: colors.text }}>
           <span
             className="sw-essay-card__band-pill"
-            style={{ background: colors.border }}
+            style={{ background: colors.border, color: colors.text }}
           >
             Band {essay.bandScore.toFixed(1)}
           </span>
@@ -139,7 +140,7 @@ function TopicDetail({
 }: {
   detail: WritingSampleTopicDetailDto
   onBack: () => void
-}): React.ReactElement {
+}): ReactElement {
   const [activeBand, setActiveBand] = useState<number | null>(null)
 
   const bands = [...new Set(detail.essays.map((e) => e.bandScore))].sort()
@@ -225,7 +226,7 @@ function TopicDetail({
 
 type ViewState = { type: "list" } | { type: "detail"; id: string }
 
-export default function SampleWritingsPage(): React.ReactElement {
+export default function SampleWritingsPage(): ReactElement {
   const [view, setView] = useState<ViewState>({ type: "list" })
   const [activeTask, setActiveTask] = useState<WritingTaskType | "ALL">("ALL")
   const [topics, setTopics] = useState<WritingSampleTopicListItemDto[]>([])
@@ -267,80 +268,106 @@ export default function SampleWritingsPage(): React.ReactElement {
 
   return (
     <MainLayout>
-      <div className="sw-page">
-        <div className="sw-container">
+      <div
+        style={{
+          display: "flex",
+          gap: 30,
+          maxWidth: 1200,
+          margin: "0 auto",
+          padding: "30px 20px",
+          alignItems: "flex-start",
+          height: "calc(100vh - 80px)",
+          overflow: "hidden",
+        }}
+      >
+        {/* SIDEBAR */}
+        <GeneralPracticeSidebar />
 
-          {/* Header */}
-          {view.type === "list" && (
-            <div className="sw-header">
-              <div className="sw-header__title-row">
-                <span className="sw-header__icon">✍️</span>
-                <h1 className="sw-header__title">Sample Writings</h1>
-              </div>
-              <p className="sw-header__subtitle">
-                Study band 6+ to 8+ model essays for IELTS Writing Task 1 & Task 2.
-              </p>
+        {/* WORKSPACE CONTENT */}
+        <div
+          style={{
+            flex: 1,
+            minWidth: 0,
+            display: "flex",
+            flexDirection: "column",
+            overflowY: "auto",
+            height: "100%",
+          }}
+        >
+          <div className="sw-container">
 
-              {/* Task type tabs */}
-              <div className="sw-tabs">
-                <TaskTypeTab
-                  id="tab-all"
-                  label="All"
-                  active={activeTask === "ALL"}
-                  onClick={() => setActiveTask("ALL")}
-                />
-                <TaskTypeTab
-                  id="tab-task1"
-                  label="Task 1"
-                  active={activeTask === "TASK_1"}
-                  onClick={() => setActiveTask("TASK_1")}
-                />
-                <TaskTypeTab
-                  id="tab-task2"
-                  label="Task 2"
-                  active={activeTask === "TASK_2"}
-                  onClick={() => setActiveTask("TASK_2")}
-                />
-              </div>
-            </div>
-          )}
-
-          {/* Error */}
-          {error && (
-            <div className="sw-error" role="alert">
-              {error}
-            </div>
-          )}
-
-          {/* Loading */}
-          {isSpinning && (
-            <div className="sw-loading" aria-busy="true" aria-label="Loading">
-              <span className="sw-loading__spinner">⟳</span>
-              Loading…
-            </div>
-          )}
-
-          {/* Topic list */}
-          {!isSpinning && view.type === "list" && (
-            <>
-              {topics.length === 0 && !error && (
-                <div className="sw-empty">
-                  <div className="sw-empty__icon">📭</div>
-                  No writing samples available yet. Check back soon!
+            {/* Header */}
+            {view.type === "list" && (
+              <div className="sw-header">
+                <div className="sw-header__title-row">
+                  <span className="sw-header__icon">✍️</span>
+                  <h1 className="sw-header__title">Sample Writings</h1>
                 </div>
-              )}
-              <div className="sw-topic-grid">
-                {topics.map((t) => (
-                  <TopicCard key={t.id} topic={t} onSelect={handleSelectTopic} />
-                ))}
-              </div>
-            </>
-          )}
+                <p className="sw-header__subtitle">
+                  Study band 6+ to 8+ model essays for IELTS Writing Task 1 & Task 2.
+                </p>
 
-          {/* Detail */}
-          {!isSpinning && view.type === "detail" && detail && (
-            <TopicDetail detail={detail} onBack={handleBack} />
-          )}
+                {/* Task type tabs */}
+                <div className="sw-tabs">
+                  <TaskTypeTab
+                    id="tab-all"
+                    label="All"
+                    active={activeTask === "ALL"}
+                    onClick={() => setActiveTask("ALL")}
+                  />
+                  <TaskTypeTab
+                    id="tab-task1"
+                    label="Task 1"
+                    active={activeTask === "TASK_1"}
+                    onClick={() => setActiveTask("TASK_1")}
+                  />
+                  <TaskTypeTab
+                    id="tab-task2"
+                    label="Task 2"
+                    active={activeTask === "TASK_2"}
+                    onClick={() => setActiveTask("TASK_2")}
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Error */}
+            {error && (
+              <div className="sw-error" role="alert">
+                {error}
+              </div>
+            )}
+
+            {/* Loading */}
+            {isSpinning && (
+              <div className="sw-loading" aria-busy="true" aria-label="Loading">
+                <span className="sw-loading__spinner">⟳</span>
+                Loading…
+              </div>
+            )}
+
+            {/* Topic list */}
+            {!isSpinning && view.type === "list" && (
+              <>
+                {topics.length === 0 && !error && (
+                  <div className="sw-empty">
+                    <div className="sw-empty__icon">📭</div>
+                    No writing samples available yet. Check back soon!
+                  </div>
+                )}
+                <div className="sw-topic-grid">
+                  {topics.map((t) => (
+                    <TopicCard key={t.id} topic={t} onSelect={handleSelectTopic} />
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Detail */}
+            {!isSpinning && view.type === "detail" && detail && (
+              <TopicDetail detail={detail} onBack={handleBack} />
+            )}
+          </div>
         </div>
       </div>
     </MainLayout>

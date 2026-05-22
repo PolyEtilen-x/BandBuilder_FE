@@ -153,15 +153,22 @@ export default function NotebookDetail({ date, onBack }: Props): React.ReactElem
                 </p>
               )}
 
-              {w.example && w.example !== "N/A" && (
-                <p className="example" style={{ margin: "4px 0" }}>
-                  Ví dụ: "{w.example}"
-                </p>
+              {w.example && w.example !== "N/A" && w.example !== "No example found in database" && (
+                <div style={{ marginTop: "4px", marginBottom: "4px" }}>
+                  <p className="example" style={{ margin: 0, fontSize: "13px", color: "#475569" }}>
+                    <strong>Ví dụ:</strong> "{w.example}"
+                  </p>
+                  {w.exampleTranslation && (
+                    <p className="example-translation" style={{ margin: 0, fontSize: "13px", color: "#16a34a", fontStyle: "italic" }}>
+                      <strong>Dịch câu ví dụ:</strong> "{w.exampleTranslation}"
+                    </p>
+                  )}
+                </div>
               )}
 
               {w.translation && (
-                <p className="translation" style={{ fontSize: "13px", color: "#64748b", fontStyle: "italic", margin: "4px 0" }}>
-                  Dịch câu ví dụ: "{w.translation}"
+                <p className="translation" style={{ fontSize: "13px", color: "#64748b", fontStyle: "italic", margin: "8px 0 4px 0" }}>
+                  <strong>Dịch câu ngữ cảnh:</strong> "{w.translation}"
                 </p>
               )}
 
