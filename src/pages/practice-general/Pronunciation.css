@@ -476,3 +476,201 @@
   border-left: 3px solid #10b981;
   margin-top: 4px;
 }
+
+/* ── YouTube Shadowing Premium Workspace Styles ─────────────────────────── */
+
+.pp-youtube-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.pp-youtube-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 12px 16px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.pp-yt-controls-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.pp-yt-control-btn {
+  background: #ffffff;
+  border: 1px solid #d1d5db;
+  color: #4b5563;
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.pp-yt-control-btn:hover {
+  background: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.pp-yt-control-btn.active {
+  background: #174593;
+  color: #ffffff;
+  border-color: #174593;
+  box-shadow: 0 2px 8px rgba(23, 69, 147, 0.2);
+}
+
+.pp-yt-status-chip {
+  font-size: 11px;
+  font-weight: 700;
+  color: #174593;
+  background: #eff6ff;
+  padding: 4px 10px;
+  border-radius: 12px;
+  border: 1px solid #bfdbfe;
+}
+
+/* Tabs */
+.pp-workspace-tabs {
+  display: flex;
+  border-bottom: 2px solid #e5e7eb;
+  margin-bottom: 16px;
+  gap: 8px;
+}
+
+.pp-tab-btn {
+  background: none;
+  border: none;
+  font-size: 14px;
+  font-weight: 700;
+  color: #6b7280;
+  padding: 8px 16px;
+  cursor: pointer;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.pp-tab-btn:hover {
+  color: #174593;
+}
+
+.pp-tab-btn.active {
+  color: #174593;
+}
+
+.pp-tab-btn.active::after {
+  content: "";
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #174593;
+  border-radius: 2px;
+}
+
+/* Shadowing Sentences List */
+.pp-shadowing-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.pp-sentence-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 16px;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.pp-sentence-row:hover {
+  border-color: rgba(23, 69, 147, 0.3);
+  background: #fafafc;
+  transform: translateX(3px);
+}
+
+.pp-sentence-row.active {
+  background: #f0f7ff;
+  border-color: #174593;
+  box-shadow: 0 4px 12px rgba(23, 69, 147, 0.06);
+}
+
+.pp-sentence-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.pp-sentence-time {
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  font-family: monospace;
+}
+
+.pp-sentence-row.active .pp-sentence-time {
+  color: #174593;
+}
+
+.pp-sentence-translate-btn {
+  background: none;
+  border: none;
+  color: #6b7280;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.pp-sentence-translate-btn:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+}
+
+.pp-word-token {
+  display: inline-block;
+  cursor: pointer;
+  border-bottom: 1.5px dashed transparent;
+  transition: all 0.1s ease;
+  padding: 0 1px;
+}
+
+.pp-word-token:hover {
+  color: #174593;
+  border-bottom-color: #174593;
+  background: rgba(23, 69, 147, 0.05);
+  border-radius: 3px;
+}
+
+.pp-sentence-translation-text {
+  margin: 4px 0 0;
+  color: #4b5563;
+  font-size: 12.5px;
+  background: #f9fafb;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border-left: 2.5px solid #d1d5db;
+  line-height: 1.4;
+}

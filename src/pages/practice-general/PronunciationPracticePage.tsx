@@ -1,14 +1,18 @@
-import { useState, useRef, ReactElement } from "react"
+import { useState, useEffect, useRef, ReactElement } from "react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import GeneralPracticeSidebar from "@/components/general_practice/GeneralPracticeSidebar"
 import { useVocabStore } from "@/services/dictionary/vocab.store"
+import { useDictionary } from "@/services/dictionary/useDictionary"
+import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
 import {
   getPronunciationTopics,
   getPronunciationTopicDetail,
   type PronunciationTopicListItemDto,
   type PronunciationTopicDetailDto,
   type PronunciationVocabDto,
+  type PronunciationSentenceDto,
 } from "@/api/practiceGeneral.api"
+import { useYoutubeShadowing } from "./useYoutubeShadowing"
 import "./Pronunciation.css"
 
 // ── Sub-components ─────────────────────────────────────────────────────────
@@ -129,6 +133,30 @@ function VocabCard({ vocab }: { vocab: PronunciationVocabDto }): ReactElement {
   )
 }
 
+/**
+ * Helper to translate English text to Vietnamese using the public translation endpoint.
+ */
+async function translateToVietnamese(text: string): Promise<string> {
+  if (!text || !text.trim()) return ""
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(
+      text
+    )}`
+    const res = await fetch(url)
+    if (!res.ok) return ""
+    const data = (await res.json()) as Array<Array<[string, ...unknown[]]>>
+    return (
+      data[0]
+        ?.map((segment) => segment[0])
+        .filter(Boolean)
+        .join("") || ""
+    )
+  } catch (error) {
+    console.error("Failed to translate transcript sentence:", error)
+    return ""
+  }
+}
+
 function TopicDetail({
   detail,
   onBack,
@@ -136,53 +164,147 @@ function TopicDetail({
   detail: PronunciationTopicDetailDto
   onBack: () => void
 }): ReactElement {
-  const [isPlaying, setIsPlaying] = useState(false)
-  const [currentTime, setCurrentTime] = useState(0)
-  const [duration, setDuration] = useState(0)
+  const [activeTab, setActiveTab] = useState<"shadowing" | "vocab">("shadowing")
+
+  // Dictionary lookup hook
+  const {
+    dict,
+    loading: dictLoading,
+    lookup,
+    close: closeDict,
+    save: saveDict,
+  } = useDictionary()
+
+  // Sentence translation states
+  const [translations, setTranslations] = useState<Record<string, string>>({})
+  const [translatingIds, setTranslatingIds] = useState<Record<string, boolean>>({})
+
+  // Custom YouTube Shadowing hook
+  const {
+    isPlaying,
+    playbackSpeed,
+    isLooping,
+    currentTime,
+    duration,
+    isPlayerReady,
+    selectedSentence,
+    activeSentence,
+    playSentence,
+    clearSelectedSentence,
+    togglePlay,
+    setSpeed,
+    toggleLoop,
+    seekTo,
+  } = useYoutubeShadowing(detail.videoUrl, detail.sentences || [])
+
+  // Legacy HTML5 Audio Player state (for graceful fallback if videoUrl is missing)
+  const [legacyPlaying, setLegacyPlaying] = useState(false)
+  const [legacyTime, setLegacyTime] = useState(0)
+  const [legacyDuration, setLegacyDuration] = useState(0)
   const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const togglePlay = (): void => {
+  const toggleLegacyPlay = (): void => {
     if (!audioRef.current) return
-    if (isPlaying) {
+    if (legacyPlaying) {
       audioRef.current.pause()
-      setIsPlaying(false)
+      setLegacyPlaying(false)
     } else {
       audioRef.current.play()
-      setIsPlaying(true)
+      setLegacyPlaying(true)
     }
   }
 
-  const handleTimeUpdate = (): void => {
+  const handleLegacyTimeUpdate = (): void => {
     if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime)
+      setLegacyTime(audioRef.current.currentTime)
     }
   }
 
-  const handleLoadedMetadata = (): void => {
+  const handleLegacyLoadedMetadata = (): void => {
     if (audioRef.current) {
-      setDuration(audioRef.current.duration || 0)
+      setLegacyDuration(audioRef.current.duration || 0)
     }
   }
 
-  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
+  const handleLegacySliderChange = (
+    e: React.ChangeEvent<HTMLInputElement>
+  ): void => {
     const val = parseFloat(e.target.value)
     if (audioRef.current) {
       audioRef.current.currentTime = val
-      setCurrentTime(val)
+      setLegacyTime(val)
     }
+  }
+
+  const handleLegacyEnded = (): void => {
+    setLegacyPlaying(false)
+    setLegacyTime(0)
   }
 
   const formatTime = (seconds: number): string => {
     if (isNaN(seconds)) return "00:00"
     const mins = Math.floor(seconds / 60)
     const secs = Math.floor(seconds % 60)
-    return `${mins.toString().padStart(2, "0")}:${secs.toString().padStart(2, "0")}`
+    return `${mins.toString().padStart(2, "0")}:${secs
+      .toString()
+      .padStart(2, "0")}`
   }
 
-  const handleEnded = (): void => {
-    setIsPlaying(false)
-    setCurrentTime(0)
+  const handleWordClick = (word: string, contextSentence: string): void => {
+    // Strip trailing or leading punctuation markers for precise lookup dictionary queries
+    const cleanWord = word
+      .toLowerCase()
+      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'“]/g, "")
+      .trim()
+    if (cleanWord) {
+      lookup(cleanWord, contextSentence)
+    }
   }
+
+  const handleTranslateSentence = async (
+    e: React.MouseEvent,
+    sentenceId: string,
+    text: string
+  ): Promise<void> => {
+    e.stopPropagation() // Avoid triggering play sentence bounds
+    if (translations[sentenceId]) {
+      setTranslations((prev) => {
+        const next = { ...prev }
+        delete next[sentenceId]
+        return next
+      })
+      return
+    }
+
+    setTranslatingIds((prev) => ({ ...prev, [sentenceId]: true }))
+    try {
+      const translated = await translateToVietnamese(text)
+      setTranslations((prev) => ({ ...prev, [sentenceId]: translated }))
+    } catch (err) {
+      console.error("Sentence translation error:", err)
+    } finally {
+      setTranslatingIds((prev) => ({ ...prev, [sentenceId]: false }))
+    }
+  }
+
+  const renderClickableText = (text: string): ReactElement[] => {
+    return text.split(/\s+/).map((word, idx) => {
+      return (
+        <span
+          key={idx}
+          className="pp-word-token"
+          onClick={(e) => {
+            e.stopPropagation()
+            handleWordClick(word, text)
+          }}
+        >
+          {word}{" "}
+        </span>
+      )
+    })
+  }
+
+  const hasVideo = detail.videoUrl && detail.videoUrl.trim() !== ""
 
   return (
     <div className="pp-detail">
@@ -199,76 +321,243 @@ function TopicDetail({
       </div>
 
       <div className="pp-detail-grid">
-        {/* LEFT COLUMN: Player & Passage Script */}
+        {/* LEFT COLUMN: Player (YouTube Shadowing or Graceful Fallback) */}
         <div className="pp-detail-left">
-          {detail.audioUrl && (
-            <div className="pp-custom-player">
-              <audio
-                ref={audioRef}
-                src={detail.audioUrl}
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={handleLoadedMetadata}
-                onEnded={handleEnded}
-              />
-              <button
-                onClick={togglePlay}
-                className="pp-player-play-btn"
-                aria-label={isPlaying ? "Pause" : "Play"}
-              >
-                {isPlaying ? "⏸" : "▶"}
-              </button>
-              <div className="pp-player-progress-container">
-                <input
-                  type="range"
-                  min={0}
-                  max={duration || 100}
-                  value={currentTime}
-                  onChange={handleSliderChange}
-                  className="pp-player-slider"
+          {hasVideo ? (
+            <div className="pp-youtube-wrapper">
+              <div className="pp-video">
+                {/* Standard Youtube Iframe element targeted by the API */}
+                <div
+                  id="shadowing-youtube-player"
+                  style={{ width: "100%", height: "100%" }}
                 />
-                <div className="pp-player-timers">
-                  <span>{formatTime(currentTime)}</span>
-                  <span>{formatTime(duration)}</span>
+              </div>
+
+              {/* Premium Controls */}
+              <div className="pp-youtube-controls">
+                <div className="pp-yt-controls-left">
+                  <button
+                    onClick={togglePlay}
+                    disabled={!isPlayerReady}
+                    className={`pp-yt-control-btn ${isPlaying ? "active" : ""}`}
+                  >
+                    {isPlaying ? "⏸ Pause" : "▶ Play"}
+                  </button>
+
+                  <button
+                    onClick={toggleLoop}
+                    disabled={!isPlayerReady}
+                    className={`pp-yt-control-btn ${isLooping ? "active" : ""}`}
+                  >
+                    🔁 Loop Sentence
+                  </button>
+
+                  {selectedSentence && (
+                    <button
+                      onClick={clearSelectedSentence}
+                      className="pp-yt-control-btn"
+                    >
+                      Clear Selection
+                    </button>
+                  )}
+                </div>
+
+                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                  <span
+                    style={{ fontSize: 11, fontWeight: 700, color: "#64748b" }}
+                  >
+                    SPEED:
+                  </span>
+                  {[0.75, 1, 1.25, 1.5].map((speed) => (
+                    <button
+                      key={speed}
+                      onClick={() => setSpeed(speed)}
+                      disabled={!isPlayerReady}
+                      className={`pp-yt-control-btn ${
+                        playbackSpeed === speed ? "active" : ""
+                      }`}
+                      style={{ padding: "4px 8px", fontSize: "11px" }}
+                    >
+                      {speed}x
+                    </button>
+                  ))}
+                </div>
+
+                <div className="pp-yt-status-chip">
+                  {selectedSentence
+                    ? `Shadowing (Sentence ${selectedSentence.orderIndex + 1})`
+                    : "Continuous Playback"}
+                  {" · "}
+                  {formatTime(currentTime)} / {formatTime(duration)}
                 </div>
               </div>
             </div>
+          ) : (
+            // GRACEFUL LEGACY FALLBACK (Audio + Raw Passage text)
+            <>
+              {detail.audioUrl && (
+                <div className="pp-custom-player">
+                  <audio
+                    ref={audioRef}
+                    src={detail.audioUrl}
+                    onTimeUpdate={handleLegacyTimeUpdate}
+                    onLoadedMetadata={handleLegacyLoadedMetadata}
+                    onEnded={handleLegacyEnded}
+                  />
+                  <button
+                    onClick={toggleLegacyPlay}
+                    className="pp-player-play-btn"
+                    aria-label={legacyPlaying ? "Pause" : "Play"}
+                  >
+                    {legacyPlaying ? "⏸" : "▶"}
+                  </button>
+                  <div className="pp-player-progress-container">
+                    <input
+                      type="range"
+                      min={0}
+                      max={legacyDuration || 100}
+                      value={legacyTime}
+                      onChange={handleLegacySliderChange}
+                      className="pp-player-slider"
+                    />
+                    <div className="pp-player-timers">
+                      <span>{formatTime(legacyTime)}</span>
+                      <span>{formatTime(legacyDuration)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              <div className="pp-passage">
+                <span className="pp-passage__label">Reading Passage</span>
+                <p className="pp-passage__text">{detail.paragraph}</p>
+              </div>
+            </>
           )}
 
-          <div className="pp-passage">
-            <span className="pp-passage__label">Reading Passage</span>
-            <p className="pp-passage__text">{detail.paragraph}</p>
-          </div>
-
-          {/* YouTube Video (Hides gracefully if empty/null) */}
-          {detail.videoUrl && detail.videoUrl.trim() !== "" && (
-            <div className="pp-video">
-              <iframe
-                id="pronunciation-video"
-                src={detail.videoUrl}
-                title={`Reading sample: ${detail.title}`}
-                className="pp-video__iframe"
-                allowFullScreen
-              />
+          {/* Passage description text at the bottom */}
+          {hasVideo && detail.paragraph && (
+            <div className="pp-passage" style={{ marginTop: "16px" }}>
+              <span className="pp-passage__label">
+                Full Topic Transcript Overview
+              </span>
+              <p className="pp-passage__text">{detail.paragraph}</p>
             </div>
           )}
         </div>
 
-        {/* RIGHT COLUMN: Key Vocabularies */}
+        {/* RIGHT COLUMN: Premium Workspace Tabs (Shadowing sentences & Key Vocabulary) */}
         <div className="pp-detail-right">
-          <h3 className="pp-vocab__heading">
-            Key Vocabulary ({detail.vocabs.length})
-          </h3>
-          {detail.vocabs.length > 0 ? (
-            <div className="pp-vocab__list">
-              {detail.vocabs.map((v) => (
-                <VocabCard key={v.id} vocab={v} />
-              ))}
+          <div className="pp-workspace-tabs">
+            <button
+              onClick={() => setActiveTab("shadowing")}
+              className={`pp-tab-btn ${
+                activeTab === "shadowing" ? "active" : ""
+              }`}
+            >
+              🎙️ Shadowing Practice
+            </button>
+            <button
+              onClick={() => setActiveTab("vocab")}
+              className={`pp-tab-btn ${activeTab === "vocab" ? "active" : ""}`}
+            >
+              📚 Key Vocabulary ({detail.vocabs.length})
+            </button>
+          </div>
+
+          {activeTab === "shadowing" ? (
+            <div className="pp-shadowing-list">
+              {detail.sentences && detail.sentences.length > 0 ? (
+                detail.sentences.map((sentence) => {
+                  const isSentenceActive = activeSentence?.id === sentence.id
+                  const isTranslating = translatingIds[sentence.id]
+                  const hasTranslation = !!translations[sentence.id]
+
+                  return (
+                    <div
+                      key={sentence.id}
+                      onClick={() => playSentence(sentence)}
+                      className={`pp-sentence-row ${
+                        isSentenceActive ? "active" : ""
+                      }`}
+                    >
+                      <div className="pp-sentence-header">
+                        <span className="pp-sentence-time">
+                          ⏱ {formatTime(sentence.startTime)} -{" "}
+                          {formatTime(sentence.endTime)}
+                        </span>
+                        <button
+                          onClick={(e) =>
+                            handleTranslateSentence(
+                              e,
+                              sentence.id,
+                              sentence.text
+                            )
+                          }
+                          className="pp-sentence-translate-btn"
+                        >
+                          {isTranslating
+                            ? "Translating..."
+                            : hasTranslation
+                            ? "✕ Hide Trans"
+                            : "🌐 Translate"}
+                        </button>
+                      </div>
+
+                      <div
+                        className="pp-sentence-text"
+                        style={{
+                          fontSize: "14.5px",
+                          lineHeight: "1.7",
+                          color: "#374151",
+                        }}
+                      >
+                        {renderClickableText(sentence.text)}
+                      </div>
+
+                      {hasTranslation && (
+                        <p className="pp-sentence-translation-text">
+                          {translations[sentence.id]}
+                        </p>
+                      )}
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="pp-vocab-empty">
+                  No shadowing sentences synced for this topic yet. You can
+                  still use the Full Transcript view below the video.
+                </div>
+              )}
             </div>
           ) : (
-            <div className="pp-vocab-empty">No vocabulary lists available.</div>
+            // VOCABULARY TAB
+            <>
+              {detail.vocabs.length > 0 ? (
+                <div className="pp-vocab__list">
+                  {detail.vocabs.map((v) => (
+                    <VocabCard key={v.id} vocab={v} />
+                  ))}
+                </div>
+              ) : (
+                <div className="pp-vocab-empty">
+                  No vocabulary lists available.
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
+
+      {/* Dictionary drawer panel */}
+      {dict && (
+        <DictionaryPanel
+          dict={dict}
+          loading={dictLoading}
+          onClose={closeDict}
+          onSave={saveDict}
+        />
+      )}
     </div>
   )
 }
@@ -287,21 +576,6 @@ export default function PronunciationPracticePage(): ReactElement {
   const [isDetailLoading, setIsDetailLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [hasLoadedList, setHasLoadedList] = useState(false)
-
-  const loadTopics = async (): Promise<void> => {
-    if (hasLoadedList) return
-    setIsLoading(true)
-    setError(null)
-    try {
-      const data = await getPronunciationTopics()
-      setTopics(data)
-      setHasLoadedList(true)
-    } catch {
-      setError("Unable to load topics. Please try again.")
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   const handleSelectTopic = async (id: string): Promise<void> => {
     setIsDetailLoading(true)
@@ -322,10 +596,24 @@ export default function PronunciationPracticePage(): ReactElement {
     setDetail(null)
   }
 
-  // Load list on mount via lazy init
-  if (!hasLoadedList && !isLoading && view.type === "list") {
-    loadTopics()
-  }
+  // Load list on mount
+  useEffect(() => {
+    if (view.type === "list" && !hasLoadedList) {
+      setIsLoading(true)
+      setError(null)
+      getPronunciationTopics()
+        .then((data) => {
+          setTopics(data)
+          setHasLoadedList(true)
+        })
+        .catch(() => {
+          setError("Unable to load topics. Please try again.")
+        })
+        .finally(() => {
+          setIsLoading(false)
+        })
+    }
+  }, [view.type, hasLoadedList])
 
   return (
     <MainLayout>

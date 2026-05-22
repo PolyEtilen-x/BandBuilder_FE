@@ -18,6 +18,15 @@ export interface PronunciationTopicListItemDto {
   vocabCount: number
 }
 
+export interface PronunciationSentenceDto {
+  id: string
+  topicId: string
+  text: string
+  startTime: number
+  endTime: number
+  orderIndex: number
+}
+
 export interface PronunciationTopicDetailDto {
   id: string
   title: string
@@ -25,6 +34,7 @@ export interface PronunciationTopicDetailDto {
   videoUrl: string | null
   audioUrl: string | null
   vocabs: PronunciationVocabDto[]
+  sentences: PronunciationSentenceDto[]
 }
 
 export type WritingTaskType = "TASK_1" | "TASK_2"
