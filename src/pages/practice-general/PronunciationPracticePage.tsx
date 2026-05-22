@@ -12,7 +12,7 @@ import {
   type PronunciationVocabDto,
   type PronunciationSentenceDto,
 } from "@/api/practiceGeneral.api"
-import { useYoutubeShadowing } from "./useYoutubeShadowing"
+import { useYoutubeShadowing } from "../../hooks/useYoutubeShadowing"
 import "./Pronunciation.css"
 
 // ── Sub-components ─────────────────────────────────────────────────────────
