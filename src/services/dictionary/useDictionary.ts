@@ -1,32 +1,73 @@
 import { useState } from "react"
-import { getDictionary } from "../../api/dictionary.api"
+import { useQuery } from "@tanstack/react-query"
+import { getDictionary, DictionaryResult } from "@/api/dictionary.api"
+import { useVocabStore } from "./vocab.store"
 
-export function useDictionary() {
-  const [dict, setDict] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
+export interface UseDictionaryReturn {
+  dict: DictionaryResult | null
+  loading: boolean
+  lookup: (word: string, sentence?: string) => void
+  close: () => void
+  save: () => void
+  remove: (word: string) => void
+}
 
-  const lookup = async (word: string, sentence?: string) => {
-    setLoading(true)
+/**
+ * Hook to lookup dictionary definitions (Server State via TanStack Query)
+ * and manage saved words list (Client State via Zustand store).
+ */
+export function useDictionary(): UseDictionaryReturn {
+  const [searchParams, setSearchParams] = useState<{ word: string; sentence?: string } | null>(null)
 
-    const data = await getDictionary(word, sentence) 
+  const { addWord, removeWord, savedWords } = useVocabStore()
 
-    setDict(data)
-    setLoading(false)
+  // Use TanStack Query to manage and cache server-side dictionary queries
+  const { data, isFetching } = useQuery<DictionaryResult>({
+    queryKey: ["dictionary", searchParams?.word, searchParams?.sentence],
+    queryFn: () => {
+      if (!searchParams?.word) throw new Error("No word provided")
+      return getDictionary(searchParams.word, searchParams.sentence)
+    },
+    enabled: !!searchParams?.word,
+    staleTime: 5 * 60 * 1000, // Cache dictionary responses for 5 minutes
+  })
+
+  const lookup = (word: string, sentence?: string): void => {
+    const cleanWord = word.toLowerCase().trim().split(" ")[0]
+    setSearchParams({ word: cleanWord, sentence })
   }
 
-  const close = () => setDict(null)
-
-  const save = () => {
-    if (!dict) return
-    const saved = JSON.parse(localStorage.getItem("vocab") || "[]")
-    localStorage.setItem("vocab", JSON.stringify([...saved, dict]))
+  const close = (): void => {
+    setSearchParams(null)
   }
+
+  const save = (): void => {
+    if (!data) return
+    addWord(data)
+  }
+
+  const remove = (word: string): void => {
+    removeWord(word)
+  }
+
+  // Derive saved state reactively from Zustand client state
+  const isSaved = data
+    ? savedWords.some((w) => w.word.toLowerCase() === data.word.toLowerCase())
+    : false
+
+  const dict: DictionaryResult | null = data
+    ? {
+        ...data,
+        isSaved,
+      }
+    : null
 
   return {
     dict,
-    loading,
+    loading: isFetching,
     lookup,
     close,
-    save
+    save,
+    remove,
   }
 }

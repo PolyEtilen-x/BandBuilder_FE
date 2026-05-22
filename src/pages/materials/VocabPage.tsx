@@ -11,14 +11,16 @@ import TopicDetail from "@/components/vocab/topic/topic_details/TopicDetail"
 import BandList from "@/components/vocab/band/band_list/BandList"
 
 import Flashcard from "@/components/vocab/flashcard/Flashcard"
-import MyNotebook from "@/components/vocab/MyNotebook"
+import NotebookList from "@/components/vocab/notebook/NotebookList"
+import NotebookDetail from "@/components/vocab/notebook/NotebookDetail"
 
 type ViewState =
   | { type: "topic_list" }
   | { type: "topic_detail"; topic: string; source: "topic" | "band" }
   | { type: "band_list" }
   | { type: "flashcard"; mode: "topic" | "band" }
-  | { type: "notebook" }
+  | { type: "notebook_list" }
+  | { type: "notebook_detail"; date: string }
 
 export default function VocabPage() {
   const [state, setState] = useState<VocabSidebarState>({
@@ -73,8 +75,22 @@ export default function VocabPage() {
           />
         )
 
-      case "notebook":
-        return <MyNotebook />
+      case "notebook_list":
+        return (
+          <NotebookList
+            onSelectDate={(date: string) =>
+              setView({ type: "notebook_detail", date })
+            }
+          />
+        )
+
+      case "notebook_detail":
+        return (
+          <NotebookDetail
+            date={view.date}
+            onBack={() => setView({ type: "notebook_list" })}
+          />
+        )
 
       default:
         return null
@@ -114,7 +130,7 @@ export default function VocabPage() {
             }
 
             if (next.category === "notebook") {
-              setView({ type: "notebook" })
+              setView({ type: "notebook_list" })
             }
           }}
         />
