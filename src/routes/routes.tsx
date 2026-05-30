@@ -18,6 +18,7 @@ const PronunciationPracticePage = lazy(
 const SampleWritingsPage = lazy(
   () => import("@/pages/practice-general/SampleWritingsPage")
 )
+const AdminPage = lazy(() => import("@/pages/admin/AdminPage"))
 
 export const routes = [
   {
@@ -95,5 +96,9 @@ export const routes = [
   {
     path: "/practice-general/call-with-ai",
     element: <ProtectedRoute><CallWithAiPage /></ProtectedRoute>,
+  },
+  {
+    path: "/admin",
+    element: <ProtectedRoute><AdminPage /></ProtectedRoute>,
   },
 ]
