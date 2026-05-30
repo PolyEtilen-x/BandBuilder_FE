@@ -1,6 +1,6 @@
 // src/pages/admin/AdminPage.tsx
 
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { 
   Transaction, 
   PracticeTest, 
@@ -14,6 +14,8 @@ import PackagesTab from "./components/PackagesTab"
 import ShadowingTab from "./components/ShadowingTab"
 import UsersTab from "./components/UsersTab"
 
+import logoImg from "@/assets/logo.png"
+
 import { 
   LayoutDashboard, 
   BookOpen, 
@@ -21,8 +23,6 @@ import {
   Youtube, 
   Users, 
   ArrowLeft,
-  Settings,
-  LogOut,
   BellRing
 } from "lucide-react"
 
@@ -30,8 +30,6 @@ type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users"
 
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard")
-  
-  // Custom Toast State
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   
   const showToast = (msg: string) => {
@@ -183,25 +181,22 @@ export default function AdminPage() {
   // HANDLERS AND STATED MUTATORS (REACTIVE CONTROL)
   // ==================================================================
 
-  // Dashboard manual transaction approvals
   const handleApproveTransaction = (txId: string) => {
     setTransactions(prev => prev.map(t => {
       if (t.id === txId) {
-        // Find corresponding user email to add balance
         setUsers(prevUsers => prevUsers.map(u => {
           if (u.email === t.email) {
             return { ...u, balance: u.balance + t.credits }
           }
           return u
         }))
-        showToast(`Đã duyệt thành công giao dịch ${t.sePayTxId}! Cộng +${t.credits} credits vào ví tài khoản.`)
+        showToast(`Duyệt thành công giao dịch ${t.sePayTxId}! Đã cộng +${t.credits} credits vào tài khoản.`)
         return { ...t, status: "COMPLETED" as const }
       }
       return t
     }))
   }
 
-  // Tests management handlers
   const handleAddTest = (newTest: Omit<PracticeTest, "id" | "visits">) => {
     const created: PracticeTest = {
       ...newTest,
@@ -222,7 +217,6 @@ export default function AdminPage() {
     showToast(`Đã xoá đề thi khỏi hệ thống thành công.`)
   }
 
-  // Credit packages handlers
   const handleUpdatePackage = (id: string, updated: Partial<CreditPackage>) => {
     setPackages(prev => prev.map(p => (p.id === id ? { ...p, ...updated } : p)))
     if (updated.isActive !== undefined) {
@@ -232,7 +226,6 @@ export default function AdminPage() {
     }
   }
 
-  // Shadowing youtube handlers
   const handleAddTopic = (newTopic: Omit<ShadowingTopic, "id" | "vocabCount" | "sentencesCount">) => {
     const created: ShadowingTopic = {
       ...newTopic,
@@ -249,11 +242,10 @@ export default function AdminPage() {
     showToast(`Đã xoá học liệu phát âm.`)
   }
 
-  // Users adjustments
   const handleAdjustCredits = (userId: string, amount: number, type: "BONUS" | "REFUND", reason: string) => {
     setUsers(prev => prev.map(u => {
       if (u.id === userId) {
-        showToast(`Đã điều chỉnh thành công! ${type === "BONUS" ? "Tặng" : "Trừ"} ${Math.abs(amount)} Credits ví của ${u.name}. Lý do: ${reason}`)
+        showToast(`Đã điều chỉnh thành công! ${type === "BONUS" ? "Tặng" : "Trừ"} ${Math.abs(amount)} Credits ví của ${u.name}.`)
         return { ...u, balance: u.balance + amount }
       }
       return u
@@ -261,45 +253,51 @@ export default function AdminPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#070b13] flex font-sans antialiased text-slate-200">
+    <div className="min-h-screen bg-[#f8fafc] flex font-sans antialiased text-slate-800">
       
-      {/* GLOBAL NOTIFICATION TOAST */}
+      {/* GLOBAL TOAST */}
       {toastMessage && (
-        <div className="fixed top-5 right-5 z-[9999] bg-slate-900 border border-indigo-500/30 text-white rounded-xl shadow-2xl px-4 py-3 flex.items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-250 w-80">
+        <div className="fixed top-6 right-6 z-[9999] bg-white border border-slate-100 text-slate-800 rounded-2xl shadow-2xl px-5 py-4 flex items-center gap-3 animate-in fade-in slide-in-from-top-4 duration-300 w-80">
           <div className="flex items-start gap-3">
-            <span className="p-1 bg-indigo-500/10 text-indigo-400 rounded-lg shrink-0">
+            <span className="p-2 bg-indigo-50 text-indigo-600 rounded-xl shrink-0">
               <BellRing className="w-5 h-5" />
             </span>
             <div>
-              <span className="text-xs text-indigo-400 font-bold block">Thông báo Quản trị</span>
-              <p className="text-xs text-slate-300 mt-0.5 leading-normal">{toastMessage}</p>
+              <span className="text-xs text-indigo-600 font-bold block uppercase tracking-wider">Thông báo hệ thống</span>
+              <p className="text-xs text-slate-600 mt-1 leading-normal font-medium">{toastMessage}</p>
             </div>
           </div>
         </div>
       )}
 
       {/* LEFT SIDEBAR NAVIGATION */}
-      <aside className="w-64 border-r border-slate-900 bg-[#090e1a] shrink-0 hidden md:flex flex-col justify-between p-5 h-screen sticky top-0">
-        <div className="space-y-8">
+      <aside className="w-68 border-r border-slate-100 bg-white shrink-0 hidden md:flex flex-col justify-between p-6 h-screen sticky top-0 shadow-sm">
+        <div className="space-y-10">
           {/* Logo Brand */}
-          <div className="flex items-center gap-3 px-2">
-            <div className="h-9 w-9 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-400 flex items-center justify-center shadow-lg shadow-indigo-600/30">
-              <span className="font-extrabold text-white text-base">B</span>
-            </div>
+          <div className="flex items-center gap-3.5 px-2">
+            <img 
+              src={logoImg} 
+              alt="Logo" 
+              className="h-10 w-10 rounded-xl object-contain shadow-sm border border-slate-100" 
+              onError={(e) => {
+                // Fallback icon if image fails
+                e.currentTarget.style.display = "none"
+              }}
+            />
             <div>
-              <span className="font-extrabold text-white tracking-tight text-base block">BandBuilder</span>
-              <span className="text-[10px] text-indigo-400 font-bold uppercase tracking-wider">ADMIN PORTAL</span>
+              <span className="font-extrabold text-slate-900 tracking-tight text-lg block">BandBuilder</span>
+              <span className="text-[10px] text-indigo-600 font-bold uppercase tracking-widest mt-0.5 block">ADMIN PORTAL</span>
             </div>
           </div>
 
           {/* Navigation Links */}
-          <nav className="space-y-1">
+          <nav className="space-y-1.5">
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activeTab === "dashboard"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <LayoutDashboard className="w-4 h-4" />
@@ -308,10 +306,10 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveTab("tests")}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activeTab === "tests"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <BookOpen className="w-4 h-4" />
@@ -320,10 +318,10 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveTab("packages")}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activeTab === "packages"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <CreditCard className="w-4 h-4" />
@@ -332,10 +330,10 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveTab("shadowing")}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activeTab === "shadowing"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <Youtube className="w-4 h-4" />
@@ -344,10 +342,10 @@ export default function AdminPage() {
 
             <button
               onClick={() => setActiveTab("users")}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold transition-all ${
+              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-bold transition-all ${
                 activeTab === "users"
-                  ? "bg-indigo-600 text-white shadow-lg shadow-indigo-600/25"
-                  : "text-slate-400 hover:text-white hover:bg-slate-900/50"
+                  ? "bg-indigo-50 text-indigo-600 shadow-sm"
+                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               <Users className="w-4 h-4" />
@@ -356,47 +354,45 @@ export default function AdminPage() {
           </nav>
         </div>
 
-        {/* Sidebar Footer options */}
-        <div className="space-y-4 pt-4 border-t border-slate-900">
+        {/* Sidebar Footer */}
+        <div className="space-y-5 pt-5 border-t border-slate-100">
           <div className="flex items-center gap-3 px-2">
-            <div className="h-8 w-8 rounded-full bg-slate-900 border border-slate-800 flex items-center justify-center font-bold text-xs text-white">
+            <div className="h-9 w-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700 shadow-sm">
               AD
             </div>
             <div>
-              <span className="text-xs font-bold text-white block">System Admin</span>
-              <span className="text-[10px] text-slate-500">Root Access</span>
+              <span className="text-xs font-bold text-slate-800 block">System Admin</span>
+              <span className="text-[10px] text-slate-400 mt-0.5">Root Access</span>
             </div>
           </div>
 
           <a
             href="/"
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white hover:bg-slate-900/30 transition-all"
+            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-500 hover:text-slate-950 hover:bg-slate-50 transition-all"
           >
             <ArrowLeft className="w-4 h-4" />
-            Về trang chủ Học viên
+            Về trang Học viên
           </a>
         </div>
       </aside>
 
-      {/* RIGHT MAIN PAGE CONTENT CANVAS */}
+      {/* RIGHT MAIN CONTENT */}
       <main className="flex-1 overflow-y-auto h-screen max-w-full">
-        {/* TOP MOBILE BAR / GENERAL HEADER */}
-        <header className="px-6 py-4 border-b border-slate-900 bg-[#090e1a]/80 backdrop-blur sticky top-0 z-40 flex items-center justify-between md:justify-end gap-4">
+        {/* TOP MOBILE BAR */}
+        <header className="px-6 py-4 border-b border-slate-100 bg-white/80 backdrop-blur sticky top-0 z-40 flex items-center justify-between md:justify-end gap-4 shadow-sm">
           <div className="flex items-center gap-3 md:hidden">
-            <div className="h-7 w-7 rounded bg-indigo-600 flex items-center justify-center">
-              <span className="font-extrabold text-white text-sm">B</span>
-            </div>
-            <span className="font-bold text-white text-sm">BandBuilder Admin</span>
+            <img src={logoImg} alt="Logo" className="h-8 w-8 object-contain" />
+            <span className="font-bold text-slate-900 text-sm">BandBuilder Admin</span>
           </div>
 
           <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-400">Server Status: <strong className="text-emerald-500">ONLINE</strong></span>
+            <span className="text-xs text-slate-500 font-medium">Trạng thái Server: <strong className="text-emerald-600 font-bold">ONLINE</strong></span>
             <span className="h-2 w-2 rounded-full bg-emerald-500"></span>
           </div>
         </header>
 
         {/* CONTAINER FOR ACTIVE TABS */}
-        <div className="p-6 md:p-8 max-w-7xl mx-auto w-full">
+        <div className="p-6 md:p-10 max-w-7xl mx-auto w-full">
           {activeTab === "dashboard" && (
             <DashboardTab 
               transactions={transactions} 

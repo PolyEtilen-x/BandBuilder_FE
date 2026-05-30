@@ -6,7 +6,6 @@ import {
   Search, 
   Plus, 
   Trash2, 
-  Edit3, 
   Eye, 
   Code,
   Check, 
@@ -104,45 +103,45 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-8">
       {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
-          <h2 className="text-2xl font-bold text-white tracking-tight">Quản trị Ngân hàng Đề thi</h2>
-          <p className="text-slate-400 text-sm mt-1">Quản lý đề thi tổng hợp (Practice Tests) và các bộ câu hỏi dạng JSON của từng kỹ năng.</p>
+          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Quản trị Ngân hàng Đề thi</h2>
+          <p className="text-slate-500 text-sm mt-2 font-medium">Quản lý đề thi tổng hợp (Practice Tests) và các bộ cấu hỏi câu trả lời chuẩn dạng JSON.</p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-indigo-500/20 self-start"
+          className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 px-5 rounded-xl flex items-center gap-2 transition-all shadow-md hover:shadow-indigo-500/10 self-start md:self-auto cursor-pointer"
         >
           <Plus className="w-4 h-4" />
-          Thêm Đề thi mới
+          Thêm đề thi mới
         </button>
       </div>
 
       {/* FILTER PANEL */}
-      <div className="bg-slate-950 border border-slate-800 rounded-xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-        <div className="relative flex-1 max-w-md">
+      <div className="bg-white border border-slate-100 rounded-2xl p-5 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <div className="relative flex-1 max-w-md w-full">
           <input 
             type="text"
             placeholder="Tìm đề thi theo tiêu đề..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-900 border border-slate-800 rounded-lg pl-9 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-indigo-500 transition-all font-medium"
           />
-          <Search className="w-4 h-4 text-slate-500 absolute left-3 top-3" />
+          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
         </div>
 
-        <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-400 font-semibold uppercase">Lọc kỹ năng:</span>
+        <div className="flex flex-wrap items-center gap-3.5">
+          <span className="text-[10px] text-slate-400 font-extrabold uppercase tracking-wider">Bộ lọc kỹ năng:</span>
           {["ALL", ...skillOptions].map((skill) => (
             <button
               key={skill}
               onClick={() => setSkillFilter(skill)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all border ${
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition-all border ${
                 skillFilter === skill 
-                  ? "bg-indigo-500/10 border-indigo-500 text-indigo-400" 
-                  : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
+                  ? "bg-indigo-50 border-indigo-200 text-indigo-600" 
+                  : "bg-white border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
               }`}
             >
               {skill.toUpperCase()}
@@ -152,27 +151,27 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
       </div>
 
       {/* TESTS GRID LIST */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredTests.map((test) => (
-          <div key={test.id} className="bg-slate-950 border border-slate-800 hover:border-slate-700 rounded-xl p-5 shadow-xl transition-all duration-200 flex flex-col justify-between group">
+          <div key={test.id} className="bg-white border border-slate-100 hover:border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between gap-6">
             <div>
               <div className="flex items-center justify-between gap-2 mb-3">
-                <span className="text-[10px] font-mono text-slate-500">{test.id}</span>
-                <span className="text-xs text-slate-400 flex items-center gap-1">
-                  <Eye className="w-3.5 h-3.5 text-indigo-400" />
-                  <strong>{test.visits}</strong> lượt truy cập
+                <span className="text-[9px] font-mono font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded border border-slate-100">{test.id}</span>
+                <span className="text-xs text-slate-400 flex items-center gap-1 font-semibold">
+                  <Eye className="w-4 h-4 text-indigo-500" />
+                  <strong>{test.visits}</strong> lượt xem
                 </span>
               </div>
-              <h3 className="text-base font-bold text-white line-clamp-2">{test.title}</h3>
+              <h3 className="text-base font-bold text-slate-800 leading-snug tracking-tight">{test.title}</h3>
             </div>
 
-            <div className="mt-4 pt-4 border-t border-slate-900 space-y-4">
+            <div className="pt-4 border-t border-slate-50 space-y-4">
               {/* Skills Tags */}
               <div className="flex flex-wrap gap-1.5">
                 {test.skills.map((skill, index) => (
                   <span 
                     key={index}
-                    className="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-slate-900 border border-slate-800 text-slate-400"
+                    className="text-[9px] font-bold uppercase tracking-wider px-2 py-1 rounded bg-slate-50 border border-slate-100 text-slate-500"
                   >
                     {skill}
                   </span>
@@ -180,17 +179,17 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
               </div>
 
               {/* Action Buttons */}
-              <div className="flex items-center justify-between gap-2">
+              <div className="flex items-center justify-between gap-2 pt-2">
                 <button
                   onClick={() => {
                     setEditingTest(test)
                     setJsonText(test.contentJson)
                     setJsonError(null)
                   }}
-                  className="flex items-center gap-1.5 text-xs font-bold text-indigo-400 hover:text-indigo-300 bg-indigo-500/5 hover:bg-indigo-500/10 px-2.5 py-1.5 rounded-lg border border-indigo-500/10 transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-50 hover:bg-indigo-100 px-3 py-2 rounded-xl transition-all cursor-pointer border border-transparent"
                 >
-                  <Code className="w-3.5 h-3.5" />
-                  JSON Câu hỏi
+                  <Code className="w-4 h-4" />
+                  Cấu trúc JSON
                 </button>
 
                 <button
@@ -199,7 +198,7 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
                       onDeleteTest(test.id)
                     }
                   }}
-                  className="text-xs font-bold text-rose-400 hover:text-rose-300 bg-rose-500/5 hover:bg-rose-500/10 p-1.5 rounded-lg border border-rose-500/10 transition-all cursor-pointer"
+                  className="text-xs font-bold text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 p-2 rounded-xl transition-all cursor-pointer border border-transparent"
                   title="Xoá đề thi"
                 >
                   <Trash2 className="w-4 h-4" />
@@ -212,34 +211,34 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
 
       {/* CREATE MODAL */}
       {showAddModal && (
-        <div className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-slate-950 border border-slate-800 rounded-xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-white">Tạo Đề Thi Mới</h3>
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+          <div className="bg-white border border-slate-100 rounded-2xl w-full max-w-lg shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+            <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+              <h3 className="text-lg font-bold text-slate-900">Tạo Đề Thi IELTS Mới</h3>
               <button 
                 onClick={() => setShowAddModal(false)}
-                className="text-slate-400 hover:text-white"
+                className="text-slate-400 hover:text-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
             
-            <form onSubmit={handleCreateTest} className="p-6 space-y-4">
+            <form onSubmit={handleCreateTest} className="p-6 space-y-5">
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-1.5">Tiêu đề đề thi</label>
+                <label className="block text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Tiêu đề đề thi</label>
                 <input 
                   type="text"
                   required
                   placeholder="Ví dụ: IELTS Cambridge 19 - Test 2"
                   value={newTitle}
                   onChange={(e) => setNewTitle(e.target.value)}
-                  className="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-2 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 font-medium"
                 />
               </div>
 
               <div>
-                <label className="block text-slate-400 text-sm font-semibold mb-1.5">Chọn các kỹ năng tích hợp</label>
-                <div className="grid grid-cols-2 gap-2">
+                <label className="block text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Chọn các kỹ năng tích hợp</label>
+                <div className="grid grid-cols-2 gap-3">
                   {skillOptions.map((skill) => {
                     const active = newSkills.includes(skill)
                     return (
@@ -247,35 +246,35 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
                         type="button"
                         key={skill}
                         onClick={() => toggleNewSkill(skill)}
-                        className={`px-3 py-2 rounded-lg text-xs font-bold transition-all border flex items-center justify-between ${
+                        className={`px-4 py-2.5 rounded-xl text-xs font-bold transition-all border flex items-center justify-between cursor-pointer ${
                           active 
-                            ? "bg-indigo-500/10 border-indigo-500 text-indigo-400" 
-                            : "bg-slate-900 border-slate-800 text-slate-400 hover:text-white"
+                            ? "bg-indigo-50 border-indigo-200 text-indigo-600" 
+                            : "bg-white border-slate-200 text-slate-500 hover:text-slate-850 hover:bg-slate-50"
                         }`}
                       >
                         <span className="uppercase">{skill}</span>
-                        {active && <Check className="w-3.5 h-3.5" />}
+                        {active && <Check className="w-4 h-4" />}
                       </button>
                     )
                   })}
                 </div>
               </div>
 
-              <div className="bg-slate-900/50 border border-slate-800 rounded-lg p-3 text-xs text-slate-400">
-                Khi tạo, cấu trúc câu hỏi JSON sẽ tự động được gán theo định dạng IELTS chuẩn. Bạn có thể bấm vào nút <strong>JSON Câu hỏi</strong> ngoài danh sách để sửa chi tiết đáp án.
+              <div className="bg-slate-50 border border-slate-100 rounded-xl p-4 text-xs text-slate-500 leading-relaxed font-medium">
+                Khi tạo, cấu trúc câu hỏi JSON sẽ tự động được khởi tạo theo định dạng IELTS tiêu chuẩn. Bạn có thể thay đổi chi tiết sau khi khởi tạo hoàn tất.
               </div>
 
-              <div className="pt-4 border-t border-slate-900 flex justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3.5">
                 <button
                   type="button"
                   onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all"
+                  className="px-4.5 py-2.5 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer"
                 >
                   Hủy bỏ
                 </button>
                 <button
                   type="submit"
-                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2 px-4 rounded-lg text-xs transition-all shadow-lg hover:shadow-indigo-500/20"
+                  className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-5 rounded-xl text-xs transition-all shadow-md hover:shadow-indigo-500/10 cursor-pointer"
                 >
                   Tạo Đề Thi
                 </button>
@@ -285,22 +284,22 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
         </div>
       )}
 
-      {/* JSON EDITOR DRAWER/MODAL */}
+      {/* JSON EDITOR DRAWER */}
       {editingTest && (
-        <div className="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 flex items-center justify-end">
-          <div className="bg-slate-950 border-l border-slate-800 w-full max-w-2xl h-full flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-250">
+        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-end">
+          <div className="bg-white border-l border-slate-100 w-full max-w-2xl h-full flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-250">
             {/* Header */}
-            <div className="px-6 py-4 bg-slate-900 border-b border-slate-800 flex items-center justify-between">
+            <div className="px-6 py-5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div>
-                <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                  <Code className="w-5 h-5 text-indigo-400" />
+                <h3 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+                  <Code className="w-5 h-5 text-indigo-600" />
                   Cấu trúc JSON Câu hỏi
                 </h3>
-                <p className="text-xs text-slate-400 mt-0.5 truncate max-w-md">Đề thi: {editingTest.title}</p>
+                <p className="text-xs text-slate-500 mt-1 font-medium truncate max-w-md">Đề thi: {editingTest.title}</p>
               </div>
               <button 
                 onClick={() => setEditingTest(null)}
-                className="text-slate-400 hover:text-white cursor-pointer"
+                className="text-slate-400 hover:text-slate-800 cursor-pointer"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -309,16 +308,16 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
             {/* Editor Area */}
             <div className="flex-1 p-6 flex flex-col space-y-4 overflow-y-auto">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-400 uppercase tracking-wider">Trình soạn thảo JSON (RAW)</span>
+                <span className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Trình soạn thảo JSON (RAW)</span>
                 
                 {/* Visual Error Badge */}
                 {jsonError ? (
-                  <span className="inline-flex items-center gap-1 text-xs text-rose-400 bg-rose-500/10 border border-rose-500/20 px-2 py-0.5 rounded font-medium">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-rose-600 bg-rose-50 border border-rose-100 px-2 py-1 rounded font-bold uppercase tracking-wider">
                     <AlertCircle className="w-3.5 h-3.5" />
                     Lỗi cú pháp
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 text-xs text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 px-2 py-0.5 rounded font-medium">
+                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-600 bg-emerald-50 border border-emerald-100 px-2 py-1 rounded font-bold uppercase tracking-wider">
                     <Check className="w-3.5 h-3.5" />
                     JSON Hợp lệ
                   </span>
@@ -328,15 +327,15 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
               <textarea
                 value={jsonText}
                 onChange={(e) => handleJsonChange(e.target.value)}
-                className="flex-1 w-full bg-slate-900 border border-slate-800 focus:border-indigo-500 text-slate-200 p-4 rounded-xl font-mono text-xs focus:outline-none resize-none leading-relaxed"
+                className="flex-1 w-full bg-slate-50 border border-slate-200 focus:border-indigo-500 text-slate-700 p-4 rounded-xl font-mono text-xs focus:outline-none resize-none leading-relaxed"
                 style={{ minHeight: "350px" }}
               />
 
               {jsonError && (
-                <div className="bg-rose-500/5 border border-rose-500/10 rounded-lg p-3 flex gap-2">
-                  <AlertCircle className="w-4 h-4 text-rose-400 shrink-0 mt-0.5" />
-                  <div className="text-xs text-rose-300">
-                    <span className="font-semibold block mb-0.5">Lỗi phân tích JSON:</span>
+                <div className="bg-rose-50 border border-rose-100 rounded-xl p-4 flex gap-3">
+                  <AlertCircle className="w-4 h-4 text-rose-500 shrink-0 mt-0.5" />
+                  <div className="text-xs text-rose-700 font-medium">
+                    <span className="font-bold block mb-1">Chi tiết lỗi phân tách:</span>
                     {jsonError}
                   </div>
                 </div>
@@ -344,22 +343,22 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
             </div>
 
             {/* Actions Footer */}
-            <div className="px-6 py-4 bg-slate-900 border-t border-slate-800 flex justify-between items-center">
-              <span className="text-xs text-slate-500">Mẹo: Cấu hình key & value khớp chuẩn schema backend.</span>
-              <div className="flex gap-3">
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-between items-center gap-4">
+              <span className="text-[10px] text-slate-400 font-medium">Lưu ý: Mọi chỉnh sửa JSON sẽ ảnh hưởng trực tiếp đến đáp án làm bài ở client.</span>
+              <div className="flex gap-3.5 shrink-0">
                 <button
                   onClick={() => setEditingTest(null)}
-                  className="px-4 py-2 border border-slate-800 hover:bg-slate-900 rounded-lg text-xs font-bold text-slate-400 hover:text-white transition-all cursor-pointer"
+                  className="px-4.5 py-2.5 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer"
                 >
                   Hủy bỏ
                 </button>
                 <button
                   onClick={handleSaveJson}
                   disabled={!!jsonError}
-                  className={`font-bold py-2 px-4 rounded-lg text-xs transition-all shadow-lg flex items-center gap-1.5 cursor-pointer ${
+                  className={`font-bold py-2.5 px-5 rounded-xl text-xs transition-all shadow-md flex items-center gap-1.5 cursor-pointer ${
                     jsonError 
-                      ? "bg-slate-800 text-slate-500 cursor-not-allowed" 
-                      : "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-indigo-500/20"
+                      ? "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none" 
+                      : "bg-indigo-600 hover:bg-indigo-500 text-white hover:shadow-indigo-500/10"
                   }`}
                 >
                   <Check className="w-4 h-4" />
