@@ -29,6 +29,9 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
   const [adjustReason, setAdjustReason] = useState("")
   const [showAdjustModal, setShowAdjustModal] = useState(false)
 
+  // Hover states for interactive buttons
+  const [hoveredBtnId, setHoveredBtnId] = useState<string | null>(null)
+
   // Filter users list
   const filteredUsers = users.filter(u => 
     u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -63,165 +66,778 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
     { id: "l4", type: "ADMIN BONUS", amount: 20, date: "2026-05-30 11:00", desc: "Tặng credit bonus khuyến học" },
   ]
 
+  // Inline CSS styles mapping
+  const styles = {
+    container: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "32px",
+      boxSizing: "border-box" as const,
+    },
+    headerSec: {
+      paddingBottom: "16px",
+      borderBottom: "1px solid #e2e8f0",
+    },
+    title: {
+      fontSize: "22px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+    },
+    subtitle: {
+      fontSize: "13px",
+      color: "#6b7280",
+      marginTop: "8px",
+      marginBottom: 0,
+      fontWeight: 500,
+      lineHeight: 1.5,
+    },
+    filterBar: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "20px 24px",
+      display: "flex",
+      flexDirection: "row" as const,
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "16px",
+      flexWrap: "wrap" as const,
+      boxSizing: "border-box" as const,
+    },
+    searchWrapper: {
+      position: "relative" as const,
+      flex: 1,
+      minWidth: "260px",
+      maxWidth: "400px",
+    },
+    searchInput: {
+      width: "100%",
+      height: "38px",
+      backgroundColor: "#f9fafb",
+      border: "1px solid #d1d5db",
+      borderRadius: "8px",
+      paddingLeft: "36px",
+      paddingRight: "12px",
+      fontSize: "13px",
+      color: "#1f2937",
+      fontWeight: 600,
+      outline: "none",
+      boxSizing: "border-box" as const,
+      transition: "border-color 0.15s ease",
+    },
+    searchIcon: {
+      position: "absolute" as const,
+      left: "12px",
+      top: "50%",
+      transform: "translateY(-50%)",
+      width: "16px",
+      height: "16px",
+      color: "#9ca3af",
+      pointerEvents: "none" as const,
+    },
+    totalCount: {
+      fontSize: "13px",
+      color: "#6b7280",
+      fontWeight: 600,
+    },
+    totalCountNumber: {
+      color: "#111827",
+      fontWeight: 800,
+      fontSize: "14px",
+    },
+    tableContainer: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      overflow: "hidden",
+      boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+    },
+    tableWrapper: {
+      overflowX: "auto" as const,
+    },
+    table: {
+      width: "100%",
+      borderCollapse: "collapse" as const,
+      fontSize: "13px",
+    },
+    th: {
+      background: "#f9fafb",
+      padding: "10px 24px",
+      textAlign: "left" as const,
+      fontSize: "12px",
+      fontWeight: 600,
+      color: "#6b7280",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em",
+      borderBottom: "1px solid #e5e7eb",
+    },
+    tr: {
+      borderBottom: "1px solid #f3f4f6",
+      transition: "background-color 0.15s",
+    },
+    td: {
+      padding: "14px 24px",
+      verticalAlign: "middle",
+      color: "#4b5563",
+      fontWeight: 500,
+    },
+    tdStudent: {
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+    },
+    avatar: {
+      height: "36px",
+      width: "36px",
+      borderRadius: "8px",
+      background: "#eff6ff",
+      border: "1px solid #dbeafe",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: 700,
+      color: "#174593",
+      fontSize: "13px",
+      flexShrink: 0,
+    },
+    studentName: {
+      fontWeight: 700,
+      color: "#111827",
+      fontSize: "14px",
+    },
+    roleBadge: (role: string) => ({
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "4px",
+      padding: "3px 10px",
+      borderRadius: "100px",
+      fontSize: "11px",
+      fontWeight: 600,
+      textTransform: "uppercase" as const,
+      background: role === "ADMIN" ? "#f3e8ff" : "#f3f4f6",
+      color: role === "ADMIN" ? "#7e22ce" : "#4b5563",
+      border: role === "ADMIN" ? "1px solid #e9d5ff" : "1px solid #e5e7eb",
+    }),
+    balanceBadge: {
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px",
+      background: "#eff6ff",
+      border: "1px solid #dbeafe",
+      padding: "4px 12px",
+      borderRadius: "8px",
+      color: "#174593",
+      fontWeight: 700,
+      fontSize: "13px",
+    },
+    actionButton: (isHovered: boolean) => ({
+      padding: "6px 12px",
+      borderRadius: "6px",
+      background: isHovered ? "#123775" : "#174593",
+      color: "white",
+      fontSize: "12px",
+      fontWeight: 500,
+      border: "none",
+      cursor: "pointer",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "4px",
+      transition: "background-color 0.15s",
+    }),
+    emptyState: {
+      padding: "48px 0",
+      textAlign: "center" as const,
+      color: "#9ca3af",
+      fontWeight: 600,
+    },
+    
+    // Drawer
+    drawerOverlay: {
+      position: "fixed" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(17, 24, 39, 0.4)",
+      backdropFilter: "blur(4px)",
+      zIndex: 1000,
+      display: "flex",
+      justifyContent: "flex-end",
+      alignItems: "center",
+    },
+    drawerContainer: {
+      background: "#ffffff",
+      borderLeft: "1px solid #e5e7eb",
+      width: "100%",
+      maxWidth: "400px",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column" as const,
+      justifyContent: "space-between",
+      boxShadow: "-10px 0 25px -5px rgba(0, 0, 0, 0.1), -10px 0 10px -5px rgba(0, 0, 0, 0.04)",
+      boxSizing: "border-box" as const,
+    },
+    drawerHeader: {
+      padding: "20px 24px",
+      background: "#f9fafb",
+      borderBottom: "1px solid #e5e7eb",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    drawerTitle: {
+      fontSize: "16px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+    },
+    drawerSubtitle: {
+      fontSize: "12px",
+      color: "#6b7280",
+      marginTop: "4px",
+      margin: 0,
+      fontWeight: 500,
+    },
+    closeBtn: {
+      border: "none",
+      background: "none",
+      cursor: "pointer",
+      color: "#9ca3af",
+      padding: "4px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "color 0.15s",
+    },
+    drawerContent: {
+      flex: 1,
+      padding: "24px",
+      overflowY: "auto" as const,
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "24px",
+      boxSizing: "border-box" as const,
+    },
+    profileCard: {
+      display: "flex",
+      alignItems: "center",
+      gap: "16px",
+      padding: "16px",
+      background: "#f9fafb",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+    },
+    drawerAvatar: {
+      height: "48px",
+      width: "48px",
+      borderRadius: "10px",
+      background: "#eff6ff",
+      border: "1px solid #dbeafe",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      fontWeight: 700,
+      color: "#174593",
+      fontSize: "18px",
+      flexShrink: 0,
+    },
+    drawerName: {
+      fontSize: "15px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+    },
+    drawerEmail: {
+      fontSize: "12px",
+      color: "#6b7280",
+      margin: "2px 0 0 0",
+      fontWeight: 500,
+    },
+    drawerUserId: {
+      fontSize: "10px",
+      color: "#9ca3af",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em",
+      margin: "4px 0 0 0",
+      fontWeight: 600,
+    },
+    balanceBanner: {
+      background: "linear-gradient(135deg, #eff6ff 0%, #f0f7ff 100%)",
+      border: "1px solid #bfdbfe",
+      borderRadius: "12px",
+      padding: "20px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      boxShadow: "0 1px 2px 0 rgba(0,0,0,0.02)",
+    },
+    balanceBannerTitle: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#1e40af",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.05em",
+      display: "block",
+    },
+    balanceBannerValue: {
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      marginTop: "8px",
+    },
+    balanceBannerAmount: {
+      fontSize: "28px",
+      fontWeight: 800,
+      color: "#174593",
+      lineHeight: 1,
+    },
+    balanceBannerCurrency: {
+      fontSize: "12px",
+      fontWeight: 700,
+      color: "#1e40af",
+      alignSelf: "flex-end",
+      marginBottom: "2px",
+    },
+    balanceBannerBtn: (isHovered: boolean) => ({
+      padding: "8px 16px",
+      borderRadius: "8px",
+      background: isHovered ? "#123775" : "#174593",
+      color: "#ffffff",
+      fontSize: "12px",
+      fontWeight: 600,
+      border: "none",
+      cursor: "pointer",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px",
+      boxShadow: "0 2px 4px rgba(23, 69, 147, 0.15)",
+      transition: "background-color 0.15s",
+    }),
+    statsSecHeader: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#9ca3af",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em",
+      margin: "0 0 12px 0",
+    },
+    statsGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "16px",
+    },
+    statsCard: {
+      background: "#f9fafb",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "16px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "4px",
+    },
+    statsCardLabel: {
+      fontSize: "11px",
+      color: "#6b7280",
+      textTransform: "uppercase" as const,
+      fontWeight: 600,
+      letterSpacing: "0.04em",
+    },
+    statsCardVal: {
+      fontSize: "16px",
+      fontWeight: 700,
+      color: "#1f2937",
+    },
+    logsHeader: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#9ca3af",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em",
+      margin: "0 0 12px 0",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+    },
+    logsList: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "12px",
+      maxHeight: "220px",
+      overflowY: "auto" as const,
+      paddingRight: "4px",
+    },
+    logCard: {
+      background: "#f9fafb",
+      border: "1px solid #e5e7eb",
+      borderRadius: "10px",
+      padding: "12px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      gap: "12px",
+    },
+    logInfo: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "4px",
+      flex: 1,
+    },
+    logHeaderRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    logType: {
+      fontSize: "12px",
+      fontWeight: 700,
+      color: "#1f2937",
+    },
+    logDate: {
+      fontSize: "10px",
+      color: "#9ca3af",
+      fontWeight: 500,
+    },
+    logDesc: {
+      fontSize: "11px",
+      color: "#6b7280",
+      margin: 0,
+      lineHeight: 1.4,
+    },
+    logAmount: (isPositive: boolean) => ({
+      fontSize: "13px",
+      fontWeight: 800,
+      color: isPositive ? "#16a34a" : "#dc2626",
+      whiteSpace: "nowrap" as const,
+    }),
+    drawerFooter: {
+      padding: "16px 24px",
+      background: "#f9fafb",
+      borderTop: "1px solid #e5e7eb",
+      display: "flex",
+    },
+    drawerCloseBtn: (isHovered: boolean) => ({
+      width: "100%",
+      padding: "12px",
+      borderRadius: "8px",
+      background: isHovered ? "#f9fafb" : "#ffffff",
+      border: "1px solid #d1d5db",
+      color: "#4b5563",
+      fontWeight: 600,
+      fontSize: "12px",
+      cursor: "pointer",
+      textAlign: "center" as const,
+      transition: "background-color 0.15s",
+    }),
+
+    // Modal Adjust Balance
+    modalOverlay: {
+      position: "fixed" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(17, 24, 39, 0.4)",
+      backdropFilter: "blur(4px)",
+      zIndex: 2000,
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      padding: "16px",
+    },
+    modalContainer: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "16px",
+      width: "100%",
+      maxWidth: "400px",
+      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)",
+      overflow: "hidden",
+      boxSizing: "border-box" as const,
+    },
+    modalHeader: {
+      padding: "16px 24px",
+      background: "#f9fafb",
+      borderBottom: "1px solid #e5e7eb",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    modalTitle: {
+      fontSize: "14px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    },
+    modalForm: {
+      padding: "24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "20px",
+      boxSizing: "border-box" as const,
+    },
+    fieldLabel: {
+      display: "block",
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#6b7280",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.05em",
+      marginBottom: "8px",
+    },
+    typeGrid: {
+      display: "grid",
+      gridTemplateColumns: "1fr 1fr",
+      gap: "12px",
+    },
+    typeBtn: (active: boolean, type: "BONUS" | "REFUND") => ({
+      padding: "12px",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: 700,
+      border: active 
+        ? (type === "BONUS" ? "1px solid #bfdbfe" : "1px solid #fecaca") 
+        : "1px solid #d1d5db",
+      background: active 
+        ? (type === "BONUS" ? "#eff6ff" : "#fee2e2") 
+        : "#ffffff",
+      color: active 
+        ? (type === "BONUS" ? "#174593" : "#b91c1c") 
+        : "#4b5563",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "6px",
+      cursor: "pointer",
+      transition: "all 0.15s",
+    }),
+    inputVal: {
+      width: "100%",
+      backgroundColor: "#f9fafb",
+      border: "1px solid #d1d5db",
+      borderRadius: "8px",
+      padding: "10px 12px",
+      fontSize: "14px",
+      fontWeight: 700,
+      color: "#1f2937",
+      fontFamily: "monospace",
+      outline: "none",
+      boxSizing: "border-box" as const,
+    },
+    textareaVal: {
+      width: "100%",
+      backgroundColor: "#f9fafb",
+      border: "1px solid #d1d5db",
+      borderRadius: "8px",
+      padding: "10px 12px",
+      fontSize: "13px",
+      color: "#1f2937",
+      fontWeight: 500,
+      resize: "none" as const,
+      outline: "none",
+      lineHeight: 1.5,
+      boxSizing: "border-box" as const,
+    },
+    modalActions: {
+      paddingTop: "16px",
+      borderTop: "1px solid #e5e7eb",
+      display: "flex",
+      justifyContent: "flex-end",
+      gap: "12px",
+    },
+    modalCancelBtn: (isHovered: boolean) => ({
+      padding: "8px 16px",
+      borderRadius: "8px",
+      background: isHovered ? "#f9fafb" : "#ffffff",
+      border: "1px solid #d1d5db",
+      color: "#4b5563",
+      fontWeight: 600,
+      fontSize: "12px",
+      cursor: "pointer",
+      transition: "background-color 0.15s",
+    }),
+    modalConfirmBtn: (isHovered: boolean) => ({
+      padding: "8px 16px",
+      borderRadius: "8px",
+      background: isHovered ? "#123775" : "#174593",
+      color: "#ffffff",
+      fontWeight: 600,
+      fontSize: "12px",
+      border: "none",
+      cursor: "pointer",
+      transition: "background-color 0.15s",
+    })
+  }
+
   return (
-    <div className="space-y-10">
+    <div style={styles.container}>
       {/* HEADER SECTION */}
-      <div className="pb-4 border-b border-slate-100">
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Quản lý Học viên & Ví Credits</h2>
-        <p className="text-slate-500 text-sm mt-2 font-medium">
+      <div style={styles.headerSec}>
+        <h2 style={styles.title}>Quản lý Học viên & Ví Credits</h2>
+        <p style={styles.subtitle}>
           Kiểm tra tài khoản người học, tra cứu lịch sử luyện thi, và can thiệp cộng thưởng (bonus) hoặc hoàn ví thủ công.
         </p>
       </div>
 
-      {/* SEARCH AND FILTER USER BAR - Expanded sizes */}
-      <div className="bg-white border border-slate-100 rounded-[24px] p-6 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-6">
-        <div className="relative flex-1 max-w-md w-full">
+      {/* SEARCH AND FILTER USER BAR */}
+      <div style={styles.filterBar}>
+        <div style={styles.searchWrapper}>
           <input 
             type="text"
             placeholder="Tìm theo tên học viên, email..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#174593] transition-all font-semibold shadow-sm"
+            style={styles.searchInput}
           />
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-4" />
+          <Search style={styles.searchIcon} />
         </div>
-        <div className="text-xs text-slate-500 font-bold uppercase tracking-wider">
-          Tổng số học viên: <strong className="text-slate-900 font-black text-sm">{users.length}</strong>
+        <div style={styles.totalCount}>
+          Tổng số học viên: <strong style={styles.totalCountNumber}>{users.length}</strong>
         </div>
       </div>
 
-      {/* USER LIST GRID - Spacious row paddings */}
-      <div className="bg-white border border-slate-100 rounded-[28px] shadow-sm overflow-hidden p-2">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+      {/* USER LIST GRID */}
+      <div style={styles.tableContainer}>
+        <div style={styles.tableWrapper}>
+          <table style={styles.table}>
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/10 text-slate-400 text-[10px] font-bold uppercase tracking-wider">
-                <th className="py-5 px-8">Học viên</th>
-                <th className="py-5 px-8">Địa chỉ Email</th>
-                <th className="py-5 px-8">Quyền hạn</th>
-                <th className="py-5 px-8 text-center">Số dư ví</th>
-                <th className="py-5 px-8">Ngày gia nhập</th>
-                <th className="py-5 px-8 text-center">Chi tiết</th>
+              <tr>
+                <th style={styles.th}>Học viên</th>
+                <th style={styles.th}>Địa chỉ Email</th>
+                <th style={styles.th}>Quyền hạn</th>
+                <th style={{ ...styles.th, textAlign: "center" }}>Số dư ví</th>
+                <th style={styles.th}>Ngày gia nhập</th>
+                <th style={{ ...styles.th, textAlign: "center" }}>Chi tiết</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs text-slate-650 font-semibold">
+            <tbody>
               {filteredUsers.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-16 text-center text-slate-400 font-bold">
+                  <td colSpan={6} style={styles.emptyState}>
                     Không tìm thấy học viên nào khớp với tìm kiếm.
                   </td>
                 </tr>
               ) : (
-                filteredUsers.map((u) => (
-                  <tr key={u.id} className="hover:bg-slate-50/30 transition-all duration-200">
-                    <td className="py-5 px-8">
-                      <div className="flex items-center gap-3.5">
-                        <div className="h-10 w-10 rounded-xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-[#174593] text-sm shrink-0 shadow-sm">
-                          {u.name.slice(0, 2).toUpperCase()}
+                filteredUsers.map((u) => {
+                  const btnHoverKey = `btn-${u.id}`
+                  return (
+                    <tr key={u.id} style={styles.tr}>
+                      <td style={styles.td}>
+                        <div style={styles.tdStudent}>
+                          <div style={styles.avatar}>
+                            {u.name.slice(0, 2).toUpperCase()}
+                          </div>
+                          <span style={styles.studentName}>{u.name}</span>
                         </div>
-                        <span className="font-extrabold text-slate-900 text-sm block">{u.name}</span>
-                      </div>
-                    </td>
-                    <td className="py-5 px-8 text-slate-700 font-semibold">{u.email}</td>
-                    <td className="py-5 px-8">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-[9px] font-extrabold uppercase tracking-wider ${
-                        u.role === "ADMIN" 
-                          ? "bg-purple-50 text-purple-600 border border-purple-100" 
-                          : "bg-slate-100 text-slate-500"
-                      }`}>
-                        {u.role === "ADMIN" && <Shield className="w-3.5 h-3.5" />}
-                        {u.role}
-                      </span>
-                    </td>
-                    <td className="py-5 px-8 text-center">
-                      <span className="text-[#174593] font-black flex items-center justify-center gap-1 bg-blue-50 px-3 py-1.5 rounded-xl border border-blue-100 w-fit mx-auto shadow-sm">
-                        <Coins className="w-4 h-4 text-indigo-500" />
-                        {u.balance} Credits
-                      </span>
-                    </td>
-                    <td className="py-5 px-8 text-slate-450 font-semibold">{u.joinDate}</td>
-                    <td className="py-5 px-8 text-center">
-                      <button
-                        onClick={() => setSelectedUser(u)}
-                        className="text-[#174593] hover:text-[#1a51ad] font-bold text-xs bg-blue-50 hover:bg-blue-100 py-2.5 px-4 rounded-xl border border-transparent transition-all cursor-pointer inline-flex items-center gap-1 shadow-sm"
-                      >
-                        Ví & Chi tiết
-                        <ArrowRight className="w-3.5 h-3.5" />
-                      </button>
-                    </td>
-                  </tr>
-                ))
+                      </td>
+                      <td style={styles.td}>{u.email}</td>
+                      <td style={styles.td}>
+                        <span style={styles.roleBadge(u.role)}>
+                          {u.role === "ADMIN" && <Shield style={{ width: "12px", height: "12px" }} />}
+                          {u.role}
+                        </span>
+                      </td>
+                      <td style={{ ...styles.td, textAlign: "center" }}>
+                        <div style={{ display: "flex", justifyContent: "center" }}>
+                          <span style={styles.balanceBadge}>
+                            <Coins style={{ width: "14px", height: "14px", color: "#6366f1" }} />
+                            {u.balance} Credits
+                          </span>
+                        </div>
+                      </td>
+                      <td style={styles.td}>{u.joinDate}</td>
+                      <td style={{ ...styles.td, textAlign: "center" }}>
+                        <button
+                          onClick={() => setSelectedUser(u)}
+                          onMouseEnter={() => setHoveredBtnId(btnHoverKey)}
+                          onMouseLeave={() => setHoveredBtnId(null)}
+                          style={styles.actionButton(hoveredBtnId === btnHoverKey)}
+                        >
+                          Ví & Chi tiết
+                          <ArrowRight style={{ width: "12px", height: "12px" }} />
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
               )}
             </tbody>
           </table>
         </div>
       </div>
 
-      {/* USER DETAILS SLIDE OVER DRAWER - Padded and spaced */}
+      {/* USER DETAILS SLIDE OVER DRAWER */}
       {selectedUser && (
-        <div className="fixed inset-0 bg-slate-900/45 backdrop-blur-sm z-50 flex items-center justify-end">
-          <div className="bg-white border-l border-slate-100 w-full max-w-md h-full flex flex-col justify-between shadow-2xl animate-in slide-in-from-right duration-250">
-            
+        <div style={styles.drawerOverlay} onClick={() => setSelectedUser(null)}>
+          <div 
+            style={styles.drawerContainer} 
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
-            <div className="px-8 py-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            <div style={styles.drawerHeader}>
               <div>
-                <h3 className="text-lg font-bold text-slate-900">Chi Tiết Hồ Sơ Học Viên</h3>
-                <p className="text-xs text-slate-500 mt-1 font-medium">Báo cáo ví nạp và theo dõi tổng thể kết quả.</p>
+                <h3 style={styles.drawerTitle}>Chi Tiết Hồ Sơ Học Viên</h3>
+                <p style={styles.drawerSubtitle}>Báo cáo ví nạp và theo dõi tổng thể kết quả.</p>
               </div>
               <button 
                 onClick={() => setSelectedUser(null)}
-                className="text-slate-400 hover:text-slate-800 cursor-pointer"
+                style={styles.closeBtn}
               >
-                <X className="w-5 h-5" />
+                <X style={{ width: "20px", height: "20px" }} />
               </button>
             </div>
 
             {/* Content Drawer Area */}
-            <div className="flex-1 p-8 space-y-8 overflow-y-auto">
+            <div style={styles.drawerContent}>
               {/* Profile Card */}
-              <div className="flex items-center gap-4.5 bg-slate-50 border border-slate-100 p-5 rounded-2xl">
-                <div className="h-14 w-14 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center font-bold text-[#174593] text-xl shrink-0 shadow-sm">
+              <div style={styles.profileCard}>
+                <div style={styles.drawerAvatar}>
                   {selectedUser.name.slice(0, 2).toUpperCase()}
                 </div>
-                <div className="space-y-1">
-                  <h4 className="font-extrabold text-base text-slate-900 leading-snug">{selectedUser.name}</h4>
-                  <p className="text-xs text-slate-500 font-mono font-bold">{selectedUser.email}</p>
-                  <span className="text-[9px] text-slate-400 font-bold uppercase tracking-wider block">ID: {selectedUser.id}</span>
+                <div>
+                  <h4 style={styles.drawerName}>{selectedUser.name}</h4>
+                  <p style={styles.drawerEmail}>{selectedUser.email}</p>
+                  <p style={styles.drawerUserId}>ID: {selectedUser.id}</p>
                 </div>
               </div>
 
               {/* Credits Box */}
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100/30 border border-blue-150 rounded-2xl p-6 shadow-sm flex justify-between items-center">
+              <div style={styles.balanceBanner}>
                 <div>
-                  <span className="text-[#174593] text-[10px] font-bold block uppercase tracking-wider">Số dư ví nạp</span>
-                  <div className="flex items-center gap-2 mt-2.5">
-                    <Coins className="w-6 h-6 text-[#174593]" />
-                    <span className="text-3xl font-extrabold text-[#174593] tracking-tight">{selectedUser.balance}</span>
-                    <span className="text-xs text-[#174593] font-bold uppercase mt-2">Credits</span>
+                  <span style={styles.balanceBannerTitle}>Số dư ví nạp</span>
+                  <div style={styles.balanceBannerValue}>
+                    <Coins style={{ width: "24px", height: "24px", color: "#174593" }} />
+                    <span style={styles.balanceBannerAmount}>{selectedUser.balance}</span>
+                    <span style={styles.balanceBannerCurrency}>Credits</span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => setShowAdjustModal(true)}
-                  className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-2.5 px-4.5 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow hover:shadow-indigo-500/10 cursor-pointer"
+                  onMouseEnter={() => setHoveredBtnId("adjust-btn")}
+                  onMouseLeave={() => setHoveredBtnId(null)}
+                  style={styles.balanceBannerBtn(hoveredBtnId === "adjust-btn")}
                 >
-                  <PlusCircle className="w-4.5 h-4.5" />
+                  <PlusCircle style={{ width: "16px", height: "16px" }} />
                   Cân đối ví
                 </button>
               </div>
 
               {/* Progress Summary */}
-              <div className="space-y-4">
-                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Thống kê học tập</h4>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4.5 space-y-1 shadow-sm">
-                    <span className="text-slate-450 text-[9px] font-bold uppercase tracking-wider block">Lượt thi</span>
-                    <span className="text-lg font-bold text-slate-800 block">12 đề thi</span>
+              <div>
+                <h4 style={styles.statsSecHeader}>Thống kê học tập</h4>
+                <div style={styles.statsGrid}>
+                  <div style={styles.statsCard}>
+                    <span style={styles.statsCardLabel}>Lượt thi</span>
+                    <span style={styles.statsCardVal}>12 đề thi</span>
                   </div>
-                  <div className="bg-slate-50 border border-slate-100 rounded-2xl p-4.5 space-y-1 shadow-sm">
-                    <span className="text-slate-450 text-[9px] font-bold uppercase tracking-wider block">Tiến độ lộ trình</span>
-                    <span className="text-lg font-bold text-emerald-600 flex items-center gap-1.5 font-black">
-                      <TrendingUp className="w-4 h-4" />
+                  <div style={styles.statsCard}>
+                    <span style={styles.statsCardLabel}>Tiến độ lộ trình</span>
+                    <span style={{ ...styles.statsCardVal, color: "#10b981", display: "flex", alignItems: "center", gap: "6px" }}>
+                      <TrendingUp style={{ width: "16px", height: "16px" }} />
                       45%
                     </span>
                   </div>
@@ -229,38 +845,41 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
               </div>
 
               {/* Wallet Transaction History logs list */}
-              <div className="space-y-4">
-                <h4 className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
-                  <Clock className="w-4.5 h-4.5 text-slate-400" />
+              <div>
+                <h4 style={styles.logsHeader}>
+                  <Clock style={{ width: "16px", height: "16px" }} />
                   Dòng tiền giao dịch ví
                 </h4>
                 
-                <div className="space-y-3 max-h-48 overflow-y-auto pr-1">
-                  {mockLogs.map((log) => (
-                    <div key={log.id} className="bg-slate-50 border border-slate-100 rounded-xl p-4 flex justify-between items-center gap-3">
-                      <div className="space-y-1 flex-1">
-                        <div className="flex justify-between items-center">
-                          <span className="text-xs font-bold text-slate-800 block">{log.type}</span>
-                          <span className="text-[10px] text-slate-400 font-semibold">{log.date}</span>
+                <div style={styles.logsList}>
+                  {mockLogs.map((log) => {
+                    const isPositive = log.amount > 0
+                    return (
+                      <div key={log.id} style={styles.logCard}>
+                        <div style={styles.logInfo}>
+                          <div style={styles.logHeaderRow}>
+                            <span style={styles.logType}>{log.type}</span>
+                            <span style={styles.logDate}>{log.date}</span>
+                          </div>
+                          <p style={styles.logDesc}>{log.desc}</p>
                         </div>
-                        <p className="text-[11px] text-slate-500 font-medium leading-relaxed">{log.desc}</p>
+                        <span style={styles.logAmount(isPositive)}>
+                          {isPositive ? `+${log.amount}` : log.amount}
+                        </span>
                       </div>
-                      <span className={`text-xs font-black shrink-0 ${
-                        log.amount > 0 ? "text-emerald-650" : "text-rose-600"
-                      }`}>
-                        {log.amount > 0 ? `+${log.amount}` : log.amount}
-                      </span>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="px-8 py-5 bg-slate-50 border-t border-slate-100 flex justify-end">
+            <div style={styles.drawerFooter}>
               <button
                 onClick={() => setSelectedUser(null)}
-                className="w-full bg-white border border-slate-200 hover:bg-slate-50 text-slate-650 hover:text-slate-900 font-bold py-3 rounded-xl text-xs transition-all cursor-pointer shadow-sm"
+                onMouseEnter={() => setHoveredBtnId("close-drawer-btn")}
+                onMouseLeave={() => setHoveredBtnId(null)}
+                style={styles.drawerCloseBtn(hoveredBtnId === "close-drawer-btn")}
               >
                 Đóng thông tin chi tiết
               </button>
@@ -271,54 +890,49 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
 
       {/* ADJUST BALANCE MODAL */}
       {showAdjustModal && selectedUser && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[60] flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 rounded-[28px] w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-8 py-5.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-sm font-bold text-slate-900 flex items-center gap-1.5">
-                <Coins className="w-4.5 h-4.5 text-[#174593]" />
+        <div style={styles.modalOverlay} onClick={() => setShowAdjustModal(false)}>
+          <div 
+            style={styles.modalContainer}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={styles.modalHeader}>
+              <h3 style={styles.modalTitle}>
+                <Coins style={{ width: "18px", height: "18px", color: "#174593" }} />
                 Cân đối Credits ví học viên
               </h3>
               <button 
                 onClick={() => setShowAdjustModal(false)}
-                className="text-slate-400 hover:text-slate-800 cursor-pointer"
+                style={styles.closeBtn}
               >
-                <X className="w-4 h-4" />
+                <X style={{ width: "16px", height: "16px" }} />
               </button>
             </div>
             
-            <form onSubmit={handleAdjustSubmit} className="p-8 space-y-5">
+            <form onSubmit={handleAdjustSubmit} style={styles.modalForm}>
               <div>
-                <label className="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Hình thức can thiệp ví</label>
-                <div className="grid grid-cols-2 gap-3">
+                <label style={styles.fieldLabel}>Hình thức can thiệp ví</label>
+                <div style={styles.typeGrid}>
                   <button
                     type="button"
                     onClick={() => setAdjustType("BONUS")}
-                    className={`py-3 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
-                      adjustType === "BONUS"
-                        ? "bg-blue-50 border-blue-200 text-[#174593]"
-                        : "bg-white border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                    }`}
+                    style={styles.typeBtn(adjustType === "BONUS", "BONUS")}
                   >
-                    <PlusCircle className="w-4.5 h-4.5" />
+                    <PlusCircle style={{ width: "16px", height: "16px" }} />
                     CỘNG BONUS
                   </button>
                   <button
                     type="button"
                     onClick={() => setAdjustType("REFUND")}
-                    className={`py-3 rounded-xl text-xs font-bold transition-all border flex items-center justify-center gap-1.5 cursor-pointer ${
-                      adjustType === "REFUND"
-                        ? "bg-rose-50 border-rose-250 text-rose-650"
-                        : "bg-white border-slate-200 text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-                    }`}
+                    style={styles.typeBtn(adjustType === "REFUND", "REFUND")}
                   >
-                    <MinusCircle className="w-4.5 h-4.5" />
+                    <MinusCircle style={{ width: "16px", height: "16px" }} />
                     TRỪ / HOÀN TRẢ
                   </button>
                 </div>
               </div>
 
               <div>
-                <label className="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Số lượng Credits</label>
+                <label style={styles.fieldLabel}>Số lượng Credits</label>
                 <input 
                   type="number"
                   required
@@ -326,33 +940,37 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
                   value={adjustAmount === 0 ? "" : adjustAmount}
                   onChange={(e) => setAdjustAmount(parseInt(e.target.value) || 0)}
                   placeholder="Nhập số Credits..."
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-850 font-bold focus:outline-none focus:border-[#174593] font-mono"
+                  style={styles.inputVal}
                 />
               </div>
 
               <div>
-                <label className="block text-slate-500 text-[10px] font-bold uppercase tracking-wider mb-2">Lý do điều chỉnh giao dịch</label>
+                <label style={styles.fieldLabel}>Lý do điều chỉnh giao dịch</label>
                 <textarea
                   required
                   rows={3}
                   value={adjustReason}
                   onChange={(e) => setAdjustReason(e.target.value)}
                   placeholder="Nhập lý do nạp log (Ví dụ: Thưởng quà sinh nhật học viên, hoàn tiền cuộc gọi âm thanh...)"
-                  className="w-full bg-slate-50 border border-slate-200 focus:border-[#174593] text-slate-800 p-3 rounded-xl text-xs focus:outline-none resize-none font-semibold leading-relaxed"
+                  style={styles.textareaVal}
                 />
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3.5">
+              <div style={styles.modalActions}>
                 <button
                   type="button"
                   onClick={() => setShowAdjustModal(false)}
-                  className="px-5 py-3 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer"
+                  onMouseEnter={() => setHoveredBtnId("cancel-modal")}
+                  onMouseLeave={() => setHoveredBtnId(null)}
+                  style={styles.modalCancelBtn(hoveredBtnId === "cancel-modal")}
                 >
                   Hủy bỏ
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-3 px-5 rounded-xl text-xs transition-all shadow-md hover:shadow-indigo-500/10 cursor-pointer"
+                  onMouseEnter={() => setHoveredBtnId("confirm-modal")}
+                  onMouseLeave={() => setHoveredBtnId(null)}
+                  style={styles.modalConfirmBtn(hoveredBtnId === "confirm-modal")}
                 >
                   Xác nhận
                 </button>
@@ -364,3 +982,4 @@ export default function UsersTab({ users, onAdjustCredits }: Props) {
     </div>
   )
 }
+

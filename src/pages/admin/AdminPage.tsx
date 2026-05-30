@@ -1,6 +1,6 @@
 // src/pages/admin/AdminPage.tsx
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { 
   Transaction, 
   PracticeTest, 
@@ -28,10 +28,30 @@ import {
 
 type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users"
 
+// Custom hook for responsive layout resizing
+export function useWindowSize() {
+  const [size, setSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 1200,
+    height: typeof window !== "undefined" ? window.innerHeight : 800
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSize({ width: window.innerWidth, height: window.innerHeight })
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  return size
+}
+
 export default function AdminPage() {
   const [activeTab, setActiveTab] = useState<TabType>("dashboard")
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-  
+  const { width } = useWindowSize()
+  const isMobileView = width < 768
+
   const showToast = (msg: string) => {
     setToastMessage(msg)
     setTimeout(() => {
@@ -247,146 +267,270 @@ export default function AdminPage() {
     }))
   }
 
+  // Pure CSS inline styles declarations
+  const styles = {
+    layoutContainer: {
+      display: "flex",
+      minHeight: "100vh",
+      background: "#f8fafc",
+      fontFamily: "Inter, system-ui, Avenir, Helvetica, Arial, Be Vietnam Pro, sans-serif",
+      color: "#1e293b",
+    },
+    sidebar: {
+      width: "220px",
+      minHeight: "100vh",
+      background: "#111827",
+      padding: "16px 0",
+      display: isMobileView ? "none" : "flex",
+      flexDirection: "column" as const,
+      justifyContent: "space-between",
+      boxSizing: "border-box" as const,
+      flexShrink: 0
+    },
+    logoArea: {
+      padding: "16px 20px",
+      borderBottom: "1px solid rgba(255, 255, 255, 0.08)",
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+    },
+    logoImg: {
+      width: "36px",
+      height: "36px",
+      objectFit: "contain" as const,
+    },
+    logoText: {
+      fontSize: "15px",
+      fontWeight: 800,
+      color: "#ffffff",
+      letterSpacing: "-0.01em",
+    },
+    logoSub: {
+      fontSize: "9px",
+      color: "#6366f1",
+      fontWeight: 700,
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.05em",
+    },
+    navGroup: {
+      marginTop: "24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "4px"
+    },
+    navItem: (active: boolean) => ({
+      padding: "9px 20px",
+      fontSize: "13px",
+      fontWeight: active ? 600 : 500,
+      color: active ? "#ffffff" : "rgba(255, 255, 255, 0.65)",
+      background: active ? "rgba(255, 255, 255, 0.08)" : "transparent",
+      borderRadius: 0,
+      border: "none",
+      display: "flex",
+      alignItems: "center",
+      gap: "10px",
+      width: "100%",
+      textAlign: "left" as const,
+      cursor: "pointer",
+      boxSizing: "border-box" as const,
+      transition: "all 0.15s"
+    }),
+    sidebarFooter: {
+      padding: "24px 20px 8px 20px",
+      borderTop: "1px solid rgba(255, 255, 255, 0.08)"
+    },
+    backButton: {
+      fontSize: "12px",
+      fontWeight: 600,
+      color: "rgba(255, 255, 255, 0.5)",
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+      textDecoration: "none",
+      cursor: "pointer",
+      border: "none",
+      background: "none",
+      padding: "8px 0",
+      textAlign: "left" as const
+    },
+    mainCanvas: {
+      flex: 1,
+      minWidth: 0,
+      height: "100vh",
+      overflowY: "auto" as const,
+      boxSizing: "border-box" as const,
+    },
+    topHeaderBar: {
+      background: "#ffffff",
+      borderBottom: "1px solid #e5e7eb",
+      padding: "16px 40px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      boxSizing: "border-box" as const,
+    },
+    topHeaderLeft: {
+      display: "flex",
+      alignItems: "center",
+      gap: "8px",
+    },
+    serverStatusBadge: {
+      fontSize: "11px",
+      padding: "3px 10px",
+      borderRadius: "100px",
+      background: "#dcfce7",
+      color: "#15803d",
+      fontWeight: 600,
+      display: "inline-flex",
+      alignItems: "center",
+    },
+    topHeaderRight: {
+      display: "flex",
+      alignItems: "center",
+      gap: "16px",
+      fontSize: "13px",
+      fontWeight: 500,
+      color: "#4b5563",
+    },
+    sePayDot: {
+      width: "8px",
+      height: "8px",
+      borderRadius: "50%",
+      background: "#22c55e",
+      display: "inline-block",
+      marginRight: "6px"
+    },
+    mainContentArea: {
+      padding: "32px 40px",
+      boxSizing: "border-box" as const,
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "32px"
+    },
+    toastContainer: {
+      position: "fixed" as const,
+      top: "24px",
+      right: "24px",
+      zIndex: 9999,
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      color: "#1f2937",
+      borderRadius: "12px",
+      boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05)",
+      padding: "16px 20px",
+      display: "flex",
+      alignItems: "center",
+      gap: "12px",
+      width: "320px",
+      animation: "slideIn 0.3s ease-out"
+    }
+  }
+
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex font-sans antialiased text-slate-800">
+    <div style={styles.layoutContainer}>
       
       {/* GLOBAL TOAST */}
       {toastMessage && (
-        <div className="fixed top-8 right-8 z-[9999] bg-white border border-slate-100 text-slate-850 rounded-[20px] shadow-2xl px-6 py-5 flex items-center gap-4 animate-in fade-in slide-in-from-top-4 duration-300 w-88">
-          <div className="flex items-start gap-3.5">
-            <span className="p-2.5 bg-[#f0f4ff] text-[#174593] rounded-[14px] shrink-0 border border-indigo-100">
-              <BellRing className="w-5 h-5" />
-            </span>
-            <div className="space-y-1">
-              <span className="text-[10px] text-[#174593] font-bold uppercase tracking-wider block">Hệ thống thông báo</span>
-              <p className="text-xs text-slate-650 font-semibold leading-relaxed">{toastMessage}</p>
-            </div>
+        <div style={styles.toastContainer}>
+          <span style={{ padding: "8px", background: "#f3f4f6", color: "#174593", borderRadius: "8px", display: "flex", flexShrink: 0 }}>
+            <BellRing size={16} />
+          </span>
+          <div style={{ display: "flex", flexDirection: "column", gap: "2px" }}>
+            <span style={{ fontSize: "10px", color: "#6b7280", fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.05em" }}>Thông báo</span>
+            <p style={{ fontSize: "12px", color: "#374151", margin: 0, fontWeight: 500, lineHeight: 1.4 }}>{toastMessage}</p>
           </div>
         </div>
       )}
 
       {/* LEFT SIDEBAR NAVIGATION */}
-      <aside className="w-72 border-r border-slate-100 bg-white shrink-0 hidden md:flex flex-col justify-between p-8 h-screen sticky top-0 shadow-sm">
-        <div className="space-y-10">
-          {/* Logo Brand */}
-          <div className="flex items-center gap-4 px-2">
-            <img 
-              src={logoImg} 
-              alt="Logo" 
-              className="h-11 w-11 rounded-2xl object-contain shadow-sm border border-slate-100" 
-              onError={(e) => {
-                e.currentTarget.style.display = "none"
-              }}
-            />
-            <div>
-              <span className="font-extrabold text-slate-900 tracking-tight text-xl block">BandBuilder</span>
-              <span className="text-[10px] text-[#174593] font-extrabold uppercase tracking-widest mt-1 block">ADMIN GATEWAY</span>
+      <aside style={styles.sidebar}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
+          {/* Logo Area */}
+          <div style={styles.logoArea}>
+            <img src={logoImg} alt="Logo" style={styles.logoImg} />
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <span style={styles.logoText}>BandBuilder</span>
+              <span style={styles.logoSub}>Admin Portal</span>
             </div>
           </div>
 
-          {/* Navigation Links */}
-          <nav className="space-y-2">
+          {/* Nav Links */}
+          <nav style={styles.navGroup}>
             <button
               onClick={() => setActiveTab("dashboard")}
-              className={`w-full flex items-center gap-3.5 px-4.5 py-3.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "dashboard"
-                  ? "bg-[#f0f4ff] text-[#174593]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              }`}
+              style={styles.navItem(activeTab === "dashboard")}
             >
-              <LayoutDashboard className="w-4.5 h-4.5" />
+              <LayoutDashboard size={16} style={{ flexShrink: 0 }} />
               Đối soát & Doanh thu
             </button>
 
             <button
               onClick={() => setActiveTab("tests")}
-              className={`w-full flex items-center gap-3.5 px-4.5 py-3.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "tests"
-                  ? "bg-[#f0f4ff] text-[#174593]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              }`}
+              style={styles.navItem(activeTab === "tests")}
             >
-              <BookOpen className="w-4.5 h-4.5" />
+              <BookOpen size={16} style={{ flexShrink: 0 }} />
               Quản trị Đề thi
             </button>
 
             <button
               onClick={() => setActiveTab("packages")}
-              className={`w-full flex items-center gap-3.5 px-4.5 py-3.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "packages"
-                  ? "bg-[#f0f4ff] text-[#174593]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              }`}
+              style={styles.navItem(activeTab === "packages")}
             >
-              <CreditCard className="w-4.5 h-4.5" />
+              <CreditCard size={16} style={{ flexShrink: 0 }} />
               Gói nạp Credit
             </button>
 
             <button
               onClick={() => setActiveTab("shadowing")}
-              className={`w-full flex items-center gap-3.5 px-4.5 py-3.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "shadowing"
-                  ? "bg-[#f0f4ff] text-[#174593]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              }`}
+              style={styles.navItem(activeTab === "shadowing")}
             >
-              <Youtube className="w-4.5 h-4.5" />
+              <Youtube size={16} style={{ flexShrink: 0 }} />
               YouTube Shadowing
             </button>
 
             <button
               onClick={() => setActiveTab("users")}
-              className={`w-full flex items-center gap-3.5 px-4.5 py-3.5 rounded-[14px] text-xs font-bold transition-all cursor-pointer ${
-                activeTab === "users"
-                  ? "bg-[#f0f4ff] text-[#174593]"
-                  : "text-slate-500 hover:text-slate-900 hover:bg-slate-50"
-              }`}
+              style={styles.navItem(activeTab === "users")}
             >
-              <Users className="w-4.5 h-4.5" />
+              <Users size={16} style={{ flexShrink: 0 }} />
               Ví & Người dùng
             </button>
           </nav>
         </div>
 
         {/* Sidebar Footer */}
-        <div className="space-y-6 pt-6 border-t border-slate-100">
-          <div className="flex items-center gap-3.5 px-2">
-            <div className="h-9 w-9 rounded-xl bg-slate-50 border border-slate-200 flex items-center justify-center font-bold text-xs text-slate-700 shadow-sm">
-              AD
-            </div>
-            <div>
-              <span className="text-xs font-extrabold text-slate-800 block">System Admin</span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block mt-0.5">Root Console</span>
-            </div>
-          </div>
-
-          <a
-            href="/"
-            className="w-full flex items-center gap-3 px-4 py-2.5 rounded-[12px] text-xs font-bold text-slate-500 hover:text-[#174593] hover:bg-slate-50 transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Về giao diện Học viên
+        <div style={styles.sidebarFooter}>
+          <a href="/" style={styles.backButton}>
+            <ArrowLeft size={14} />
+            Về trang Học viên
           </a>
         </div>
       </aside>
 
       {/* RIGHT MAIN CONTENT */}
-      <main className="flex-1 overflow-y-auto h-screen max-w-full">
-        {/* TOP MOBILE BAR */}
-        <header className="px-8 py-5 border-b border-slate-100 bg-white/80 backdrop-blur sticky top-0 z-40 flex items-center justify-between md:justify-end gap-4 shadow-sm">
-          <div className="flex items-center gap-3 md:hidden">
-            <img src={logoImg} alt="Logo" className="h-9 w-9 object-contain rounded-lg border border-slate-100 shadow-sm" />
-            <span className="font-extrabold text-slate-900 text-sm tracking-tight">BandBuilder Portal</span>
+      <main style={styles.mainCanvas}>
+        {/* TOP MOBILE BAR / HEADER */}
+        <header style={styles.topHeaderBar}>
+          <div style={styles.topHeaderLeft}>
+            {isMobileView && (
+              <img src={logoImg} alt="Logo" style={{ height: "28px", width: "28px", objectFit: "contain", marginRight: "8px" }} />
+            )}
+            <span style={{ fontSize: "14px", fontWeight: 700, color: "#111827", textTransform: "uppercase", letterSpacing: "0.02em" }}>
+              {isMobileView ? "BandBuilder Admin" : "Hệ thống Quản trị"}
+            </span>
           </div>
 
-          <div className="flex items-center gap-3">
-            <span className="text-xs text-slate-500 font-bold uppercase tracking-wider">Server Status: <strong className="text-emerald-600">ONLINE</strong></span>
-            <span className="h-2.5 w-2.5 rounded-full bg-emerald-500 shadow-sm shadow-emerald-500/30"></span>
+          <div style={styles.topHeaderRight}>
+            <span>Trạng thái Server: </span>
+            <span style={styles.serverStatusBadge}>
+              <span style={styles.sePayDot}></span>
+              ONLINE
+            </span>
           </div>
         </header>
 
         {/* CONTAINER FOR ACTIVE TABS */}
-        <div className="p-8 md:p-12 max-w-7xl mx-auto w-full">
+        <div style={styles.mainContentArea}>
           {activeTab === "dashboard" && (
             <DashboardTab 
               transactions={transactions} 

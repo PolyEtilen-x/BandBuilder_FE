@@ -1,6 +1,6 @@
 // src/pages/admin/components/ShadowingTab.tsx
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { ShadowingTopic, ShadowingSentence } from "../types"
 import { 
   Youtube, 
@@ -21,6 +21,21 @@ interface Props {
   onDeleteTopic: (id: string) => void
 }
 
+// Window size observer hook
+function useWindowSize() {
+  const [size, setSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 1200
+  })
+
+  useEffect(() => {
+    const handleResize = () => setSize({ width: window.innerWidth })
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  return size
+}
+
 export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [ytLink, setYtLink] = useState("")
@@ -38,13 +53,14 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
     sentences: ShadowingSentence[]
   } | null>(null)
 
-  // Filter list
+  const { width } = useWindowSize()
+  const isMobile = width < 768
+
   const filteredTopics = topics.filter(t => 
     t.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
     t.paragraph.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  // Start Simulated Crawling
   const handleStartCrawl = (e: React.FormEvent) => {
     e.preventDefault()
     if (!ytLink.trim()) return
@@ -106,117 +122,347 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
     setCrawlProgress(0)
   }
 
+  // Pure inline style mapping
+  const styles = {
+    headerRow: {
+      borderBottom: "1px solid #e5e7eb",
+      paddingBottom: "16px",
+      marginBottom: "24px"
+    },
+    title: {
+      fontSize: "22px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0
+    },
+    subtitle: {
+      fontSize: "13px",
+      color: "#6b7280",
+      marginTop: "4px",
+      marginBottom: 0
+    },
+    crawlerCard: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "24px",
+      boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "24px",
+      boxSizing: "border-box" as const,
+      position: "relative" as const,
+      overflow: "hidden" as const
+    },
+    crawlerHeader: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "6px"
+    },
+    crawlerTitle: {
+      fontSize: "16px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+      display: "flex",
+      alignItems: "center",
+      gap: "8px"
+    },
+    formRow: {
+      display: "flex",
+      flexDirection: isMobile ? ("column" as const) : ("row" as const),
+      gap: "12px",
+      width: "100%"
+    },
+    inputWrapper: {
+      position: "relative" as const,
+      flex: 1
+    },
+    textInput: {
+      width: "100%",
+      height: "40px",
+      background: "#f9fafb",
+      border: "1px solid #cbd5e1",
+      borderRadius: "8px",
+      paddingLeft: "36px",
+      paddingRight: "12px",
+      fontSize: "13px",
+      outline: "none",
+      boxSizing: "border-box" as const,
+      fontFamily: "monospace"
+    },
+    submitBtn: {
+      height: "40px",
+      background: "#dc2626",
+      color: "#ffffff",
+      fontSize: "13px",
+      fontWeight: 700,
+      padding: "0 20px",
+      borderRadius: "8px",
+      border: "none",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: "8px"
+    },
+    progressTrack: {
+      width: "100%",
+      height: "8px",
+      borderRadius: "100px",
+      background: "#f1f5f9",
+      border: "1px solid #e2e8f0",
+      boxSizing: "border-box" as const,
+      overflow: "hidden" as const
+    },
+    progressBar: (progress: number) => ({
+      height: "100%",
+      width: `${progress}%`,
+      background: "linear-gradient(to right, #dc2626, #2563eb)",
+      borderRadius: "100px",
+      transition: "width 0.3s"
+    }),
+    successBadge: {
+      fontSize: "11px",
+      fontWeight: 700,
+      background: "#dcfce7",
+      color: "#15803d",
+      padding: "4px 10px",
+      borderRadius: "6px",
+      border: "1px solid #bbf7d0",
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "6px"
+    },
+    previewBox: {
+      background: "#f8fafc",
+      border: "1px solid #cbd5e1",
+      borderRadius: "12px",
+      padding: "20px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "16px",
+      boxSizing: "border-box" as const
+    },
+    timelineRow: {
+      display: "grid",
+      gridTemplateColumns: "30px 1fr 180px",
+      gap: "12px",
+      background: "#ffffff",
+      border: "1px solid #e2e8f0",
+      borderRadius: "8px",
+      padding: "10px 16px",
+      alignItems: "center",
+      boxSizing: "border-box" as const
+    },
+    timeBox: {
+      width: "48px",
+      height: "28px",
+      textAlign: "center" as const,
+      border: "1px solid #cbd5e1",
+      borderRadius: "6px",
+      fontSize: "12px",
+      fontWeight: 700,
+      color: "#174593",
+      fontFamily: "monospace",
+      outline: "none"
+    },
+    saveBtn: {
+      background: "#16a34a",
+      color: "#ffffff",
+      fontSize: "13px",
+      fontWeight: 700,
+      padding: "10px 20px",
+      borderRadius: "8px",
+      border: "none",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
+    },
+    libraryContainer: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      overflow: "hidden" as const
+    },
+    libraryHeader: {
+      padding: "16px 24px",
+      background: "#f9fafb",
+      borderBottom: "1px solid #e5e7eb",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      flexWrap: "wrap" as const,
+      gap: "12px"
+    },
+    libraryGrid: {
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr",
+      gap: "24px",
+      padding: "24px",
+      boxSizing: "border-box" as const
+    },
+    topicCard: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "20px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "start",
+      gap: "16px",
+      boxShadow: "0 1px 3px 0 rgba(0,0,0,0.02)",
+      boxSizing: "border-box" as const
+    },
+    miniPlay: {
+      padding: "6px",
+      background: "#fee2e2",
+      color: "#dc2626",
+      borderRadius: "6px",
+      display: "flex",
+      flexShrink: 0
+    },
+    tagCount: {
+      fontSize: "10px",
+      fontWeight: 700,
+      padding: "2px 8px",
+      borderRadius: "4px",
+      background: "#f3f4f6",
+      border: "1px solid #e5e7eb",
+      color: "#4b5563"
+    },
+    formGroup: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "6px"
+    },
+    label: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#4b5563",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.05em"
+    },
+    searchWrapper: {
+      position: "relative" as const,
+      minWidth: "220px"
+    },
+    searchInput: {
+      height: "36px",
+      padding: "0 12px 0 32px",
+      borderRadius: "8px",
+      border: "1px solid #cbd5e1",
+      fontSize: "13px",
+      outline: "none",
+      boxSizing: "border-box" as const,
+      width: "100%"
+    }
+  }
+
   return (
-    <div className="space-y-10">
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {/* HEADER SECTION */}
-      <div className="pb-4 border-b border-slate-100">
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Quản lý Học liệu YouTube Shadowing</h2>
-        <p className="text-slate-500 text-sm mt-2 font-medium">
-          Dán liên kết video YouTube để cào phụ đề tự động, phân hoạch timeline và đồng bộ karaoke hỗ trợ luyện phát âm.
-        </p>
+      <div style={styles.headerRow}>
+        <h2 style={styles.title}>Quản lý Học liệu YouTube Shadowing</h2>
+        <p style={styles.subtitle}>Cào phụ đề tự động (YouTube Transcript) từ liên kết video để đồng bộ mốc thời gian bài học phát âm.</p>
       </div>
 
-      {/* IMPORT & CRAWLER BOX - Spacious card padding */}
-      <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm space-y-8 relative overflow-hidden">
-        <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-red-600 via-red-500 to-[#174593]"></div>
+      {/* IMPORT & CRAWLER BOX */}
+      <div style={styles.crawlerCard}>
+        {/* Accent bar red youtube */}
+        <div style={{ height: "4px", width: "100%", background: "#dc2626", position: "absolute", top: 0, left: 0 }}></div>
 
-        <div>
-          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2.5">
-            <Youtube className="w-6 h-6 text-red-600" />
-            Nhập bài luyện phát âm mới từ YouTube
+        <div style={styles.crawlerHeader}>
+          <h3 style={styles.crawlerTitle}>
+            <Youtube size={20} style={{ color: "#dc2626" }} />
+            Thêm bài phát âm mới từ YouTube
           </h3>
-          <p className="text-slate-500 text-xs mt-2 font-semibold">
-            AI Crawler sẽ bóc tách và phân luồng phụ đề, gán mốc giây tự động từ video gốc.
+          <p style={{ fontSize: "13px", color: "#6b7280", margin: 0 }}>
+            Dán liên kết video, hệ thống sẽ tự phân tích phụ đề và chia mốc giây karaoke.
           </p>
         </div>
 
         {/* Input Form */}
         {!crawledData && !isCrawling && (
-          <form onSubmit={handleStartCrawl} className="flex flex-col sm:flex-row gap-4">
-            <div className="relative flex-1">
+          <form onSubmit={handleStartCrawl} style={styles.formRow}>
+            <div style={styles.inputWrapper}>
               <input 
                 type="url"
                 required
                 placeholder="Dán link YouTube (Ví dụ: https://www.youtube.com/watch?v=...) tại đây"
                 value={ytLink}
                 onChange={(e) => setYtLink(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-3.5 text-xs text-slate-800 placeholder-slate-450 focus:outline-none focus:border-[#174593] transition-all font-mono font-bold shadow-sm"
+                style={styles.textInput}
               />
-              <LinkIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-4.5" />
+              <LinkIcon size={14} style={{ position: "absolute", left: "12px", top: "13px", color: "#94a3b8" }} />
             </div>
-            <button
-              type="submit"
-              className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-3.5 px-6 rounded-xl text-xs flex items-center justify-center gap-2 transition-all shadow hover:shadow-indigo-500/10 cursor-pointer shrink-0"
-            >
-              <Sparkles className="w-4 h-4 text-amber-300 fill-amber-300" />
-              Tải phụ đề tự động
+            <button type="submit" style={styles.submitBtn}>
+              <Sparkles size={14} style={{ color: "#fef08a" }} />
+              Tải Phụ đề
             </button>
           </form>
         )}
 
-        {/* Crawling Progress */}
+        {/* Crawling Progress bar */}
         {isCrawling && (
-          <div className="space-y-4 py-3">
-            <div className="flex items-center justify-between text-xs font-semibold">
-              <span className="text-slate-500 flex items-center gap-2">
-                <Loader2 className="w-4.5 h-4.5 text-[#174593] animate-spin" />
+          <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+            <div style={{ display: "flex", alignItems: "center", fontSize: "12px", fontWeight: 700, color: "#4b5563", justifyContent: "space-between" }}>
+              <span style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                <Loader2 size={14} className="animate-spin" style={{ color: "#2563eb" }} />
                 {crawlStage}
               </span>
-              <span className="text-[#174593] font-extrabold">{crawlProgress}%</span>
+              <span style={{ color: "#2563eb" }}>{crawlProgress}%</span>
             </div>
-            
-            <div className="w-full bg-slate-100 rounded-full h-2.5 border border-slate-200/50">
-              <div 
-                className="bg-gradient-to-r from-red-650 to-[#174593] h-2.5 rounded-full transition-all duration-300" 
-                style={{ width: `${crawlProgress}%` }}
-              ></div>
+            <div style={styles.progressTrack}>
+              <div style={styles.progressBar(crawlProgress)}></div>
             </div>
           </div>
         )}
 
-        {/* CRAWL SUCCESS PREVIEW PANEL */}
+        {/* CRAWL PREVIEW */}
         {crawledData && (
-          <div className="bg-slate-50 border border-slate-200 rounded-2xl p-6 space-y-6 animate-in fade-in zoom-in-95 duration-200">
-            <div className="flex items-center justify-between pb-4 border-b border-slate-200">
-              <span className="text-[10px] font-extrabold text-emerald-700 bg-emerald-50 px-3 py-1.5 border border-emerald-100 rounded-xl flex items-center gap-1.5 uppercase tracking-wider">
-                <Check className="w-3.5 h-3.5" />
-                Dữ liệu bóc tách sẵn sàng
+          <div style={styles.previewBox}>
+            <div style={{ display: "flex", alignItems: "center", borderBottom: "1px solid #cbd5e1", paddingBottom: "12px", justifyContent: "space-between" }}>
+              <span style={styles.successBadge}>
+                <Check size={12} />
+                Bóc tách video YouTube thành công!
               </span>
               <button 
                 onClick={() => setCrawledData(null)}
-                className="text-slate-500 hover:text-slate-800 text-xs font-bold flex items-center gap-1 bg-white border border-slate-200 px-3 py-2 rounded-xl cursor-pointer"
+                style={{ padding: "4px 8px", fontSize: "11px", fontWeight: 700, background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "6px", cursor: "pointer", color: "#4b5563" }}
               >
                 Hủy bỏ
               </button>
             </div>
 
-            {/* Editable title */}
-            <div>
-              <label className="block text-slate-500 text-xs font-bold uppercase tracking-wider mb-2">Tiêu đề bài phát âm</label>
+            {/* Editable Title */}
+            <div style={styles.formGroup}>
+              <label style={styles.label}>Tiêu đề bài học</label>
               <input 
                 type="text"
                 value={crawledData.title}
                 onChange={(e) => setCrawledData({ ...crawledData, title: e.target.value })}
-                className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-xs text-slate-850 focus:outline-none focus:border-[#174593] font-bold"
+                style={{ ...styles.textInput, paddingLeft: "12px", height: "36px", background: "#ffffff", fontWeight: 700 }}
               />
             </div>
 
-            {/* Paragraph */}
-            <div>
-              <span className="text-slate-500 text-xs font-bold uppercase tracking-wider block mb-2">Lời thoại mẫu (Paragraph)</span>
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 text-xs text-slate-700 leading-relaxed font-semibold">
+            {/* Paragraph transcript */}
+            <div style={styles.formGroup}>
+              <span style={styles.label}>Nội dung đoạn văn mẫu</span>
+              <div style={{ background: "#ffffff", border: "1px solid #cbd5e1", borderRadius: "8px", padding: "12px", fontSize: "13px", color: "#374151", lineHeight: 1.5 }}>
                 {crawledData.paragraph}
               </div>
             </div>
 
-            {/* Sentences with time stamps */}
-            <div className="space-y-3">
-              <span className="text-slate-500 text-xs font-bold uppercase tracking-wider block">Phân chia timeline karaoke</span>
+            {/* Timelines partition */}
+            <div style={styles.formGroup}>
+              <span style={styles.label}>Đồng bộ mốc thời gian</span>
               
-              <div className="space-y-3 max-h-56 overflow-y-auto pr-1">
+              <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "200px", overflowY: "auto" }}>
                 {crawledData.sentences.map((sentence, idx) => (
-                  <div key={sentence.id} className="grid grid-cols-12 gap-3 bg-white border border-slate-200 rounded-2xl p-4 items-center">
-                    <span className="col-span-1 text-slate-400 text-xs font-bold text-center">#{idx + 1}</span>
+                  <div key={sentence.id} style={styles.timelineRow}>
+                    <span style={{ fontSize: "11px", fontWeight: 750, color: "#6b7280" }}>#{idx + 1}</span>
                     <input 
                       type="text"
                       value={sentence.text}
@@ -225,10 +471,10 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
                         newS[idx].text = e.target.value
                         setCrawledData({ ...crawledData, sentences: newS })
                       }}
-                      className="col-span-7 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs text-slate-850 font-semibold focus:outline-none focus:border-[#174593]"
+                      style={{ border: "none", background: "transparent", fontSize: "12px", outline: "none", color: "#1f2937", fontWeight: 500 }}
                     />
-                    <div className="col-span-4 flex items-center gap-1.5 justify-end">
-                      <Clock className="w-3.5 h-3.5 text-slate-400" />
+                    <div style={{ display: "flex", gap: "4px", alignItems: "center", justifyContent: "flex-end" }}>
+                      <Clock size={12} style={{ color: "#94a3b8" }} />
                       <input 
                         type="number"
                         step="0.1"
@@ -238,9 +484,9 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
                           newS[idx].startTime = parseFloat(e.target.value) || 0
                           setCrawledData({ ...crawledData, sentences: newS })
                         }}
-                        className="w-12 bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-xs text-center text-indigo-650 font-bold focus:outline-none font-mono"
+                        style={styles.timeBox}
                       />
-                      <span className="text-slate-400 text-xs">➔</span>
+                      <span style={{ fontSize: "10px", color: "#cbd5e1" }}>➔</span>
                       <input 
                         type="number"
                         step="0.1"
@@ -250,7 +496,7 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
                           newS[idx].endTime = parseFloat(e.target.value) || 0
                           setCrawledData({ ...crawledData, sentences: newS })
                         }}
-                        className="w-12 bg-slate-50 border border-slate-200 rounded-lg px-1.5 py-1 text-xs text-center text-indigo-650 font-bold focus:outline-none font-mono"
+                        style={styles.timeBox}
                       />
                     </div>
                   </div>
@@ -258,74 +504,65 @@ export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Prop
               </div>
             </div>
 
-            {/* Save Action */}
-            <div className="pt-4 border-t border-slate-200 flex justify-end">
-              <button
-                onClick={handleSaveTopic}
-                className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-3 px-6 rounded-xl text-xs flex items-center gap-2 transition-all shadow hover:shadow-indigo-500/10 cursor-pointer animate-pulse"
-              >
-                <Check className="w-4 h-4" />
-                Lưu vào thư viện học liệu
+            {/* Save Button */}
+            <div style={{ display: "flex", borderTop: "1px solid #cbd5e1", paddingTop: "12px", justifyContent: "flex-end" }}>
+              <button onClick={handleSaveTopic} style={styles.saveBtn}>
+                <Check size={14} />
+                Lưu Học Liệu Shadowing
               </button>
             </div>
           </div>
         )}
       </div>
 
-      {/* SEARCH AND LIST OF ACTIVE LESSONS - Expanded spacing */}
-      <div className="bg-white border border-slate-100 rounded-[28px] shadow-sm overflow-hidden p-2">
-        {/* Header list */}
-        <div className="p-8 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-50/20 rounded-t-[26px]">
-          <h3 className="text-xl font-bold text-slate-800 flex items-center gap-2">
-            <FileText className="w-5.5 h-5.5 text-[#174593]" />
-            Thư viện bài học Shadowing đang hoạt động ({filteredTopics.length})
+      {/* SEARCH AND LIST ACTIVE LESSONS */}
+      <div style={styles.libraryContainer}>
+        <div style={styles.libraryHeader}>
+          <h3 style={styles.crawlerTitle}>
+            <FileText size={18} style={{ color: "#2563eb" }} />
+            Thư viện Shadowing đang hoạt động ({filteredTopics.length})
           </h3>
-          <div className="relative">
+          <div style={styles.searchWrapper}>
             <input 
               type="text"
               placeholder="Tìm bài Shadowing..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="bg-white border border-slate-200 rounded-xl pl-9 pr-4 py-2.5 text-xs text-slate-850 focus:outline-none focus:border-[#174593] w-64 font-semibold shadow-sm"
+              style={styles.searchInput}
             />
-            <Search className="w-4 h-4 text-slate-400 absolute left-3 top-3.5" />
+            <Search size={14} style={{ position: "absolute", left: "12px", top: "11px", color: "#94a3b8" }} />
           </div>
         </div>
 
-        {/* List Grid */}
-        <div className="p-6 grid grid-cols-1 lg:grid-cols-2 gap-8 bg-white">
+        <div style={styles.libraryGrid}>
           {filteredTopics.length === 0 ? (
-            <div className="col-span-2 py-12 text-center text-slate-400 font-bold bg-slate-50/10 rounded-2xl">
-              Chưa có học liệu Shadowing nào được cào. Dán link video bên trên để cào ngay.
+            <div style={{ gridColumn: "span 2", textAlign: "center", color: "#6b7280", padding: "24px 0", fontSize: "13px" }}>
+              Không tìm thấy bài Shadowing nào. Hãy dán link YouTube bên trên để cào transcript.
             </div>
           ) : (
             filteredTopics.map((topic) => (
-              <div key={topic.id} className="bg-white border border-slate-100 rounded-[24px] p-6.5 flex gap-4.5 hover:border-slate-200 transition-all duration-300 justify-between items-start shadow-sm hover:shadow-md hover:-translate-y-1">
-                <div className="space-y-3 flex-1">
-                  <div className="flex items-center gap-2.5">
-                    <span className="p-2 bg-red-50 text-red-500 rounded-xl flex shrink-0 border border-red-100">
-                      <Play className="w-4 h-4 fill-red-500 text-red-550" />
+              <div key={topic.id} style={styles.topicCard}>
+                <div style={{ display: "flex", flexDirection: "column", gap: "8px", flex: 1 }}>
+                  <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    <span style={styles.miniPlay}>
+                      <Play size={12} style={{ fill: "#dc2626", stroke: "none" }} />
                     </span>
-                    <h4 className="text-base font-bold text-slate-850 line-clamp-1">{topic.title}</h4>
+                    <h4 style={{ fontSize: "14px", fontWeight: 700, color: "#111827", margin: 0 }}>{topic.title}</h4>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed font-semibold">{topic.paragraph}</p>
+                  <p style={{ fontSize: "12px", color: "#6b7280", margin: 0, lineHeight: 1.4, display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}>{topic.paragraph}</p>
                   
-                  <div className="flex flex-wrap gap-2.5 pt-1.5 font-bold text-[9px] uppercase tracking-wider">
-                    <span className="bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-xl shadow-sm">
-                      {topic.sentencesCount} Câu nói
-                    </span>
-                    <span className="bg-slate-50 border border-slate-100 text-slate-500 px-2.5 py-1 rounded-xl shadow-sm">
-                      {topic.vocabCount} Từ chính
-                    </span>
+                  <div style={{ display: "flex", gap: "6px", marginTop: "4px" }}>
+                    <span style={styles.tagCount}>{topic.sentencesCount} Câu phát âm</span>
+                    <span style={styles.tagCount}>{topic.vocabCount} Từ cốt lõi</span>
                   </div>
                 </div>
 
                 <button
                   onClick={() => onDeleteTopic(topic.id)}
-                  className="text-slate-400 hover:text-rose-600 p-2 hover:bg-rose-50 rounded-xl border border-transparent hover:border-rose-100 transition-all shrink-0 cursor-pointer"
+                  style={{ border: "none", background: "none", cursor: "pointer", color: "#94a3b8", padding: "6px", borderRadius: "6px" }}
                   title="Xoá học liệu"
                 >
-                  <Trash2 className="w-4.5 h-4.5" />
+                  <Trash2 size={15} style={{ color: "#ef4444" }} />
                 </button>
               </div>
             ))

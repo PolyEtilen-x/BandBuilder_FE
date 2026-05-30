@@ -1,13 +1,12 @@
 // src/pages/admin/components/PackagesTab.tsx
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { CreditPackage } from "../types"
 import { 
   Zap, 
   Sparkles, 
   Coins, 
   Edit3, 
-  Check, 
   EyeOff, 
   Eye,
   X
@@ -18,9 +17,28 @@ interface Props {
   onUpdatePackage: (id: string, updated: Partial<CreditPackage>) => void
 }
 
+// Inline window size observer for responsiveness
+function useWindowSize() {
+  const [size, setSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 1200
+  })
+
+  useEffect(() => {
+    const handleResize = () => setSize({ width: window.innerWidth })
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  return size
+}
+
 export default function PackagesTab({ packages, onUpdatePackage }: Props) {
   const [editingPack, setEditingPack] = useState<CreditPackage | null>(null)
-  
+  const { width } = useWindowSize()
+
+  const isMobile = width < 640
+  const isTablet = width < 1024
+
   // Edit Form state
   const [editName, setEditName] = useState("")
   const [editPrice, setEditPrice] = useState(0)
@@ -67,121 +85,318 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
     onUpdatePackage(pack.id, { isActive: !pack.isActive })
   }
 
+  // Pure inline styles object
+  const styles = {
+    headerRow: {
+      borderBottom: "1px solid #e5e7eb",
+      paddingBottom: "16px",
+      marginBottom: "24px"
+    },
+    title: {
+      fontSize: "22px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0
+    },
+    subtitle: {
+      fontSize: "13px",
+      color: "#6b7280",
+      marginTop: "4px",
+      marginBottom: 0
+    },
+    gridList: {
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : isTablet ? "1fr 1fr" : "repeat(4, 1fr)",
+      gap: "24px"
+    },
+    card: (active: boolean) => ({
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      display: "flex",
+      flexDirection: "column" as const,
+      justifyContent: "space-between",
+      overflow: "hidden" as const,
+      opacity: active ? 1 : 0.65,
+      boxShadow: "0 1px 3px 0 rgba(0,0,0,0.05)",
+      transition: "all 0.3s",
+      boxSizing: "border-box" as const
+    }),
+    cardAccent: (active: boolean, price: number) => {
+      let bg = "#2563eb"
+      if (!active) {
+        bg = "#94a3b8"
+      } else if (price > 300000) {
+        bg = "linear-gradient(to right, #8b5cf6, #3b82f6)"
+      } else if (price > 100000) {
+        bg = "linear-gradient(to right, #10b981, #14b8a6)"
+      }
+      return {
+        height: "6px",
+        width: "100%",
+        background: bg
+      }
+    },
+    cardBody: {
+      padding: "24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      justifyContent: "space-between",
+      gap: "24px",
+      flex: 1,
+      boxSizing: "border-box" as const
+    },
+    cardName: {
+      fontSize: "18px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0
+    },
+    priceWrapper: {
+      display: "flex",
+      alignItems: "baseline",
+      gap: "4px",
+      margin: "12px 0"
+    },
+    priceVal: {
+      fontSize: "28px",
+      fontWeight: 800,
+      color: "#174593"
+    },
+    priceUnit: {
+      fontSize: "12px",
+      color: "#6b7280",
+      fontWeight: 700
+    },
+    creditsBox: {
+      background: "#f9fafb",
+      border: "1px solid #e5e7eb",
+      borderRadius: "8px",
+      padding: "12px 16px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "8px",
+      fontSize: "13px"
+    },
+    creditsRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    },
+    bonusLabel: {
+      fontSize: "11px",
+      fontWeight: 700,
+      background: "#dcfce7",
+      color: "#15803d",
+      padding: "2px 8px",
+      borderRadius: "100px",
+      border: "1px solid #bbf7d0"
+    },
+    cardActions: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderTop: "1px solid #f3f4f6",
+      paddingTop: "16px",
+      boxSizing: "border-box" as const
+    },
+    statusToggleBtn: (active: boolean) => ({
+      padding: "6px 12px",
+      borderRadius: "8px",
+      fontSize: "12px",
+      fontWeight: 700,
+      border: active ? "1px solid #bbf7d0" : "1px solid #cbd5e1",
+      background: active ? "#emerald-50" : "#f3f4f6",
+      color: active ? "#15803d" : "#4b5563",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px",
+      cursor: "pointer"
+    }),
+    editBtn: {
+      padding: "6px 12px",
+      borderRadius: "8px",
+      background: "#2563eb",
+      color: "#ffffff",
+      fontSize: "12px",
+      fontWeight: 700,
+      border: "none",
+      cursor: "pointer",
+      display: "flex",
+      alignItems: "center",
+      gap: "6px"
+    },
+    modalOverlay: {
+      position: "fixed" as const,
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      background: "rgba(15, 23, 42, 0.4)",
+      backdropFilter: "blur(4px)",
+      zIndex: 1000,
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      padding: "16px"
+    },
+    modalCard: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "16px",
+      width: "100%",
+      maxWidth: "440px",
+      boxShadow: "0 20px 25px -5px rgba(0,0,0,0.1)",
+      overflow: "hidden" as const
+    },
+    modalHeader: {
+      padding: "16px 24px",
+      background: "#f9fafb",
+      borderBottom: "1px solid #e5e7eb",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center"
+    },
+    modalBody: {
+      padding: "24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "16px"
+    },
+    formGroup: {
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "6px"
+    },
+    label: {
+      fontSize: "11px",
+      fontWeight: 700,
+      color: "#4b5563",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em"
+    },
+    textInput: {
+      height: "38px",
+      padding: "0 12px",
+      borderRadius: "8px",
+      border: "1px solid #cbd5e1",
+      fontSize: "13px",
+      outline: "none",
+      boxSizing: "border-box" as const
+    },
+    switchRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      background: "#f8fafc",
+      padding: "14px 18px",
+      borderRadius: "12px",
+      border: "1px solid #e5e7eb",
+      marginTop: "8px"
+    },
+    toggleOuter: (active: boolean) => ({
+      width: "44px",
+      height: "24px",
+      borderRadius: "100px",
+      border: active ? "1px solid #2563eb" : "1px solid #cbd5e1",
+      background: active ? "#2563eb" : "#e2e8f0",
+      display: "flex",
+      alignItems: "center",
+      padding: "2px",
+      cursor: "pointer",
+      position: "relative" as const,
+      boxSizing: "border-box" as const
+    }),
+    toggleInner: (active: boolean) => ({
+      width: "18px",
+      height: "18px",
+      borderRadius: "50%",
+      background: "#ffffff",
+      boxShadow: "0 1px 3px 0 rgba(0,0,0,0.1)",
+      position: "absolute" as const,
+      left: active ? "22px" : "2px",
+      transition: "left 0.2s"
+    })
+  }
+
   return (
-    <div className="space-y-10">
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {/* HEADER SECTION */}
-      <div className="pb-4 border-b border-slate-100">
-        <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Cấu hình Gói Nạp Credit</h2>
-        <p className="text-slate-500 text-sm mt-2 font-medium">Điều chỉnh giá bán (VND), lượng Credit cơ bản và khuyến mãi nạp ví học viên trực tuyến.</p>
+      <div style={styles.headerRow}>
+        <h2 style={styles.title}>Cấu hình Gói Nạp Credit</h2>
+        <p style={styles.subtitle}>Điều chỉnh giá tiền (VND), lượng Credits cơ bản và Credits khuyến mãi của các gói nạp trực tuyến.</p>
       </div>
 
-      {/* PRICING GRID LIST - Expanded card spacing and large padding */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+      {/* PRICING GRID LIST */}
+      <div style={styles.gridList}>
         {packages
           .sort((a, b) => a.sortOrder - b.sortOrder)
           .map((pack) => {
             const active = pack.isActive
             return (
-              <div 
-                key={pack.id} 
-                className={`bg-white border rounded-[24px] shadow-sm hover:shadow-md hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group ${
-                  active 
-                    ? "border-slate-100 hover:border-[#174593]/40" 
-                    : "border-slate-200 bg-slate-50/50 opacity-60 grayscale"
-                }`}
-              >
-                {/* Visual Accent Header */}
-                <div className={`h-2 w-full ${
-                  !active 
-                    ? "bg-slate-200" 
-                    : pack.price > 300000 
-                    ? "bg-gradient-to-r from-purple-500 to-[#174593]" 
-                    : pack.price > 100000 
-                    ? "bg-gradient-to-r from-emerald-500 to-teal-500" 
-                    : "bg-[#174593]"
-                }`}></div>
+              <div key={pack.id} style={styles.card(active)}>
+                {/* Accent bar */}
+                <div style={styles.cardAccent(active, pack.price)}></div>
 
-                {/* Card Body - Generous padding 40px (p-8) */}
-                <div className="p-8 flex-1 flex flex-col justify-between gap-8">
-                  <div className="space-y-6">
-                    {/* Header */}
-                    <div className="flex justify-between items-start">
+                {/* Card content */}
+                <div style={styles.cardBody}>
+                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start" }}>
                       <div>
-                        <h3 className="text-lg font-bold text-slate-800 tracking-tight">{pack.name}</h3>
-                        <span className="text-[9px] font-mono font-bold text-slate-400 uppercase">Ưu tiên xếp: {pack.sortOrder}</span>
+                        <h3 style={styles.cardName}>{pack.name}</h3>
+                        <span style={{ fontSize: "9px", fontFamily: "monospace", color: "#94a3b8", fontWeight: 700, textTransform: "uppercase" }}>Sort: {pack.sortOrder}</span>
                       </div>
-                      <span className={`p-3 rounded-2xl text-xs font-semibold border ${
-                        !active 
-                          ? "bg-slate-100 text-slate-400 border-slate-200" 
-                          : pack.price > 300000 
-                          ? "bg-purple-50 text-purple-600 border-purple-100" 
-                          : "bg-blue-50 text-[#174593] border-blue-100"
-                      }`}>
-                        {pack.price > 300000 ? <Sparkles className="w-4.5 h-4.5" /> : <Zap className="w-4.5 h-4.5" />}
+                      <span style={{ color: active ? "#2563eb" : "#cbd5e1" }}>
+                        {pack.price > 300000 ? <Sparkles size={18} /> : <Zap size={18} />}
                       </span>
                     </div>
 
-                    {/* Pricing details */}
-                    <div>
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-3xl font-extrabold text-slate-900 tracking-tight">
-                          {formatVnd(pack.price).replace("₫", "")}
-                        </span>
-                        <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">VND</span>
-                      </div>
-                      <p className="text-[9px] text-slate-400 mt-1.5 font-bold uppercase tracking-widest">Nạp qua VietQR SePay</p>
+                    <div style={styles.priceWrapper}>
+                      <span style={styles.priceVal}>{formatVnd(pack.price).replace("₫", "").trim()}</span>
+                      <span style={styles.priceUnit}>VND</span>
                     </div>
 
-                    {/* Credits details */}
-                    <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 space-y-3">
-                      <div className="flex justify-between items-center text-xs font-semibold">
-                        <span className="text-slate-500">Credits gốc:</span>
-                        <span className="text-slate-800 font-extrabold flex items-center gap-1.5">
-                          <Coins className="w-4 h-4 text-[#174593]" />
+                    <div style={styles.creditsBox}>
+                      <div style={styles.creditsRow}>
+                        <span style={{ color: "#6b7280", fontWeight: 500 }}>Credits:</span>
+                        <span style={{ fontWeight: 750, color: "#111827", display: "flex", alignItems: "center", gap: "4px" }}>
+                          <Coins size={14} style={{ color: "#eab308" }} />
                           {pack.credits}
                         </span>
                       </div>
                       {pack.bonus > 0 && (
-                        <div className="flex justify-between items-center text-xs border-t border-slate-200/60 pt-3 font-semibold">
-                          <span className="text-slate-500">Credits tặng thêm:</span>
-                          <span className="text-emerald-600 font-extrabold flex items-center gap-1 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100">
-                            +{pack.bonus} Bonus
-                          </span>
+                        <div style={{ ...styles.creditsRow, borderTop: "1px dashed #e5e7eb", paddingTop: "8px" }}>
+                          <span style={{ color: "#6b7280", fontWeight: 500 }}>Tặng thêm:</span>
+                          <span style={styles.bonusLabel}>+{pack.bonus} Bonus</span>
                         </div>
                       )}
                     </div>
                   </div>
 
-                  {/* Actions Area */}
-                  <div className="pt-5 border-t border-slate-50 flex items-center justify-between gap-2">
+                  <div style={styles.cardActions}>
                     <button
                       onClick={() => toggleQuickActive(pack)}
-                      className={`inline-flex items-center gap-1.5 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all cursor-pointer border border-transparent ${
-                        active 
-                          ? "bg-emerald-50 hover:bg-emerald-100 text-emerald-600" 
-                          : "bg-slate-100 hover:bg-slate-200 text-slate-500"
-                      }`}
-                      title={active ? "Tạm dừng kinh doanh" : "Mở bán lại"}
+                      style={styles.statusToggleBtn(active)}
                     >
                       {active ? (
                         <>
-                          <Eye className="w-4 h-4" />
-                          Mở bán
+                          <Eye size={13} />
+                          Đang bán
                         </>
                       ) : (
                         <>
-                          <EyeOff className="w-4 h-4" />
-                          Tạm dừng
+                          <EyeOff size={13} />
+                          Tạm đóng
                         </>
                       )}
                     </button>
 
                     <button
                       onClick={() => startEdit(pack)}
-                      className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-2.5 px-4 rounded-xl text-xs flex items-center gap-1.5 transition-all shadow hover:shadow-indigo-500/10 cursor-pointer"
+                      style={styles.editBtn}
                     >
-                      <Edit3 className="w-3.5 h-3.5" />
-                      Chỉnh sửa
+                      <Edit3 size={13} />
+                      Sửa gói
                     </button>
                   </div>
                 </div>
@@ -192,113 +407,108 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
 
       {/* EDIT MODAL */}
       {editingPack && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white border border-slate-100 rounded-[28px] w-full max-w-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-            <div className="px-8 py-5.5 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="text-lg font-bold text-slate-900">Chỉnh Sửa Gói Nạp</h3>
-              <button 
-                onClick={() => setEditingPack(null)}
-                className="text-slate-400 hover:text-slate-800 cursor-pointer"
-              >
-                <X className="w-5 h-5" />
+        <div style={styles.modalOverlay}>
+          <div style={styles.modalCard}>
+            <div style={styles.modalHeader}>
+              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#111827", margin: 0 }}>Chỉnh Sửa Gói Nạp</h3>
+              <button onClick={() => setEditingPack(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8" }}>
+                <X size={18} />
               </button>
             </div>
             
-            <form onSubmit={handleEditSubmit} className="p-8 space-y-5">
-              <div>
-                <label className="block text-slate-500 text-xs font-bold uppercase mb-2">Tên gói nạp</label>
-                <input 
-                  type="text"
-                  required
-                  value={editName}
-                  onChange={(e) => setEditName(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-850 font-bold focus:outline-none focus:border-[#174593]"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-500 text-xs font-bold uppercase mb-2">Giá bán (VND)</label>
+            <form onSubmit={handleEditSubmit}>
+              <div style={styles.modalBody}>
+                <div style={styles.formGroup}>
+                  <label style={styles.label}>Tên gói nạp</label>
                   <input 
-                    type="number"
+                    type="text"
                     required
-                    min={0}
-                    value={editPrice}
-                    onChange={(e) => setEditPrice(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-850 focus:outline-none focus:border-[#174593] font-mono font-bold"
+                    value={editName}
+                    onChange={(e) => setEditName(e.target.value)}
+                    style={styles.textInput}
                   />
                 </div>
 
-                <div>
-                  <label className="block text-slate-500 text-xs font-bold uppercase mb-2">Ưu tiên sắp xếp</label>
-                  <input 
-                    type="number"
-                    required
-                    min={0}
-                    value={editSort}
-                    onChange={(e) => setEditSort(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-slate-850 focus:outline-none focus:border-[#174593] font-mono"
-                  />
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Giá tiền (VND)</label>
+                    <input 
+                      type="number"
+                      required
+                      min={0}
+                      value={editPrice}
+                      onChange={(e) => setEditPrice(parseInt(e.target.value) || 0)}
+                      style={{ ...styles.textInput, fontWeight: 700 }}
+                    />
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Sort Order</label>
+                    <input 
+                      type="number"
+                      required
+                      min={0}
+                      value={editSort}
+                      onChange={(e) => setEditSort(parseInt(e.target.value) || 0)}
+                      style={styles.textInput}
+                    />
+                  </div>
+                </div>
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Credits Gốc</label>
+                    <input 
+                      type="number"
+                      required
+                      min={0}
+                      value={editCredits}
+                      onChange={(e) => setEditCredits(parseInt(e.target.value) || 0)}
+                      style={{ ...styles.textInput, color: "#2563eb", fontWeight: 750 }}
+                    />
+                  </div>
+
+                  <div style={styles.formGroup}>
+                    <label style={styles.label}>Credits Bonus</label>
+                    <input 
+                      type="number"
+                      required
+                      min={0}
+                      value={editBonus}
+                      onChange={(e) => setEditBonus(parseInt(e.target.value) || 0)}
+                      style={{ ...styles.textInput, color: "#16a34a", fontWeight: 750 }}
+                    />
+                  </div>
+                </div>
+
+                {/* Status Toggle Switch */}
+                <div style={styles.switchRow}>
+                  <div>
+                    <span style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", display: "block" }}>Trạng thái kinh doanh</span>
+                    <span style={{ fontSize: "10px", color: "#6b7280", display: "block", marginTop: "2px" }}>Hiển thị gói này trực tuyến để học viên mua.</span>
+                  </div>
+                  
+                  <button
+                    type="button"
+                    onClick={() => setEditActive(!editActive)}
+                    style={styles.toggleOuter(editActive)}
+                  >
+                    <span style={styles.toggleInner(editActive)}></span>
+                  </button>
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-slate-500 text-xs font-bold uppercase mb-2">Credits Gốc</label>
-                  <input 
-                    type="number"
-                    required
-                    min={0}
-                    value={editCredits}
-                    onChange={(e) => setEditCredits(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-indigo-650 font-bold focus:outline-none focus:border-[#174593] font-mono"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-slate-500 text-xs font-bold uppercase mb-2">Credits Thưởng</label>
-                  <input 
-                    type="number"
-                    required
-                    min={0}
-                    value={editBonus}
-                    onChange={(e) => setEditBonus(parseInt(e.target.value) || 0)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 text-sm text-emerald-650 font-bold focus:outline-none focus:border-[#174593] font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Status Toggle Switch */}
-              <div className="flex items-center justify-between p-4.5 bg-slate-50 border border-slate-100 rounded-2xl mt-4">
-                <div className="space-y-0.5">
-                  <span className="text-xs font-bold text-slate-800 block">Kích hoạt mở bán</span>
-                  <span className="text-slate-400 text-[10px] font-semibold block">Học viên nhìn thấy gói này để mua.</span>
-                </div>
-                
-                <button
-                  type="button"
-                  onClick={() => setEditActive(!editActive)}
-                  className={`w-11 h-6 rounded-full transition-all relative outline-none flex items-center p-0.5 cursor-pointer border ${
-                    editActive ? "bg-[#174593] border-[#174593]" : "bg-slate-200 border-slate-300"
-                  }`}
-                >
-                  <span className={`h-4.5 w-4.5 rounded-full bg-white shadow-md transform transition-all duration-200 ${
-                    editActive ? "translate-x-5" : "translate-x-0"
-                  }`}></span>
-                </button>
-              </div>
-
-              <div className="pt-4 border-t border-slate-100 flex justify-end gap-3.5">
+              <div style={{ padding: "16px 24px", background: "#f9fafb", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", gap: "12px" }}>
                 <button
                   type="button"
                   onClick={() => setEditingPack(null)}
-                  className="px-4.5 py-2.5 border border-slate-200 hover:bg-slate-50 rounded-xl text-xs font-bold text-slate-500 transition-all cursor-pointer"
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "1px solid #cbd5e1", background: "#ffffff", fontSize: "13px", fontWeight: 600, cursor: "pointer", color: "#4b5563" }}
                 >
-                  Hủy bỏ
+                  Hủy
                 </button>
                 <button
                   type="submit"
-                  className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-2.5 px-5 rounded-xl text-xs transition-all shadow-md hover:shadow-indigo-500/10 cursor-pointer"
+                  style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#2563eb", fontSize: "13px", fontWeight: 600, cursor: "pointer", color: "#ffffff" }}
                 >
                   Lưu thay đổi
                 </button>

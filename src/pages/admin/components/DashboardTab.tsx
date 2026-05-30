@@ -1,6 +1,6 @@
 // src/pages/admin/components/DashboardTab.tsx
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Transaction } from "../types"
 import { 
   TrendingUp, 
@@ -17,9 +17,30 @@ interface Props {
   onApproveTransaction: (txId: string) => void
 }
 
+// Inline window size observer for responsiveness
+function useWindowSize() {
+  const [size, setSize] = useState({
+    width: typeof window !== "undefined" ? window.innerWidth : 1200
+  })
+
+  useEffect(() => {
+    const handleResize = () => {
+      setSize({ width: window.innerWidth })
+    }
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
+
+  return size
+}
+
 export default function DashboardTab({ transactions, onApproveTransaction }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("ALL")
+  const { width } = useWindowSize()
+
+  const isMobile = width < 768
+  const isTablet = width < 1024
 
   // Calculate stats based on current transactions
   const totalRevenue = transactions
@@ -57,177 +78,383 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
     { day: "CN", val: 25000000, height: "80%" },
   ]
 
+  // Styles block matching user requirements exactly
+  const styles = {
+    pageHeader: {
+      display: "flex",
+      flexDirection: "column" as const,
+    },
+    pageTitle: {
+      fontSize: "22px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+    },
+    pageSubtitle: {
+      fontSize: "13px",
+      color: "#6b7280",
+      marginTop: "4px",
+      marginBottom: "24px",
+    },
+    statsGrid: {
+      display: "grid",
+      gridTemplateColumns: isMobile ? "1fr" : width < 900 ? "1fr 1fr" : "repeat(4, 1fr)",
+      gap: "16px",
+    },
+    card: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "20px 24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "8px",
+      boxSizing: "border-box" as const,
+    },
+    cardHeader: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+    },
+    cardLabel: {
+      fontSize: "13px",
+      color: "#6b7280",
+      fontWeight: 500,
+    },
+    cardValue: {
+      fontSize: "28px",
+      fontWeight: 700,
+      color: "#111827",
+      margin: 0,
+    },
+    badge: (status: "COMPLETED" | "PENDING" | "FAILED") => {
+      const base = {
+        fontSize: "12px",
+        padding: "2px 8px",
+        borderRadius: "100px",
+        width: "fit-content",
+        fontWeight: 600,
+      }
+      if (status === "COMPLETED") {
+        return { ...base, background: "#dcfce7", color: "#15803d" }
+      }
+      if (status === "PENDING") {
+        return { ...base, background: "#fef9c3", color: "#92400e" }
+      }
+      return { ...base, background: "#fee2e2", color: "#b91c1c" }
+    },
+    middleGrid: {
+      display: "grid",
+      gridTemplateColumns: isTablet ? "1fr" : "1fr 360px",
+      gap: "24px",
+      alignItems: "start",
+    },
+    chartContainer: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "24px",
+      overflow: "hidden" as const,
+      boxSizing: "border-box" as const,
+    },
+    chartTitle: {
+      fontSize: "16px",
+      fontWeight: 600,
+      marginBottom: "4px",
+      color: "#111827",
+      margin: 0
+    },
+    chartSubtitle: {
+      fontSize: "13px",
+      color: "#6b7280",
+      marginBottom: "20px",
+      marginTop: 0
+    },
+    svgContainer: {
+      width: "100%",
+      height: "220px",
+      display: "block",
+      position: "relative" as const,
+      overflow: "hidden" as const,
+      boxSizing: "border-box" as const,
+    },
+    customChartBarTrack: {
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      alignItems: "end",
+      justifyContent: "space-between",
+      padding: "8px 0"
+    },
+    sePayPanel: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      padding: "20px 24px",
+      display: "flex",
+      flexDirection: "column" as const,
+      gap: "12px",
+      boxSizing: "border-box" as const,
+    },
+    panelTitle: {
+      fontSize: "15px",
+      fontWeight: 600,
+      color: "#111827",
+      margin: 0
+    },
+    infoRow: {
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      paddingBottom: "8px",
+      borderBottom: "1px solid #f3f4f6",
+      fontSize: "13px",
+      boxSizing: "border-box" as const,
+    },
+    infoLabel: {
+      color: "#6b7280",
+    },
+    infoValue: (mono: boolean) => ({
+      color: "#111827",
+      fontWeight: 500,
+      fontFamily: mono ? "monospace" : "inherit",
+    }),
+    ruleBox: {
+      fontSize: "12px",
+      background: "#fffbeb",
+      borderRadius: "8px",
+      padding: "10px 12px",
+      color: "#78350f",
+      border: "1px solid #fde68a",
+      lineHeight: 1.5,
+    },
+    tableContainer: {
+      background: "#ffffff",
+      border: "1px solid #e5e7eb",
+      borderRadius: "12px",
+      overflow: "hidden" as const,
+      boxSizing: "border-box" as const,
+    },
+    tableHeader: {
+      padding: "16px 24px",
+      display: "flex",
+      justifyContent: "space-between",
+      alignItems: "center",
+      borderBottom: "1px solid #e5e7eb",
+      boxSizing: "border-box" as const,
+      flexWrap: "wrap" as const,
+      gap: "12px"
+    },
+    tableTitle: {
+      fontSize: "15px",
+      fontWeight: 600,
+      color: "#111827",
+      margin: 0,
+      display: "flex",
+      alignItems: "center",
+      gap: "8px"
+    },
+    searchInput: {
+      height: "36px",
+      padding: "0 12px",
+      borderRadius: "8px",
+      border: "1px solid #d1d5db",
+      fontSize: "13px",
+      minWidth: "220px",
+      boxSizing: "border-box" as const,
+      outline: "none"
+    },
+    filterSelect: {
+      height: "36px",
+      padding: "0 12px",
+      borderRadius: "8px",
+      border: "1px solid #d1d5db",
+      fontSize: "13px",
+      boxSizing: "border-box" as const,
+      outline: "none",
+      background: "#ffffff",
+      cursor: "pointer"
+    },
+    tableElement: {
+      width: "100%",
+      borderCollapse: "collapse" as const,
+      fontSize: "13px",
+    },
+    thElement: {
+      background: "#f9fafb",
+      padding: "10px 24px",
+      textAlign: "left" as const,
+      fontSize: "12px",
+      fontWeight: 600,
+      color: "#6b7280",
+      textTransform: "uppercase" as const,
+      letterSpacing: "0.04em",
+      borderBottom: "1px solid #e5e7eb",
+    },
+    tdElement: {
+      padding: "14px 24px",
+      borderBottom: "1px solid #f3f4f6",
+      verticalAlign: "middle",
+      color: "#374151"
+    },
+    statusBadge: (status: "COMPLETED" | "PENDING" | "FAILED") => {
+      const base = {
+        display: "inline-flex",
+        alignItems: "center",
+        gap: "4px",
+        padding: "3px 10px",
+        borderRadius: "100px",
+        fontSize: "12px",
+        fontWeight: 500,
+      }
+      if (status === "COMPLETED") {
+        return { ...base, background: "#dcfce7", color: "#15803d" }
+      }
+      if (status === "PENDING") {
+        return { ...base, background: "#fef9c3", color: "#854d0e" }
+      }
+      return { ...base, background: "#fee2e2", color: "#b91c1c" }
+    },
+    approveButton: {
+      padding: "5px 12px",
+      borderRadius: "6px",
+      background: "#2563eb",
+      color: "white",
+      fontSize: "12px",
+      fontWeight: 500,
+      border: "none",
+      cursor: "pointer",
+      outline: "none"
+    }
+  }
+
   return (
-    <div className="space-y-10">
-      {/* HEADER SECTION */}
-      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-4 border-b border-slate-100">
-        <div className="space-y-1">
-          <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Đối soát & Báo cáo tài chính</h2>
-          <p className="text-slate-500 text-sm font-medium">Giám sát doanh thu, giao dịch nạp tiền VietQR tự động qua SePay Webhook và kiểm tra thanh toán.</p>
-        </div>
-        <div className="flex items-center gap-2 bg-white border border-slate-200/60 shadow-sm rounded-2xl px-5 py-3 text-xs text-slate-650 font-bold self-start md:self-auto shrink-0">
-          <span className="flex h-2.5 w-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span>Cổng Webhook SePay: Hoạt động</span>
-        </div>
+    <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
+      {/* HEADER TABS TITLE */}
+      <div style={styles.pageHeader}>
+        <h2 style={styles.pageTitle}>Đối soát & Báo cáo tài chính</h2>
+        <p style={styles.pageSubtitle}>
+          Giám sát doanh thu, giao dịch nạp tiền VietQR tự động qua SePay Webhook và kiểm tra thanh toán.
+        </p>
       </div>
 
-      {/* STATS GRID - Increased gap and massive card size */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-        {/* Total Revenue */}
-        <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative flex flex-col justify-between min-h-[160px]">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Tổng Doanh Thu</span>
-            <span className="p-3 bg-blue-50 text-[#174593] rounded-2xl border border-blue-100">
-              <DollarSign className="w-5 h-5" />
-            </span>
+      {/* STATS CARDS */}
+      <div style={styles.statsGrid}>
+        {/* Doanh thu */}
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <span style={styles.cardLabel}>Tổng doanh thu</span>
+            <span style={{ color: "#174593" }}><DollarSign size={16} /></span>
           </div>
-          <div className="mt-6">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{formatVnd(totalRevenue)}</h3>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-emerald-600 font-bold">
-              <TrendingUp className="w-4 h-4" />
-              <span>+15.4% so với tháng trước</span>
-            </div>
-          </div>
+          <h3 style={styles.cardValue}>{formatVnd(totalRevenue)}</h3>
+          <span style={styles.badge("COMPLETED")}>+15.4% tháng này</span>
         </div>
 
-        {/* Lượt thi */}
-        <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative flex flex-col justify-between min-h-[160px]">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Thành công</span>
-            <span className="p-3 bg-emerald-50 text-emerald-600 rounded-2xl border border-emerald-100">
-              <CheckCircle className="w-5 h-5" />
-            </span>
+        {/* Thành công */}
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <span style={styles.cardLabel}>Giao dịch Thành công</span>
+            <span style={{ color: "#15803d" }}><CheckCircle size={16} /></span>
           </div>
-          <div className="mt-6">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{completedCount} giao dịch</h3>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-slate-500 font-semibold">
-              <span>Tỷ lệ hoàn tất giao dịch đạt 94.2%</span>
-            </div>
-          </div>
+          <h3 style={styles.cardValue}>{completedCount} giao dịch</h3>
+          <span style={styles.badge("COMPLETED")}>Đạt 94.2% hoàn tất</span>
         </div>
 
         {/* Chờ duyệt */}
-        <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative flex flex-col justify-between min-h-[160px]">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Đang Chờ Duyệt</span>
-            <span className="p-3 bg-amber-50 text-amber-650 rounded-2xl border border-amber-100">
-              <Clock className="w-5 h-5" />
-            </span>
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <span style={styles.cardLabel}>Đang Chờ duyệt</span>
+            <span style={{ color: "#92400e" }}><Clock size={16} /></span>
           </div>
-          <div className="mt-6">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{pendingCount} giao dịch</h3>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-amber-600 font-bold">
-              <span>Cần đối soát VietQR thủ công</span>
+          <h3 style={styles.cardValue}>{pendingCount} giao dịch</h3>
+          <span style={styles.badge("PENDING")}>Cần duyệt VietQR</span>
+        </div>
+
+        {/* Lỗi */}
+        <div style={styles.card}>
+          <div style={styles.cardHeader}>
+            <span style={styles.cardLabel}>Giao dịch Bị lỗi</span>
+            <span style={{ color: "#b91c1c" }}><XCircle size={16} /></span>
+          </div>
+          <h3 style={styles.cardValue}>{failedCount} giao dịch</h3>
+          <span style={styles.badge("FAILED")}>Sai cú pháp hoặc hủy</span>
+        </div>
+      </div>
+
+      {/* CHART & SEPAY PANEL */}
+      <div style={styles.middleGrid}>
+        {/* Left Column Chart */}
+        <div style={styles.chartContainer}>
+          <h3 style={styles.chartTitle}>Xu hướng Doanh thu 7 ngày qua</h3>
+          <p style={styles.chartSubtitle}>Biểu diễn dòng tiền chuyển khoản nhận về qua hệ thống API SePay thụ động.</p>
+          
+          <div style={styles.svgContainer}>
+            <div style={styles.customChartBarTrack}>
+              {chartData.map((d, i) => (
+                <div key={i} style={{ display: "flex", flexDirection: "column", flex: 1, height: "100%", justifyContent: "flex-end", alignItems: "center" }}>
+                  <div style={{
+                    width: "36px",
+                    height: d.height,
+                    background: "#2563eb",
+                    borderRadius: "4px 4px 0 0",
+                    transition: "all 0.3s"
+                  }}></div>
+                  <span style={{ fontSize: "11px", color: "#6b7280", marginTop: "8px", fontWeight: 650 }}>{d.day}</span>
+                </div>
+              ))}
             </div>
           </div>
         </div>
 
-        {/* Lỗi thanh toán */}
-        <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-300 relative flex flex-col justify-between min-h-[160px]">
-          <div className="flex items-center justify-between">
-            <span className="text-slate-400 text-xs font-bold uppercase tracking-wider">Giao dịch Lỗi</span>
-            <span className="p-3 bg-rose-50 text-rose-600 rounded-2xl border border-rose-100">
-              <XCircle className="w-5 h-5" />
-            </span>
+        {/* Right Column SePay */}
+        <div style={styles.sePayPanel}>
+          <h3 style={styles.panelTitle}>Thông số Cổng SePay</h3>
+          
+          <div style={styles.infoRow}>
+            <span style={styles.infoLabel}>Endpoint Webhook</span>
+            <span style={styles.infoValue(true)}>/api/sepay/webhook</span>
           </div>
-          <div className="mt-6">
-            <h3 className="text-3xl font-extrabold text-slate-900 tracking-tight">{failedCount} giao dịch</h3>
-            <div className="flex items-center gap-1.5 mt-2.5 text-xs text-rose-600 font-bold">
-              <span>Sai cú pháp nạp hoặc huỷ nạp</span>
-            </div>
+          <div style={styles.infoRow}>
+            <span style={styles.infoLabel}>Phương thức</span>
+            <span style={{ ...styles.infoValue(false), background: "#eff6ff", color: "#2563eb", padding: "2px 6px", borderRadius: "4px", fontSize: "11px", fontWeight: 700 }}>POST</span>
+          </div>
+          <div style={styles.infoRow}>
+            <span style={styles.infoLabel}>Mã bảo mật (Secret)</span>
+            <span style={styles.infoValue(true)}>••••••••••••••••</span>
+          </div>
+          <div style={styles.infoRow}>
+            <span style={styles.infoLabel}>Độ trễ phản hồi</span>
+            <span style={{ ...styles.infoValue(false), color: "#16a34a", fontWeight: 600 }}>&lt; 150ms</span>
+          </div>
+
+          <div style={styles.ruleBox}>
+            <strong>LƯU Ý QUY ĐỊNH:</strong> Trường hợp học viên chuyển khoản thành công nhưng webhook ngân hàng bị chậm, admin có thể dùng tính năng duyệt thủ công để cộng credit ngay lập tức.
           </div>
         </div>
       </div>
 
-      {/* REVENUE CHART & WEBHOOK MONITOR - Expanded heights and margins */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Bar Chart Card */}
-        <div className="lg:col-span-2 bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm flex flex-col justify-between gap-8">
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">Xu hướng Doanh thu 7 ngày qua</h3>
-            <p className="text-slate-500 text-xs mt-2 font-semibold">Biểu diễn dòng tiền chuyển khoản nhận về qua hệ thống API SePay thụ động.</p>
-          </div>
-
-          <div className="flex items-end justify-between h-56 px-2 gap-4 border-b border-slate-100 pb-4">
-            {chartData.map((d, i) => (
-              <div key={i} className="flex flex-col items-center flex-1 h-full justify-end group relative">
-                {/* Tooltip value */}
-                <div className="bg-slate-900 text-white text-[10px] py-1.5 px-2.5 rounded-lg mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none absolute -top-8 whitespace-nowrap shadow-md z-10">
-                  {formatVnd(d.val)}
-                </div>
-                {/* Bar Background Box Track */}
-                <div className="w-full bg-slate-50 rounded-t-xl h-full flex items-end justify-center hover:bg-slate-100/50 transition-all duration-300">
-                  <div 
-                    style={{ height: d.height }}
-                    className="w-full bg-[#174593]/80 rounded-t-xl group-hover:bg-[#174593] transition-all duration-300"
-                  ></div>
-                </div>
-                {/* Label */}
-                <span className="text-xs text-slate-500 mt-3.5 font-bold">{d.day}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Webhook Status Info */}
-        <div className="bg-white border border-slate-100 rounded-[24px] p-8 shadow-sm flex flex-col justify-between gap-8">
-          <div>
-            <h3 className="text-xl font-bold text-slate-900">Thông số Cổng SePay</h3>
-            <p className="text-slate-500 text-xs mt-2 font-semibold">Đặc tả liên kết webhook thanh toán ngân hàng chuyển khoản tự động.</p>
-          </div>
-
-          <div className="space-y-5 text-sm flex-1 flex flex-col justify-center">
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500 font-bold">Endpoint Webhook</span>
-              <span className="text-slate-800 font-mono text-xs font-bold">/api/sepay/webhook</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500 font-bold">Phương thức</span>
-              <span className="text-[#174593] font-extrabold text-xs bg-blue-50 px-2.5 py-1 rounded-lg border border-blue-100">POST</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500 font-bold">Mã bảo mật (Secret)</span>
-              <span className="text-slate-800 font-mono text-xs font-semibold">••••••••••••••••</span>
-            </div>
-            <div className="flex justify-between border-b border-slate-100 pb-3">
-              <span className="text-slate-500 font-bold">Độ trễ phản hồi</span>
-              <span className="text-emerald-600 text-xs font-extrabold">&lt; 150ms</span>
-            </div>
-          </div>
-
-          <div className="bg-slate-50 border border-slate-100 rounded-2xl p-5 text-xs text-slate-500 leading-relaxed font-semibold">
-            <span className="text-slate-850 font-bold block mb-1.5 uppercase tracking-wider text-[10px]">Quy định đối soát tài chính:</span>
-            Trường hợp khách hàng chuyển tiền nhưng webhook bị chậm, admin có thể dùng nút <strong>Duyệt thủ công</strong> để cập nhật trạng thái ngay.
-          </div>
-        </div>
-      </div>
-
-      {/* TRANSACTIONS TABLE - Spacious container, padded cells */}
-      <div className="bg-white border border-slate-100 rounded-[28px] shadow-sm overflow-hidden p-2">
-        {/* Table Filter Header */}
-        <div className="p-8 border-b border-slate-100 flex flex-col md:flex-row md:items-center md:justify-between gap-6 bg-slate-50/20 rounded-t-[26px]">
-          <h3 className="text-xl font-bold text-slate-850 flex items-center gap-2.5">
-            <FileCheck className="w-5.5 h-5.5 text-[#174593]" />
+      {/* TRANSACTION HISTORY TABLE */}
+      <div style={styles.tableContainer}>
+        {/* Table Header Controls */}
+        <div style={styles.tableHeader}>
+          <h3 style={styles.tableTitle}>
+            <FileCheck size={18} style={{ color: "#2563eb" }} />
             Lịch sử giao dịch & đối soát nạp Credit
           </h3>
-          <div className="flex flex-wrap items-center gap-4">
-            {/* Search */}
-            <div className="relative">
-              <input 
-                type="text"
-                placeholder="Tìm email, mã giao dịch..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="bg-white border border-slate-200 rounded-[14px] pl-10 pr-4 py-3 text-xs text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#174593] focus:ring-1 focus:ring-[#174593] w-64 transition-all font-semibold shadow-sm"
-              />
-              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
-            </div>
 
-            {/* Select Status */}
+          <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+            <input 
+              type="text"
+              placeholder="Tìm email, mã giao dịch..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              style={styles.searchInput}
+            />
+
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="bg-white border border-slate-200 rounded-[14px] px-4.5 py-3 text-xs text-slate-650 font-bold focus:outline-none focus:border-[#174593] shadow-sm"
+              style={styles.filterSelect}
             >
               <option value="ALL">Tất cả trạng thái</option>
               <option value="COMPLETED">Thành công</option>
@@ -237,64 +464,59 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
           </div>
         </div>
 
-        {/* Table Body - Large paddings */}
-        <div className="overflow-x-auto">
-          <table className="w-full text-left border-collapse">
+        {/* Table Body Area */}
+        <div style={{ overflowX: "auto" }}>
+          <table style={styles.tableElement}>
             <thead>
-              <tr className="border-b border-slate-100 bg-slate-50/10 text-slate-400 text-[10px] font-extrabold uppercase tracking-wider">
-                <th className="py-5 px-8">Mã giao dịch SePay</th>
-                <th className="py-5 px-8">Học viên</th>
-                <th className="py-5 px-8">Nội dung / Memo</th>
-                <th className="py-5 px-8 text-right">Số tiền</th>
-                <th className="py-5 px-8 text-center">Credit nạp</th>
-                <th className="py-5 px-8">Thời gian nhận</th>
-                <th className="py-5 px-8">Trạng thái</th>
-                <th className="py-5 px-8 text-center">Hành động</th>
+              <tr>
+                <th style={styles.thElement}>Mã GD SePay</th>
+                <th style={styles.thElement}>Học viên</th>
+                <th style={styles.thElement}>Memo</th>
+                <th style={{ ...styles.thElement, textAlign: "right" }}>Số tiền</th>
+                <th style={{ ...styles.thElement, textAlign: "center" }}>Credit</th>
+                <th style={styles.thElement}>Thời gian nhận</th>
+                <th style={styles.thElement}>Trạng thái</th>
+                <th style={{ ...styles.thElement, textAlign: "center" }}>Hành động</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 text-xs text-slate-600 font-semibold">
+            <tbody>
               {filteredTransactions.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="py-16 text-center text-slate-400 font-bold bg-slate-50/10">
-                    Không tìm thấy giao dịch nào khớp với điều kiện.
+                  <td colSpan={8} style={{ ...styles.tdElement, textAlign: "center", padding: "32px 0", color: "#6b7280" }}>
+                    Không tìm thấy giao dịch nào phù hợp.
                   </td>
                 </tr>
               ) : (
                 filteredTransactions.map((tx) => (
-                  <tr key={tx.id} className="hover:bg-slate-50/40 transition-all duration-200">
-                    <td className="py-6 px-8 font-mono text-slate-800 font-bold">{tx.sePayTxId}</td>
-                    <td className="py-6 px-8 text-slate-900 font-extrabold">{tx.email}</td>
-                    <td className="py-6 px-8">
-                      <span className="font-mono text-slate-500 font-bold bg-slate-50 border border-slate-100 px-3 py-1.5 rounded-lg">{tx.memo}</span>
+                  <tr key={tx.id} style={{ borderBottom: "1px solid #f3f4f6" }}>
+                    <td style={{ ...styles.tdElement, fontFamily: "monospace", fontWeight: 600 }}>{tx.sePayTxId}</td>
+                    <td style={{ ...styles.tdElement, fontWeight: 700, color: "#111827" }}>{tx.email}</td>
+                    <td style={styles.tdElement}>
+                      <span style={{ fontFamily: "monospace", padding: "2px 6px", background: "#f3f4f6", borderRadius: "4px" }}>{tx.memo}</span>
                     </td>
-                    <td className="py-6 px-8 text-right font-black text-slate-900 text-sm">{formatVnd(tx.amount)}</td>
-                    <td className="py-6 px-8 text-center font-black text-[#174593] text-sm">+{tx.credits}</td>
-                    <td className="py-6 px-8 text-slate-400 font-medium">
+                    <td style={{ ...styles.tdElement, fontWeight: 600, textAlign: "right", color: "#111827" }}>{formatVnd(tx.amount)}</td>
+                    <td style={{ ...styles.tdElement, color: "#16a34a", fontWeight: 600, textAlign: "center" }}>+{tx.credits}</td>
+                    <td style={{ ...styles.tdElement, color: "#6b7280" }}>
                       {new Date(tx.date).toLocaleString("vi-VN")}
                     </td>
-                    <td className="py-6 px-8">
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-[10px] font-extrabold uppercase tracking-wider ${
-                        tx.status === "COMPLETED" 
-                          ? "bg-emerald-50 text-emerald-600 border border-emerald-100" 
-                          : tx.status === "PENDING"
-                          ? "bg-amber-50 text-amber-600 animate-pulse border border-amber-100"
-                          : "bg-rose-50 text-rose-600 border border-rose-100"
-                      }`}>
-                        {tx.status === "COMPLETED" && "Thành công"}
-                        {tx.status === "PENDING" && "Chờ duyệt"}
-                        {tx.status === "FAILED" && "Thất bại"}
+                    <td style={styles.tdElement}>
+                      <span style={styles.statusBadge(tx.status)}>
+                        <span style={{ width: "6px", height: "6px", borderRadius: "50%", background: tx.status === "COMPLETED" ? "#22c55e" : tx.status === "PENDING" ? "#eab308" : "#ef4444", display: "inline-block" }}></span>
+                        {tx.status === "COMPLETED" && "THÀNH CÔNG"}
+                        {tx.status === "PENDING" && "CHỜ DUYỆT"}
+                        {tx.status === "FAILED" && "THẤT BẠI"}
                       </span>
                     </td>
-                    <td className="py-6 px-8 text-center">
+                    <td style={{ ...styles.tdElement, textAlign: "center" }}>
                       {tx.status === "PENDING" ? (
                         <button
                           onClick={() => onApproveTransaction(tx.id)}
-                          className="bg-[#174593] hover:bg-[#1a51ad] text-white font-bold py-2 px-4 rounded-xl text-[10px] uppercase tracking-wider transition-all shadow hover:shadow-indigo-500/10 cursor-pointer"
+                          style={styles.approveButton}
                         >
-                          Duyệt nhanh
+                          DUYỆT NHANH
                         </button>
                       ) : (
-                        <span className="text-slate-300 font-bold">—</span>
+                        <span style={{ color: "#d1d5db" }}>—</span>
                       )}
                     </td>
                   </tr>
