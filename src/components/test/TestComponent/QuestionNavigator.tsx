@@ -60,7 +60,7 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
 
         // Clear answers and navigate
         clearAnswers()
-        navigate(`/practice/result/${examId}`, {
+        navigate(`/practice-ielts/result/${examId}`, {
           state: {
             examData: { sections: [currentUnit] }
           }

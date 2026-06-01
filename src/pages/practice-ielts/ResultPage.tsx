@@ -25,7 +25,7 @@ export default function ResultPage() {
   // Safety check for undefined ID
   useEffect(() => {
     if (!id || id === "undefined") {
-      navigate("/practice")
+      navigate("/practice-ielts")
     }
   }, [id, navigate])
 
@@ -143,7 +143,7 @@ export default function ResultPage() {
   if (!stats || stats.total === 0) return (
     <div className="error-state">
       <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
-      <button onClick={() => navigate("/practice")} className="back-home-btn cursor-pointer">
+      <button onClick={() => navigate("/practice-ielts")} className="back-home-btn cursor-pointer">
         {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
       </button>
     </div>
@@ -318,7 +318,7 @@ export default function ResultPage() {
 
               <div className="action-buttons">
                 <button
-                  onClick={() => navigate(`/practice/review/${id}`)}
+                  onClick={() => navigate(`/practice-ielts/review/${id}`)}
                   className="primary-btn cursor-pointer"
                 >
                   {t("result_btn_review")} <ChevronRight size={18} />
@@ -326,7 +326,7 @@ export default function ResultPage() {
                 <button
                   onClick={() => {
                     clearAnswers()
-                    navigate("/practice")
+                    navigate("/practice-ielts")
                   }}
                   className="secondary-btn cursor-pointer"
                 >
