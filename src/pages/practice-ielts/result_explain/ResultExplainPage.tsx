@@ -60,23 +60,6 @@ export default function ResultExplainPage() {
   return (
     <MainLayout>
       <div className="explain-page-container">
-        {/* HEADER SECTION */}
-        <header className="explain-header">
-          <div className="header-content">
-            <button onClick={() => navigate(-1)} className="back-btn">
-              <ArrowLeft size={18} />
-              <span>{t("result_back") || "Back"}</span>
-            </button>
-
-            <div className="brand-wrapper">
-              <Brain className="brand-icon" size={24} />
-              <span className="brand-text">BandBuilder AI</span>
-            </div>
-
-            <div style={{ width: "32px" }}></div>
-          </div>
-        </header>
-
         <main className="explain-main">
           {/* LOADING STATE */}
           {isLoading && (
@@ -119,28 +102,145 @@ export default function ResultExplainPage() {
 
           {/* CONTENT STATE */}
           {explanationData && (
-            <div className="animate-fade-in">
-              {/* HERO OVERVIEW CARD */}
-              <div className="overview-card">
-                <div className="overview-top">
-                  <div>
-                    <div className="badge-skill-wrapper">
-                      <span className="badge-skill">{explanationData.skill}</span>
-                      <span className="badge-attempt-id">
-                        Attempt ID: <span>{explanationData.attemptId.slice(0, 8)}...</span>
-                      </span>
-                    </div>
-                    <h1 className="title-main">
-                      {language === "vi" ? "Phân Tích Lỗi Sai & Giải Thích AI" : "AI Answer Explanations"}
-                    </h1>
-                    <p className="description-meta">
-                      {language === "vi"
-                        ? "Xem phân tích chi tiết từng đáp án sai và lời khuyên để bứt phá band điểm."
-                        : "Review comprehensive insights on every incorrect answer and expert tips."}
-                    </p>
+            <div className="explain-grid animate-fade-in">
+              {/* LEFT COLUMN */}
+              <div className="explain-left-column">
+                <div className="overview-card-header">
+                  <div className="badge-skill-wrapper">
+                    <span className="badge-skill">{explanationData.skill}</span>
+                    <span className="badge-attempt-id">
+                      Attempt ID: <span>{explanationData.attemptId.slice(0, 8)}...</span>
+                    </span>
                   </div>
+                  <h1 className="title-main">
+                    {language === "vi" ? "Phân Tích Lỗi Sai & Giải Thích AI" : "AI Answer Explanations"}
+                  </h1>
+                  <p className="description-meta">
+                    {language === "vi"
+                      ? "Xem phân tích chi tiết từng đáp án sai và lời khuyên để bứt phá band điểm."
+                      : "Review comprehensive insights on every incorrect answer and expert tips."}
+                  </p>
+                </div>
 
-                  {/* Credit info badge */}
+                {/* FILTER PANEL */}
+                <div className="filter-panel">
+                  <div className="filter-results-count">
+                    {language === "vi"
+                      ? `Đang hiển thị ${filteredExplanations.length} câu hỏi`
+                      : `Showing ${filteredExplanations.length} questions`}
+                  </div>
+                  <div className="filter-tabs">
+                    <button
+                      onClick={() => setFilter("all")}
+                      className={`filter-tab ${filter === "all" ? "active-all" : ""}`}
+                    >
+                      {language === "vi" ? "Tất cả" : "All"}
+                    </button>
+                    <button
+                      onClick={() => setFilter("incorrect")}
+                      className={`filter-tab ${filter === "incorrect" ? "active-incorrect" : ""}`}
+                    >
+                      {language === "vi" ? "Câu Sai" : "Incorrect"}
+                    </button>
+                    <button
+                      onClick={() => setFilter("correct")}
+                      className={`filter-tab ${filter === "correct" ? "active-correct" : ""}`}
+                    >
+                      {language === "vi" ? "Câu Đúng" : "Correct"}
+                    </button>
+                  </div>
+                </div>
+
+                {/* EXPLANATIONS LIST */}
+                <div className="explanations-list">
+                  {filteredExplanations.length === 0 ? (
+                    <div className="empty-list-card">
+                      <Brain size={40} className="empty-list-icon" />
+                      <p>
+                        {language === "vi" ? "Không có câu hỏi nào khớp với bộ lọc." : "No questions match your filter."}
+                      </p>
+                    </div>
+                  ) : (
+                    filteredExplanations.map((item, idx) => {
+                      const isCorrect = item.userAnswer?.trim().toLowerCase() === item.correctAnswer.trim().toLowerCase()
+                      return (
+                        <div
+                          key={idx}
+                          className={`explain-item-card ${isCorrect ? "correct-card" : "incorrect-card"}`}
+                        >
+                          {/* Item Header */}
+                          <div className="card-header">
+                            <div className="card-title-left">
+                              <div className={`question-num-badge ${isCorrect ? "correct" : "incorrect"}`}>
+                                {item.questionId.replace(/\D/g, "") || idx + 1}
+                              </div>
+                              <div className="question-title">
+                                {language === "vi" ? `Câu hỏi: ${item.questionId}` : `Question: ${item.questionId}`}
+                              </div>
+                            </div>
+
+                            <div className="answers-comparison-box">
+                              <span className="answer-meta-span">
+                                <label>{language === "vi" ? "Bạn chọn:" : "Your Answer:"}</label>
+                                <span className={`badge-answer-box user ${isCorrect ? "correct" : "incorrect"}`}>
+                                  {item.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
+                                </span>
+                              </span>
+
+                              <span className="answer-meta-span">
+                                <label>{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</label>
+                                <span className="badge-answer-box correct-badge">
+                                  {item.correctAnswer}
+                                </span>
+                              </span>
+                            </div>
+                          </div>
+
+                          {/* Item Body */}
+                          <div className="card-body">
+                            {/* Explanation Content */}
+                            <div className="explain-text-row">
+                              <div className="row-icon-container sparkle">
+                                <Sparkles size={18} />
+                              </div>
+                              <div>
+                                <div className="content-label">
+                                  {language === "vi" ? "Phân tích từ Giám khảo AI" : "AI Examiner Analysis"}
+                                </div>
+                                <p className="content-text">
+                                  {item.explanation}
+                                </p>
+                              </div>
+                            </div>
+
+                            {/* Tip Content */}
+                            <div className="tip-box-container">
+                              <div className="tip-box-row">
+                                <div className="row-icon-container lightbulb">
+                                  <Lightbulb size={18} />
+                                </div>
+                                <div>
+                                  <div className="tip-content-label">
+                                    {language === "vi" ? "Mẹo tránh bẫy & kinh nghiệm" : "Pro Tip & Strategy"}
+                                  </div>
+                                  <p className="tip-content-text">
+                                    {item.tip}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      )
+                    })
+                  )}
+                </div>
+              </div>
+
+              {/* RIGHT COLUMN */}
+              <div className="explain-right-column">
+                {/* Credit info card */}
+                <div className="credit-card-sidebar">
                   <div className="credit-badge">
                     <div className="credit-icon-container">
                       <Coins size={20} />
@@ -159,149 +259,40 @@ export default function ResultExplainPage() {
                 </div>
 
                 {/* Mini Stats Banner */}
-                <div className="stats-banner">
-                  <div className="stat-block">
-                    <div className="stat-info-left">
-                      <div className="stat-label-mini">
-                        {language === "vi" ? "Số câu trả lời sai" : "Mistakes Found"}
-                      </div>
-                      <div className="stat-val-large incorrect">{stats.incorrect}</div>
-                    </div>
-                    <XCircle size={28} className="stat-block-icon incorrect" />
+                <div className="stats-card-sidebar">
+                  <div className="stats-sidebar-header">
+                    <h3>{language === "vi" ? "Thống kê kết quả" : "Result Summary"}</h3>
                   </div>
-
-                  <div className="stat-block">
-                    <div className="stat-info-left">
-                      <div className="stat-label-mini">
-                        {language === "vi" ? "Số câu chính xác" : "Correct Answers"}
-                      </div>
-                      <div className="stat-val-large correct">{stats.correct}</div>
-                    </div>
-                    <CheckCircle2 size={28} className="stat-block-icon correct" />
-                  </div>
-                </div>
-              </div>
-
-              {/* FILTER PANEL */}
-              <div className="filter-panel">
-                <div className="filter-results-count">
-                  {language === "vi"
-                    ? `Đang hiển thị ${filteredExplanations.length} câu hỏi`
-                    : `Showing ${filteredExplanations.length} questions`}
-                </div>
-                <div className="filter-tabs">
-                  <button
-                    onClick={() => setFilter("all")}
-                    className={`filter-tab ${filter === "all" ? "active-all" : ""}`}
-                  >
-                    {language === "vi" ? "Tất cả" : "All"}
-                  </button>
-                  <button
-                    onClick={() => setFilter("incorrect")}
-                    className={`filter-tab ${filter === "incorrect" ? "active-incorrect" : ""}`}
-                  >
-                    {language === "vi" ? "Câu Sai" : "Incorrect"}
-                  </button>
-                  <button
-                    onClick={() => setFilter("correct")}
-                    className={`filter-tab ${filter === "correct" ? "active-correct" : ""}`}
-                  >
-                    {language === "vi" ? "Câu Đúng" : "Correct"}
-                  </button>
-                </div>
-              </div>
-
-              {/* EXPLANATIONS LIST */}
-              <div className="explanations-list">
-                {filteredExplanations.length === 0 ? (
-                  <div className="empty-list-card">
-                    <Brain size={40} className="empty-list-icon" />
-                    <p>
-                      {language === "vi" ? "Không có câu hỏi nào khớp với bộ lọc." : "No questions match your filter."}
-                    </p>
-                  </div>
-                ) : (
-                  filteredExplanations.map((item, idx) => {
-                    const isCorrect = item.userAnswer?.trim().toLowerCase() === item.correctAnswer.trim().toLowerCase()
-                    return (
-                      <div
-                        key={idx}
-                        className={`explain-item-card ${isCorrect ? "correct-card" : "incorrect-card"}`}
-                      >
-                        {/* Item Header */}
-                        <div className="card-header">
-                          <div className="card-title-left">
-                            <div className={`question-num-badge ${isCorrect ? "correct" : "incorrect"}`}>
-                              {item.questionId.replace(/\D/g, "") || idx + 1}
-                            </div>
-                            <div className="question-title">
-                              {language === "vi" ? `Câu hỏi: ${item.questionId}` : `Question: ${item.questionId}`}
-                            </div>
-                          </div>
-
-                          <div className="answers-comparison-box">
-                            <span className="answer-meta-span">
-                              <label>{language === "vi" ? "Bạn chọn:" : "Your Answer:"}</label>
-                              <span className={`badge-answer-box user ${isCorrect ? "correct" : "incorrect"}`}>
-                                {item.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
-                              </span>
-                            </span>
-
-                            <span className="answer-meta-span">
-                              <label>{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</label>
-                              <span className="badge-answer-box correct-badge">
-                                {item.correctAnswer}
-                              </span>
-                            </span>
-                          </div>
+                  <div className="stats-sidebar-body">
+                    <div className="stat-block">
+                      <div className="stat-info-left">
+                        <div className="stat-label-mini">
+                          {language === "vi" ? "Số câu trả lời sai" : "Mistakes Found"}
                         </div>
-
-                        {/* Item Body */}
-                        <div className="card-body">
-                          {/* Explanation Content */}
-                          <div className="explain-text-row">
-                            <div className="row-icon-container sparkle">
-                              <Sparkles size={18} />
-                            </div>
-                            <div>
-                              <div className="content-label">
-                                {language === "vi" ? "Phân tích từ Giám khảo AI" : "AI Examiner Analysis"}
-                              </div>
-                              <p className="content-text">
-                                {item.explanation}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Tip Content */}
-                          <div className="tip-box-container">
-                            <div className="tip-box-row">
-                              <div className="row-icon-container lightbulb">
-                                <Lightbulb size={18} />
-                              </div>
-                              <div>
-                                <div className="tip-content-label">
-                                  {language === "vi" ? "Mẹo tránh bẫy & kinh nghiệm" : "Pro Tip & Strategy"}
-                                </div>
-                                <p className="tip-content-text">
-                                  {item.tip}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                        </div>
+                        <div className="stat-val-large incorrect">{stats.incorrect}</div>
                       </div>
-                    )
-                  })
-                )}
-              </div>
+                      <XCircle size={28} className="stat-block-icon incorrect" />
+                    </div>
 
-              {/* ACTION FOOTER */}
-              <div className="action-footer">
-                <button onClick={() => navigate(-1)} className="btn-back-results">
-                  <span>{language === "vi" ? "Quay lại trang kết quả" : "Back to Results"}</span>
-                  <ChevronRight size={16} />
-                </button>
+                    <div className="stat-block">
+                      <div className="stat-info-left">
+                        <div className="stat-label-mini">
+                          {language === "vi" ? "Số câu chính xác" : "Correct Answers"}
+                        </div>
+                        <div className="stat-val-large correct">{stats.correct}</div>
+                      </div>
+                      <CheckCircle2 size={28} className="stat-block-icon correct" />
+                    </div>
+                  </div>
+                </div>
+
+                {/* ACTION FOOTER */}
+                <div className="action-footer">
+                  <button onClick={() => navigate(-1)} className="btn-back-results cursor-pointer">
+                    <span>{language === "vi" ? "Quay lại trang kết quả" : "Back to Results"}</span>
+                    <ChevronRight size={16} />
+                  </button>
+                </div>
               </div>
             </div>
           )}

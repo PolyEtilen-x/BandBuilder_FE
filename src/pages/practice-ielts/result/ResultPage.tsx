@@ -159,16 +159,6 @@ export default function ResultPage() {
   return (
     <MainLayout>
       <div className="result-page-container">
-        <header className="result-header">
-          <div className="result-header-content">
-            <button onClick={() => navigate(-1)} className="back-button cursor-pointer">
-              <ArrowLeft size={20} />
-              {t("result_back")}
-            </button>
-            <div className="header-title">{t("result_header_title")}</div>
-          </div>
-        </header>
-
         <main className="result-main">
           <div className="result-grid">
 
