@@ -2,28 +2,36 @@ import PassagePanel from "@/components/test/LayoutSkill/ReadingPanel"
 import QuestionPanel from "@/components/test/TestComponent/QuestionPanel"
 import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator"
 import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
+import WritingPanel from "@/components/test/LayoutSkill/WritingPanel"
+import WritingEditor from "@/components/test/LayoutSkill/WritingEditor"
 import Timer from "@/components/components/Timer"
-import { PracticeTestDTO, Passage, Section } from "@/data/practices/practice.types"
+import { PracticeTestDTO, Passage, Section, WritingTask } from "@/data/practices/practice.types"
 
 import { useState, useRef, useEffect } from "react"
 
 import "./style.css"
 type Props = {
     test: PracticeTestDTO
-    unit: Passage | Section
+    unit: Passage | Section | null
     isReview?: boolean
+    isWriting?: boolean
+    taskNumber?: 1 | 2
+    writingContent?: WritingTask | null
 }
 
 export default function RealExam({
     test,
     unit,
-    isReview = false
+    isReview = false,
+    isWriting = false,
+    taskNumber,
+    writingContent,
 }: Props) {
     const isReading = !!test?.content?.passages
     const isListening = !!test?.content?.sections
 
     const [activeTab, setActiveTab] = useState<"passage" | "question">("passage")
-    const [leftWidth, setLeftWidth] = useState(60)
+    const [leftWidth, setLeftWidth] = useState(isWriting ? 50 : 60)
     const isDragging = useRef(false)
 
     const [isMobile, setIsMobile] = useState(false)
@@ -62,7 +70,11 @@ export default function RealExam({
         }
     }, [])
 
-    const duration = (unit?.time_suggested_minutes || 60) * 60
+    // Duration: for writing use task-specific time, for others use unit time
+    const writingMinutes = taskNumber === 2 ? 40 : 20
+    const duration = isWriting
+        ? (writingContent?.time_minutes ?? writingMinutes) * 60
+        : ((unit as any)?.time_suggested_minutes || 60) * 60
 
     return (
         <div className="exam-container">
@@ -90,15 +102,29 @@ export default function RealExam({
                     <>
                         {/* TAB BAR */}
                         <div className="exam-tabs">
-                            <button className={activeTab === "passage" ? "active" : ""} onClick={() => setActiveTab("passage")}>Passage</button>
-                            <button className={activeTab === "question" ? "active" : ""} onClick={() => setActiveTab("question")}>Questions</button>
+                            <button className={activeTab === "passage" ? "active" : ""} onClick={() => setActiveTab("passage")}>
+                                {isWriting ? "Prompt" : "Passage"}
+                            </button>
+                            <button className={activeTab === "question" ? "active" : ""} onClick={() => setActiveTab("question")}>
+                                {isWriting ? "Write" : "Questions"}
+                            </button>
                         </div>
 
                         <div className="exam-mobile-content">
                             {activeTab === "passage" ? (
-                                isReading ? <PassagePanel passage={unit} /> : <ListeningPanel section={unit} />
+                                isWriting && writingContent ? (
+                                    <WritingPanel content={writingContent} taskNumber={taskNumber} />
+                                ) : isReading ? (
+                                    <PassagePanel passage={unit as Passage} />
+                                ) : (
+                                    <ListeningPanel section={unit as Section} />
+                                )
                             ) : (
-                                <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+                                isWriting && writingContent ? (
+                                    <WritingEditor content={writingContent} taskNumber={taskNumber} />
+                                ) : (
+                                    <QuestionPanel questionBlocks={(unit as any)?.question_blocks || []} isReview={isReview} />
+                                )
                             )}
                         </div>
                     </>
@@ -106,14 +132,19 @@ export default function RealExam({
                     <>
                         {/* DESKTOP SPLIT */}
                         <div className="exam-left" style={{ width: `${leftWidth}%` }}>
-                            {isReading && <PassagePanel passage={unit} />}
-                            {isListening && <ListeningPanel section={unit} />}
+                            {isWriting && writingContent && <WritingPanel content={writingContent} taskNumber={taskNumber} />}
+                            {!isWriting && isReading && unit && <PassagePanel passage={unit as Passage} />}
+                            {!isWriting && isListening && unit && <ListeningPanel section={unit as Section} />}
                         </div>
 
                         <div className="exam-divider" onMouseDown={handleMouseDown} />
 
                         <div className="exam-right" style={{ width: `${100 - leftWidth}%` }}>
-                            <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+                            {isWriting && writingContent ? (
+                                <WritingEditor content={writingContent} taskNumber={taskNumber} />
+                            ) : (
+                                <QuestionPanel questionBlocks={(unit as any)?.question_blocks || []} isReview={isReview} />
+                            )}
                         </div>
                     </>
                 )}
@@ -122,9 +153,11 @@ export default function RealExam({
             {/* FOOTER */}
             <div className="exam-footer">
                 <QuestionNavigator
-                    questionBlocks={unit?.question_blocks || []}
+                    questionBlocks={isWriting ? [] : ((unit as any)?.question_blocks || [])}
                     examId={test?.id}
                     currentUnit={unit}
+                    isWriting={isWriting}
+                    taskNumber={taskNumber}
                 />
             </div>
 

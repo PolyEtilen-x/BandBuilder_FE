@@ -36,9 +36,37 @@ export interface Section {
   time_suggested_minutes?: number;
 }
 
+export interface WritingVisual {
+  type: string;
+  label: string;
+  data_points?: any[];
+}
+
+export interface WritingTask {
+  task: 1 | 2;
+  module?: string;
+  prompt: string;
+  instruction: string;
+  min_words: number;
+  time_minutes: number;
+  // Task 1 specific
+  visual_type?: string;
+  visual_description?: string;
+  visuals?: WritingVisual[];
+  // Task 2 specific
+  essay_type?: string;
+  note?: string;
+}
+
 export interface TestContent {
   passages?: Passage[];
   sections?: Section[];
+  // Writing: content IS the task object (flat)
+  task?: 1 | 2;
+  prompt?: string;
+  instruction?: string;
+  min_words?: number;
+  time_minutes?: number;
 }
 
 export interface PracticeTestDTO {
@@ -51,6 +79,9 @@ export interface PracticeTestDTO {
   // Aliases for compatibility
   id: string;
   skill: IELTSComponentType;
+  // Writing: filled by usePracticeTest hook
+  taskNumber?: 1 | 2;
+  skills?: any[];
 }
 
 export interface PracticeTestPreview {

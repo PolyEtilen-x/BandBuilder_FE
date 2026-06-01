@@ -4,27 +4,35 @@ import QuestionNavigator from "@/components/test/TestComponent/QuestionNavigator
 import ListeningPanel from "@/components/test/LayoutSkill/ListeningPanel"
 import PracticeToolbar from "@/components/test/PracticeModal/PracticeToolbar"
 import ReadingPanel from "@/components/test/LayoutSkill/ReadingPanel"
-import { PracticeTestDTO, Passage, Section } from "@/data/practices/practice.types"
+import WritingPanel from "@/components/test/LayoutSkill/WritingPanel"
+import WritingEditor from "@/components/test/LayoutSkill/WritingEditor"
+import { PracticeTestDTO, Passage, Section, WritingTask } from "@/data/practices/practice.types"
 
 import "./style.css"
 
 type Props = {
   test: PracticeTestDTO
-  unit: Passage | Section
+  unit: Passage | Section | null
   isReview?: boolean
+  isWriting?: boolean
+  taskNumber?: 1 | 2
+  writingContent?: WritingTask | null
 }
 
 export default function PracticeExam({
   test,
   unit,
-  isReview = false
+  isReview = false,
+  isWriting = false,
+  taskNumber,
+  writingContent,
 }: Props) {
 
   const isReading = !!test?.content?.passages
   const isListening = !!test?.content?.sections
 
   // Divider logic
-  const [leftWidth, setLeftWidth] = useState(60)
+  const [leftWidth, setLeftWidth] = useState(isWriting ? 50 : 60)
   const isDragging = useRef(false)
 
   const handleMouseDown = () => {
@@ -67,7 +75,7 @@ export default function PracticeExam({
     return () => window.removeEventListener("resize", check)
   }, [])
 
-  // Toolbar state
+  // Toolbar state (not shown for writing)
   type ToolType = "highlight" | "note" | "dict"
   const [activeTool, setActiveTool] = useState<ToolType>("highlight")
 
@@ -81,41 +89,58 @@ export default function PracticeExam({
 
       {/* MAIN */}
       <div className="practice-main">
-        <PracticeToolbar
-          activeTool={activeTool}
-          setActiveTool={setActiveTool}
-        />
+        {!isWriting && (
+          <PracticeToolbar
+            activeTool={activeTool}
+            setActiveTool={setActiveTool}
+          />
+        )}
 
         {isMobile ? (
           <>
             <div className="practice-tabs">
               <button className={activeTab === "passage" ? "active" : ""} onClick={() => setActiveTab("passage")}>
-                Passage
+                {isWriting ? "Prompt" : "Passage"}
               </button>
               <button className={activeTab === "question" ? "active" : ""} onClick={() => setActiveTab("question")}>
-                Questions
+                {isWriting ? "Write" : "Questions"}
               </button>
             </div>
 
             <div className="practice-mobile-content">
               {activeTab === "passage" ? (
-                isReading ? <ReadingPanel passage={unit} activeTool={activeTool} /> : <ListeningPanel section={unit} activeTool={activeTool} />
+                isWriting && writingContent ? (
+                  <WritingPanel content={writingContent} taskNumber={taskNumber} />
+                ) : isReading ? (
+                  <ReadingPanel passage={unit as Passage} activeTool={activeTool} />
+                ) : (
+                  <ListeningPanel section={unit as Section} activeTool={activeTool} />
+                )
               ) : (
-                <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+                isWriting && writingContent ? (
+                  <WritingEditor content={writingContent} taskNumber={taskNumber} />
+                ) : (
+                  <QuestionPanel questionBlocks={(unit as any)?.question_blocks || []} isReview={isReview} />
+                )
               )}
             </div>
           </>
         ) : (
           <>
             <div className="practice-left" style={{ width: `${leftWidth}%` }}>
-              {isReading && <ReadingPanel passage={unit} activeTool={activeTool} />}
-              {isListening && <ListeningPanel section={unit} activeTool={activeTool} />}
+              {isWriting && writingContent && <WritingPanel content={writingContent} taskNumber={taskNumber} />}
+              {!isWriting && isReading && unit && <ReadingPanel passage={unit as Passage} activeTool={activeTool} />}
+              {!isWriting && isListening && unit && <ListeningPanel section={unit as Section} activeTool={activeTool} />}
             </div>
 
             <div className="practice-divider" onMouseDown={handleMouseDown} />
 
             <div className="practice-right" style={{ width: `${100 - leftWidth}%` }}>
-              <QuestionPanel questionBlocks={unit?.question_blocks || []} isReview={isReview} />
+              {isWriting && writingContent ? (
+                <WritingEditor content={writingContent} taskNumber={taskNumber} />
+              ) : (
+                <QuestionPanel questionBlocks={(unit as any)?.question_blocks || []} isReview={isReview} />
+              )}
             </div>
           </>
         )}
@@ -124,9 +149,11 @@ export default function PracticeExam({
       {/* FOOTER */}
       <div className="practice-footer">
         <QuestionNavigator
-          questionBlocks={unit?.question_blocks || []}
+          questionBlocks={isWriting ? [] : ((unit as any)?.question_blocks || [])}
           examId={test?.id}
           currentUnit={unit}
+          isWriting={isWriting}
+          taskNumber={taskNumber}
         />
       </div>
     </div>

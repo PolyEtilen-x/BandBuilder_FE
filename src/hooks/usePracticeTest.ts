@@ -13,15 +13,34 @@ export const usePracticeTest = () => {
   const rawUnit = searchParams.get("unit");
   const unitNumber = rawUnit === "full" ? null : Number(rawUnit || 1);
 
+  const isWriting = skill?.toLowerCase() === "writing";
+
   const { data: test, isLoading, error } = useQuery({
-    queryKey: ["practice-test", id, skill],
+    queryKey: ["practice-test", id, skill, unitNumber],
     queryFn: async () => {
       if (!id) throw new Error("Test ID is required");
       const res = await practiceApi.getTestSessionContent(id);
 
-      const skillItem = res.data.skills?.find(
-        (s: any) => s.skillType.toLowerCase() === skill?.toLowerCase()
-      );
+      let skillItem: any;
+
+      if (isWriting) {
+        // Writing has 2 separate SkillTest entries — match by content.task
+        skillItem = res.data.skills?.find(
+          (s: any) =>
+            s.skillType?.toLowerCase() === "writing" &&
+            (s.content?.task === unitNumber || unitNumber === null)
+        );
+        // Fallback: first writing skill
+        if (!skillItem) {
+          skillItem = res.data.skills?.find(
+            (s: any) => s.skillType?.toLowerCase() === "writing"
+          );
+        }
+      } else {
+        skillItem = res.data.skills?.find(
+          (s: any) => s.skillType?.toLowerCase() === skill?.toLowerCase()
+        );
+      }
 
       if (!skillItem) {
         throw new Error(`Skill "${skill}" not found in this test session`);
@@ -32,7 +51,8 @@ export const usePracticeTest = () => {
         audioUrl: skillItem.audioUrl,
         source: skillItem.source,
         content: skillItem.content,
-      };
+        taskNumber: isWriting ? (skillItem.content?.task as 1 | 2 | undefined) : undefined,
+      } as PracticeTestDTO & { taskNumber?: 1 | 2 };
     },
     enabled: !!id && !!skill,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -40,6 +60,11 @@ export const usePracticeTest = () => {
 
   const currentUnit = useMemo(() => {
     if (!test) return null;
+
+    // Writing: the content itself IS the unit (flat object with prompt, instruction, etc.)
+    if (isWriting && test.content) {
+      return test.content as any;
+    }
 
     const isReading = !!test.content?.passages;
     const isListening = !!test.content?.sections;
@@ -59,7 +84,7 @@ export const usePracticeTest = () => {
     }
 
     return null;
-  }, [test, unitNumber]);
+  }, [test, unitNumber, isWriting]);
 
   return {
     test,
@@ -68,5 +93,8 @@ export const usePracticeTest = () => {
     error,
     mode,
     id,
+    unitNumber,
+    isWriting,
   };
 };
+

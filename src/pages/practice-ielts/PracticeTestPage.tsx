@@ -11,7 +11,9 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
         currentUnit,
         isLoading,
         error,
-        mode
+        mode,
+        isWriting,
+        unitNumber,
     } = usePracticeTest()
 
     if (isLoading) return <PracticeSkeleton />
@@ -26,25 +28,41 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
         </div>
     )
 
-    if (!test || !currentUnit) return (
+    // For Writing, currentUnit is the content object itself (always present if test loaded)
+    // For Reading/Listening, we need a specific unit
+    if (!test) return (
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
+            <p style={{ color: "#6b7280" }}>No data found for this test.</p>
+        </div>
+    )
+
+    if (!isWriting && !currentUnit) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
             <p style={{ color: "#6b7280" }}>No data found for this test.</p>
         </div>
     )
 
     const isReview = pageMode === "review"
+    const taskNumber = (test as any).taskNumber as 1 | 2 | undefined
+    const writingUnit = isWriting ? currentUnit : null
 
     return mode === "exam" ? (
         <RealExam
             test={test}
             unit={currentUnit}
             isReview={isReview}
+            isWriting={isWriting}
+            taskNumber={taskNumber}
+            writingContent={writingUnit}
         />
     ) : (
         <PracticeExam
             test={test}
             unit={currentUnit}
             isReview={isReview}
+            isWriting={isWriting}
+            taskNumber={taskNumber}
+            writingContent={writingUnit}
         />
     )
 }
