@@ -8,7 +8,7 @@ import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 
-import styles from "./ResultPage.module.css"
+import "./ResultPage.css"
 
 export default function ResultPage() {
   const location = useLocation()
@@ -141,15 +141,15 @@ export default function ResultPage() {
 
   if (isLoading) return (
     <MainLayout>
-      <div className={styles.loadingState}>{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
+      <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
     </MainLayout>
   )
 
   if (!stats || stats.total === 0) return (
     <MainLayout>
-      <div className={styles.errorState}>
+      <div className="error-state">
         <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
-        <button onClick={() => navigate("/practice-ielts")} className={styles.primaryBtn} style={{ width: "auto" }}>
+        <button onClick={() => navigate("/practice-ielts")} className="primary-btn" style={{ width: "auto" }}>
           {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
         </button>
       </div>
@@ -158,28 +158,28 @@ export default function ResultPage() {
 
   return (
     <MainLayout>
-      <div className={styles.pageWrapper}>
+      <div className="result-page-container">
 
         {/* LEFT CONTENT */}
-        <div className={styles.leftColumn}>
+        <div className="result-left-column">
           
           {/* HEADER INFO BLOCK (Skill Badge + Page Title + Page Subtitle) */}
-          <div className={styles.sectionCard}>
-            <span className={styles.skillBadge}>
+          <div className="overview-card">
+            <span className="skill-badge">
               {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
             </span>
             {attemptId && (
-              <span className={styles.attemptId}>
+              <span className="attempt-id">
                 Attempt ID: {attemptId.slice(0, 8)}...
               </span>
             )}
-            <h1 className={styles.pageTitle}>
+            <h1 className="page-title">
               {stats.isBand
                 ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
                 : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
               }
             </h1>
-            <p className={styles.pageSubtitle}>
+            <p className="page-subtitle">
               {stats.isBand
                 ? `${language === "vi" ? "Kết quả bài thi đạt Band Score:" : "Achieved Band Score:"} ${stats.score}`
                 : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác." : "accuracy."}`
@@ -187,47 +187,47 @@ export default function ResultPage() {
             </p>
 
             {/* STAT ROW */}
-            <div className={styles.statGrid}>
-              <div className={`${styles.statItem} ${styles.correct}`}>
-                <div className={styles.statLabel}>{t("result_correct")}</div>
-                <div className={`${styles.statNumber} ${styles.correct}`}>{stats.correct}</div>
+            <div className="stat-grid">
+              <div className="stat-item correct">
+                <div className="stat-label">{t("result_correct")}</div>
+                <div className="stat-number correct">{stats.correct}</div>
               </div>
-              <div className={`${styles.statItem} ${styles.wrong}`}>
-                <div className={styles.statLabel}>{t("result_wrong")}</div>
-                <div className={`${styles.statNumber} ${styles.wrong}`}>{stats.wrong}</div>
+              <div className="stat-item wrong">
+                <div className="stat-label">{t("result_wrong")}</div>
+                <div className="stat-number wrong">{stats.wrong}</div>
               </div>
-              <div className={`${styles.statItem} ${styles.skipped}`}>
-                <div className={styles.statLabel}>{t("result_skipped")}</div>
-                <div className={`${styles.statNumber} ${styles.skipped}`}>{stats.skipped}</div>
+              <div className="stat-item skipped">
+                <div className="stat-label">{t("result_skipped")}</div>
+                <div className="stat-number skipped">{stats.skipped}</div>
               </div>
             </div>
           </div>
 
           {/* PERF BY TYPE DETAILS CARD */}
-          <div className={styles.sectionCard}>
-            <div className={styles.detailsHeader}>
+          <div className="details-card">
+            <div className="details-header">
               <h2>{t("result_perf_by_type")}</h2>
             </div>
-            <div className={styles.detailsList}>
+            <div className="details-list">
               {stats.details.map((item: any, idx: number) => (
-                <div key={idx} className={styles.detailsItem}>
-                  <div className={styles.itemInfo}>
-                    <div className={styles.itemIcon}>
+                <div key={idx} className="details-item">
+                  <div className="item-info">
+                    <div className="item-icon">
                       <HelpCircle size={20} />
                     </div>
                     <div>
-                      <div className={styles.itemType}>{item.type.replace(/_/g, " ")}</div>
-                      <div className={styles.itemCount}>{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
+                      <div className="item-type">{item.type.replace(/_/g, " ")}</div>
+                      <div className="item-count">{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
                     </div>
                   </div>
-                  <div className={styles.itemProgressContainer}>
-                    <div className={styles.progressText}>
-                      <div className={styles.progressPercent}>{Math.round((item.correct / item.total) * 100)}%</div>
-                      <div className={styles.progressLabel}>{t("result_accuracy")}</div>
+                  <div className="item-progress-container">
+                    <div className="progress-text">
+                      <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
+                      <div className="progress-label">{t("result_accuracy")}</div>
                     </div>
-                    <div className={styles.progressBarBg}>
+                    <div className="progress-bar-bg">
                       <div
-                        className={styles.progressBarFill}
+                        className="progress-bar-fill"
                         style={{ width: `${(item.correct / item.total) * 100}%` }}
                       />
                     </div>
@@ -238,13 +238,13 @@ export default function ResultPage() {
           </div>
 
           {/* DETAILED ANSWERS KEY */}
-          <div className={styles.sectionCard}>
-            <div className={styles.detailsHeader}>
+          <div className="details-card">
+            <div className="details-header">
               <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
               {attemptId && (
                 <button
                   onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
-                  className={styles.primaryBtn}
+                  className="primary-btn"
                   style={{ width: "auto" }}
                 >
                   <Sparkles size={13} className="animate-pulse" />
@@ -259,18 +259,18 @@ export default function ResultPage() {
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               {attemptDetail ? (
                 (attemptDetail.answers || []).map((ans: any, idx: number) => (
-                  <div key={idx} className={styles.questionItem}>
-                    <div className={styles.questionInfo}>
-                      <div className={`${styles.questionNumber} ${ans.isCorrect === true ? styles.correct : ans.isCorrect === false ? styles.wrong : ""}`}>
+                  <div key={idx} className="question-item">
+                    <div className="question-info">
+                      <div className={`question-number ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : ''}`}>
                         {idx + 1}
                       </div>
                       <div>
-                        <div className={styles.questionTitle}>
+                        <div className="question-title">
                           {language === "vi" ? `Câu hỏi: ${ans.questionId.replace(/_/g, " ")}` : `Question: ${ans.questionId.replace(/_/g, " ")}`}
                         </div>
-                        <div className={styles.answerRow}>
+                        <div className="answer-row">
                           {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
-                          <span className={`${styles.answerBadge} ${ans.isCorrect === true ? styles.correct : ans.isCorrect === false ? styles.wrong : styles.skipped}`}>
+                          <span className={`answer-badge ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
                             {ans.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
                           </span>
                         </div>
@@ -300,29 +300,29 @@ export default function ResultPage() {
         </div>
 
         {/* RIGHT SIDEBAR COLUMN */}
-        <div className={styles.rightColumn}>
-          <div className={styles.analysisPanel}>
-            <div className={styles.analysisHeader}>
-              <div className={styles.itemIcon}>
+        <div className="result-right-column">
+          <div className="analysis-panel">
+            <div className="analysis-header">
+              <div className="item-icon">
                 <Clock size={20} />
               </div>
-              <div className={styles.analysisLabel}>{t("result_analysis")}</div>
+              <div className="analysis-label">{t("result_analysis")}</div>
             </div>
 
-            <div className={styles.bandScore}>
+            <div className="band-score">
               {stats.score}
-              <span className={styles.bandScoreUnit}>
+              <span className="band-score-unit">
                 {stats.isBand ? "Band" : "%"}
               </span>
             </div>
-            <p className={styles.analysisText}>
+            <p className="analysis-text">
               {t("result_analysis_text")}
             </p>
 
             <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
               <button
                 onClick={() => attemptId && navigate(`/practice-ielts/explain/${attemptId}`)}
-                className={styles.primaryBtn}
+                className="primary-btn"
               >
                 {t("result_btn_review")} <ChevronRight size={18} />
               </button>
@@ -331,16 +331,16 @@ export default function ResultPage() {
                   clearAnswers()
                   navigate("/practice-ielts")
                 }}
-                className={styles.secondaryBtn}
+                className="secondary-btn"
               >
                 {t("result_btn_more")}
               </button>
             </div>
           </div>
 
-          <div className={styles.tipCard}>
-            <h3 className={styles.tipTitle}>{t("result_tip_title")}</h3>
-            <p className={styles.tipText}>
+          <div className="tip-card">
+            <h3 className="tip-title">{t("result_tip_title")}</h3>
+            <p className="tip-text">
               {t("result_tip_text")}
             </p>
           </div>

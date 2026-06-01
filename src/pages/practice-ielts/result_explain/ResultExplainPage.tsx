@@ -6,7 +6,7 @@ import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 
-import styles from "./ResultExplainPage.module.css"
+import "./ResultExplainPage.css"
 
 interface ExplanationItem {
   questionId: string
@@ -60,15 +60,15 @@ export default function ResultExplainPage() {
 
   return (
     <MainLayout>
-      <div className={styles.pageWrapper}>
-        
+      <div className="explain-page-container">
+
         {/* LOADING STATE */}
         {isLoading && (
-          <div className={styles.loadingState}>
-            <div className={styles.spinnerWrapper}>
-              <div className={styles.spinnerBg}></div>
-              <div className={styles.spinnerIndicator}></div>
-              <Brain className={styles.spinnerIcon} size={32} />
+          <div className="loading-state">
+            <div className="spinner-wrapper">
+              <div className="spinner-bg"></div>
+              <div className="spinner-indicator"></div>
+              <Brain className="spinner-icon" size={32} />
             </div>
             <h2>
               {language === "vi" ? "Đang phân tích với Trí Tuệ Nhân Tạo..." : "Analyzing with AI..."}
@@ -83,8 +83,8 @@ export default function ResultExplainPage() {
 
         {/* ERROR STATE */}
         {error && (
-          <div className={styles.errorState}>
-            <AlertCircle className={styles.errorIcon} size={48} />
+          <div className="error-state">
+            <AlertCircle className="error-icon" size={48} />
             <h3>
               {language === "vi" ? "Không thể tải giải thích" : "Failed to load explanation"}
             </h3>
@@ -95,7 +95,7 @@ export default function ResultExplainPage() {
                   : "An error occurred while generating AI feedback. Please check your credit balance."
               )}
             </p>
-            <button onClick={() => navigate(-1)} className={styles.btnRetry}>
+            <button onClick={() => navigate(-1)} className="btn-retry">
               {language === "vi" ? "Quay lại" : "Go Back"}
             </button>
           </div>
@@ -105,20 +105,20 @@ export default function ResultExplainPage() {
         {explanationData && (
           <>
             {/* LEFT COLUMN */}
-            <div className={styles.leftColumn}>
-              
+            <div className="explain-left-column">
+
               {/* HEADER INFO BLOCK (Skill Badge + Page Title + Page Subtitle) */}
-              <div className={styles.sectionCard}>
-                <span className={styles.skillBadge}>
+              <div className="overview-card-header">
+                <span className="skill-badge">
                   {explanationData.skill}
                 </span>
-                <span className={styles.attemptId}>
+                <span className="attempt-id">
                   Attempt ID: <span>{explanationData.attemptId.slice(0, 8)}...</span>
                 </span>
-                <h1 className={styles.pageTitle}>
+                <h1 className="page-title">
                   {language === "vi" ? "Phân Tích Lỗi Sai & Giải Thích AI" : "AI Answer Explanations"}
                 </h1>
-                <p className={styles.pageSubtitle}>
+                <p className="page-subtitle">
                   {language === "vi"
                     ? "Xem phân tích chi tiết từng đáp án sai và lời khuyên để bứt phá band điểm."
                     : "Review comprehensive insights on every incorrect answer and expert tips."}
@@ -126,28 +126,28 @@ export default function ResultExplainPage() {
               </div>
 
               {/* FILTER PANEL */}
-              <div className={styles.filterPanel}>
-                <div className={styles.filterResultsCount}>
+              <div className="filter-panel">
+                <div className="filter-results-count">
                   {language === "vi"
                     ? `Đang hiển thị ${filteredExplanations.length} câu hỏi`
                     : `Showing ${filteredExplanations.length} questions`}
                 </div>
-                <div className={styles.filterTabs}>
+                <div className="filter-tabs">
                   <button
                     onClick={() => setFilter("all")}
-                    className={`${styles.filterTab} ${filter === "all" ? styles.activeAll : ""}`}
+                    className={`filter-tab ${filter === "all" ? 'active-all' : ""}`}
                   >
                     {language === "vi" ? "Tất cả" : "All"}
                   </button>
                   <button
                     onClick={() => setFilter("incorrect")}
-                    className={`${styles.filterTab} ${filter === "incorrect" ? styles.activeIncorrect : ""}`}
+                    className={`filter-tab ${filter === "incorrect" ? 'active-incorrect' : ""}`}
                   >
                     {language === "vi" ? "Câu Sai" : "Incorrect"}
                   </button>
                   <button
                     onClick={() => setFilter("correct")}
-                    className={`${styles.filterTab} ${filter === "correct" ? styles.activeCorrect : ""}`}
+                    className={`filter-tab ${filter === "correct" ? 'active-correct' : ""}`}
                   >
                     {language === "vi" ? "Câu Đúng" : "Correct"}
                   </button>
@@ -155,10 +155,10 @@ export default function ResultExplainPage() {
               </div>
 
               {/* EXPLANATIONS LIST */}
-              <div className={styles.explanationsList}>
+              <div className="explanations-list">
                 {filteredExplanations.length === 0 ? (
-                  <div className={styles.emptyListCard}>
-                    <Brain size={40} className={styles.emptyListIcon} />
+                  <div className="empty-list-card">
+                    <Brain size={40} className="empty-list-icon" />
                     <p>
                       {language === "vi" ? "Không có câu hỏi nào khớp với bộ lọc." : "No questions match your filter."}
                     </p>
@@ -169,30 +169,30 @@ export default function ResultExplainPage() {
                     return (
                       <div
                         key={idx}
-                        className={`${styles.questionItem} ${isCorrect ? styles.correctCard : styles.incorrectCard}`}
+                        className={`question-item ${isCorrect ? 'correct-card' : 'incorrect-card'}`}
                       >
                         {/* Item Header */}
-                        <div className={styles.questionHeader}>
-                          <div className={styles.questionInfo}>
-                            <div className={`${styles.questionNumber} ${isCorrect ? styles.correct : styles.incorrect}`}>
+                        <div className="question-header">
+                          <div className="question-info">
+                            <div className={`question-number ${isCorrect ? 'correct' : 'incorrect'}`}>
                               {item.questionId.replace(/\D/g, "") || idx + 1}
                             </div>
-                            <div className={styles.questionTitle}>
+                            <div className="question-title">
                               {language === "vi" ? `Câu hỏi: ${item.questionId}` : `Question: ${item.questionId}`}
                             </div>
                           </div>
 
-                          <div className={styles.answersComparisonBox}>
-                            <span className={styles.answerMetaSpan}>
+                          <div className="answers-comparison-box">
+                            <span className="answer-meta-span">
                               <label>{language === "vi" ? "Bạn chọn:" : "Your Answer:"}</label>
-                              <span className={`${styles.answerBadge} ${isCorrect ? styles.correct : styles.wrong}`}>
+                              <span className={`answer-badge ${isCorrect ? 'correct' : 'wrong'}`}>
                                 {item.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
                               </span>
                             </span>
 
-                            <span className={styles.answerMetaSpan}>
+                            <span className="answer-meta-span">
                               <label>{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</label>
-                              <span className={`${styles.answerBadge} ${styles.correct}`}>
+                              <span className="answer-badge correct">
                                 {item.correctAnswer}
                               </span>
                             </span>
@@ -200,22 +200,22 @@ export default function ResultExplainPage() {
                         </div>
 
                         {/* Item Body (AI Examiner Analysis) */}
-                        <div className={styles.aiAnalysisBlock}>
-                          <div className={styles.aiAnalysisLabel}>
-                            <Sparkles size={14} />
+                        <div className="ai-analysis-block">
+                          <div className="ai-analysis-label">
+                            <Sparkles size={14} style={{ marginRight: "4px" }} />
                             {language === "vi" ? "Phân tích từ Giám khảo AI" : "AI Examiner Analysis"}
                           </div>
-                          <p className={styles.aiAnalysisText}>
+                          <p className="ai-analysis-text">
                             {item.explanation}
                           </p>
 
                           {/* Pro Tip Content */}
-                          <div className={styles.proTipBlock}>
-                            <div className={styles.proTipLabel}>
+                          <div className="pro-tip-block">
+                            <div className="pro-tip-label">
                               <Lightbulb size={14} style={{ marginRight: "4px" }} />
                               {language === "vi" ? "Mẹo tránh bẫy & kinh nghiệm" : "Pro Tip & Strategy"}
                             </div>
-                            <p className={styles.proTipText}>
+                            <p className="pro-tip-text">
                               {item.tip}
                             </p>
                           </div>
@@ -228,18 +228,18 @@ export default function ResultExplainPage() {
             </div>
 
             {/* RIGHT COLUMN */}
-            <div className={styles.rightColumn}>
+            <div className="explain-right-column">
               {/* Credit info card */}
-              <div className={styles.sectionCard}>
-                <div className={styles.creditBadge}>
-                  <div className={styles.creditIconContainer}>
+              <div className="credit-card-sidebar">
+                <div className="credit-badge">
+                  <div className="credit-icon-container">
                     <Coins size={20} />
                   </div>
-                  <div className={styles.creditDetails}>
-                    <div className={styles.creditTitle}>
+                  <div className="credit-details">
+                    <div className="credit-title">
                       {language === "vi" ? "Trạng thái giao dịch" : "Transaction"}
                     </div>
-                    <div className={styles.creditStatus}>
+                    <div className="credit-status">
                       {explanationData.charged
                         ? (language === "vi" ? "Đã khấu trừ 1 Credit" : "1 Credit Charged")
                         : (language === "vi" ? "Truy cập miễn phí (Đã lưu)" : "Free (Previously Generated)")}
@@ -249,36 +249,36 @@ export default function ResultExplainPage() {
               </div>
 
               {/* Analysis Panel (Mini Stats Banner) */}
-              <div className={styles.analysisPanel}>
-                <div className={styles.analysisHeader}>
+              <div className="analysis-panel">
+                <div className="analysis-header">
                   <h3>{language === "vi" ? "Thống kê kết quả" : "Result Summary"}</h3>
                 </div>
-                <div className={styles.statsSidebarBody}>
-                  <div className={styles.statBlock}>
-                    <div className={styles.statInfoLeft}>
-                      <div className={styles.statLabelMini}>
+                <div className="stats-sidebar-body">
+                  <div className="stat-block">
+                    <div className="stat-info-left">
+                      <div className="stat-label-mini">
                         {language === "vi" ? "Số câu trả lời sai" : "Mistakes Found"}
                       </div>
-                      <div className={`${styles.statValLarge} ${styles.incorrect}`}>{stats.incorrect}</div>
+                      <div className="stat-val-large incorrect">{stats.incorrect}</div>
                     </div>
-                    <XCircle size={28} className={`${styles.statBlockIcon} ${styles.incorrect}`} />
+                    <XCircle size={28} className="stat-block-icon incorrect" />
                   </div>
 
-                  <div className={styles.statBlock}>
-                    <div className={styles.statInfoLeft}>
-                      <div className={styles.statLabelMini}>
+                  <div className="stat-block">
+                    <div className="stat-info-left">
+                      <div className="stat-label-mini">
                         {language === "vi" ? "Số câu chính xác" : "Correct Answers"}
                       </div>
-                      <div className={`${styles.statValLarge} ${styles.correct}`}>{stats.correct}</div>
+                      <div className="stat-val-large correct">{stats.correct}</div>
                     </div>
-                    <CheckCircle2 size={28} className={`${styles.statBlockIcon} ${styles.correct}`} />
+                    <CheckCircle2 size={28} className="stat-block-icon correct" />
                   </div>
                 </div>
               </div>
 
               {/* ACTION FOOTER */}
-              <div className={styles.sectionCard} style={{ padding: "12px var(--space-6)" }}>
-                <button onClick={() => navigate(-1)} className={styles.primaryBtn}>
+              <div className="action-footer-card" style={{ padding: "12px var(--space-6)" }}>
+                <button onClick={() => navigate(-1)} className="primary-btn">
                   <span>{language === "vi" ? "Quay lại trang kết quả" : "Back to Results"}</span>
                   <ChevronRight size={16} />
                 </button>

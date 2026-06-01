@@ -1,8 +1,4 @@
-/* ==========================================================================
-   CSS MODULE FOR PRACTICE RESULTS PAGE
-   ========================================================================== */
-
-.pageWrapper {
+.result-page-container {
   display: grid;
   grid-template-columns: 1fr 320px;
   gap: var(--space-6);
@@ -11,24 +7,27 @@
 }
 
 @media (max-width: 1024px) {
-  .pageWrapper {
+  .result-page-container {
     grid-template-columns: 1fr;
     padding: var(--space-4);
   }
 }
 
-.leftColumn {
+.result-left-column {
   display: flex;
   flex-direction: column;
 }
 
-.rightColumn {
+.result-right-column {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
 }
 
-.sectionCard {
+.overview-card,
+.details-card,
+.analysis-panel,
+.tip-card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
@@ -36,7 +35,7 @@
   margin-bottom: var(--space-4);
 }
 
-.skillBadge {
+.skill-badge {
   display: inline-block;
   padding: var(--space-1) var(--space-3);
   border-radius: var(--radius-full);
@@ -48,26 +47,26 @@
   text-transform: uppercase;
 }
 
-.attemptId {
+.attempt-id {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin-left: var(--space-2);
 }
 
-.pageTitle {
+.page-title {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
   margin: var(--space-2) 0 var(--space-1);
 }
 
-.pageSubtitle {
+.page-subtitle {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
 }
 
 /* STAT ROW */
-.statGrid {
+.stat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-3);
@@ -75,12 +74,12 @@
 }
 
 @media (max-width: 640px) {
-  .statGrid {
+  .stat-grid {
     grid-template-columns: 1fr;
   }
 }
 
-.statItem {
+.stat-item {
   border-radius: var(--radius-md);
   padding: var(--space-4);
   border: 1px solid;
@@ -88,22 +87,22 @@
   flex-direction: column;
 }
 
-.statItem.correct {
+.stat-item.correct {
   background: #f0fdf4;
   border-color: #bbf7d0;
 }
 
-.statItem.wrong {
+.stat-item.wrong {
   background: #fef2f2;
   border-color: #fecaca;
 }
 
-.statItem.skipped {
+.stat-item.skipped {
   background: var(--color-surface-muted);
   border-color: var(--color-border);
 }
 
-.statLabel {
+.stat-label {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -112,17 +111,25 @@
   letter-spacing: 0.05em;
 }
 
-.statNumber {
+.stat-number {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
 }
 
-.statNumber.correct { color: var(--color-success); }
-.statNumber.wrong   { color: var(--color-danger); }
-.statNumber.skipped { color: var(--color-text-primary); }
+.stat-number.correct {
+  color: var(--color-success);
+}
+
+.stat-number.wrong {
+  color: var(--color-danger);
+}
+
+.stat-number.skipped {
+  color: var(--color-text-primary);
+}
 
 /* QUESTION ITEM CARD */
-.questionItem {
+.question-item {
   background: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
@@ -134,20 +141,20 @@
   gap: var(--space-4);
 }
 
-.questionHeader {
+.question-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
 }
 
-.questionInfo {
+.question-info {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
-.questionNumber {
+.question-number {
   width: 28px;
   height: 28px;
   border-radius: var(--radius-full);
@@ -161,23 +168,23 @@
   flex-shrink: 0;
 }
 
-.questionNumber.correct {
+.question-number.correct {
   background: var(--color-success);
   color: #fff;
 }
 
-.questionNumber.wrong {
+.question-number.wrong {
   background: var(--color-danger);
   color: #fff;
 }
 
-.questionTitle {
+.question-title {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
 }
 
-.answerRow {
+.answer-row {
   display: flex;
   align-items: center;
   gap: var(--space-2);
@@ -185,7 +192,7 @@
   color: var(--color-text-secondary);
 }
 
-.answerBadge {
+.answer-badge {
   display: inline-flex;
   align-items: center;
   padding: var(--space-1) var(--space-3);
@@ -194,22 +201,18 @@
   font-weight: var(--font-weight-semibold);
 }
 
-.answerBadge.wrong {
+.answer-badge.wrong {
   background: #fee2e2;
   color: #b91c1c;
 }
 
-.answerBadge.correct {
+.answer-badge.correct {
   background: #dcfce7;
   color: #15803d;
 }
 
 /* ANALYSIS PANEL (cột phải) */
-.analysisPanel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
+.analysis-panel {
   position: sticky;
   top: var(--space-6);
   display: flex;
@@ -217,13 +220,13 @@
   gap: var(--space-4);
 }
 
-.analysisHeader {
+.analysis-header {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
-.analysisLabel {
+.analysis-label {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-secondary);
@@ -231,26 +234,26 @@
   letter-spacing: 0.05em;
 }
 
-.bandScore {
+.band-score {
   font-size: var(--font-size-2xl);
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
 
-.bandScoreUnit {
+.band-score-unit {
   font-size: var(--font-size-lg);
   color: var(--color-primary);
   margin-left: var(--space-1);
 }
 
-.analysisText {
+.analysis-text {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: 1.6;
 }
 
 /* DETAILS PERF */
-.detailsHeader {
+.details-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -259,19 +262,19 @@
   margin-bottom: var(--space-4);
 }
 
-.detailsHeader h2 {
+.details-header h2 {
   font-size: var(--font-size-md);
   font-weight: var(--font-weight-bold);
   margin: 0;
 }
 
-.detailsList {
+.details-list {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-.detailsItem {
+.details-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -281,48 +284,48 @@
   background: var(--color-surface-muted);
 }
 
-.itemInfo {
+.item-info {
   display: flex;
   align-items: center;
   gap: var(--space-3);
 }
 
-.itemIcon {
+.item-icon {
   color: var(--color-primary);
   display: flex;
   align-items: center;
 }
 
-.itemType {
+.item-type {
   font-weight: var(--font-weight-bold);
   color: var(--color-text-primary);
 }
 
-.itemCount {
+.item-count {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
-.itemProgressContainer {
+.item-progress-container {
   display: flex;
   align-items: center;
   gap: var(--space-4);
 }
 
-.progressText {
+.progress-text {
   text-align: right;
 }
 
-.progressPercent {
+.progress-percent {
   font-weight: var(--font-weight-bold);
 }
 
-.progressLabel {
+.progress-label {
   font-size: var(--font-size-xs);
   color: var(--color-text-secondary);
 }
 
-.progressBarBg {
+.progress-bar-bg {
   width: 80px;
   height: 6px;
   background: var(--color-border);
@@ -330,14 +333,14 @@
   overflow: hidden;
 }
 
-.progressBarFill {
+.progress-bar-fill {
   height: 100%;
   background: var(--color-primary);
   border-radius: var(--radius-full);
 }
 
 /* BUTTONS */
-.primaryBtn {
+.primary-btn {
   background: var(--color-primary);
   color: #fff;
   padding: var(--space-3) var(--space-5);
@@ -354,11 +357,11 @@
   transition: opacity 150ms ease;
 }
 
-.primaryBtn:hover {
+.primary-btn:hover {
   opacity: 0.9;
 }
 
-.secondaryBtn {
+.secondary-btn {
   background: var(--color-surface-muted);
   border: 1px solid var(--color-border);
   color: var(--color-text-primary);
@@ -374,30 +377,27 @@
   justify-content: center;
 }
 
-.secondaryBtn:hover {
+.secondary-btn:hover {
   background: rgba(0, 0, 0, 0.02);
 }
 
-.tipCard {
+.tip-card {
   background: var(--color-surface-muted);
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
 }
 
-.tipTitle {
+.tip-title {
   font-weight: var(--font-weight-bold);
   margin-bottom: var(--space-2);
 }
 
-.tipText {
+.tip-text {
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   line-height: 1.5;
 }
 
 /* LOADING & ERROR */
-.loadingState {
+.loading-state {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -406,7 +406,7 @@
   color: var(--color-text-secondary);
 }
 
-.errorState {
+.error-state {
   display: flex;
   flex-direction: column;
   align-items: center;
