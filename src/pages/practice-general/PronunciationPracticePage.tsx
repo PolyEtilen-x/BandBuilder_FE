@@ -1,55 +1,65 @@
-import { useState, useEffect, useRef, ReactElement } from "react"
+import { useState, useRef, ReactElement } from "react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import GeneralPracticeSidebar from "@/components/general_practice/GeneralPracticeSidebar"
+import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
 import { useVocabStore } from "@/services/dictionary/vocab.store"
 import { useDictionary } from "@/services/dictionary/useDictionary"
-import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
-import {
-  getPronunciationTopics,
-  getPronunciationTopicDetail,
-  type PronunciationTopicListItemDto,
-  type PronunciationTopicDetailDto,
-  type PronunciationVocabDto,
-  type PronunciationSentenceDto,
+import { usePronunciationTopics, usePronunciationTopicDetail } from "@/hooks/usePronunciation"
+import { useYoutubeShadowing } from "@/hooks/useYoutubeShadowing"
+import type {
+  PronunciationVocabDto,
+  PronunciationSentenceDto,
+  PronunciationTopicDetailDto,
 } from "@/api/practiceGeneral.api"
-import { useYoutubeShadowing } from "../../hooks/useYoutubeShadowing"
 import "./Pronunciation.css"
 
-// ── Sub-components ─────────────────────────────────────────────────────────
+// ─── Helpers ────────────────────────────────────────────────────────────────
 
-function TopicCard({
-  topic,
-  onSelect,
-}: {
-  topic: PronunciationTopicListItemDto
-  onSelect: (id: string) => void
-}): ReactElement {
-  return (
-    <button
-      id={`pronunciation-topic-${topic.id}`}
-      onClick={() => onSelect(topic.id)}
-      className="pp-topic-card"
-    >
-      <div className="pp-topic-card__header-row">
-        <span className="pp-topic-card__icon">🎙️</span>
-        <span className="pp-topic-card__title">{topic.title}</span>
-      </div>
-      <div className="pp-topic-card__meta">
-        <span>📚</span>
-        {topic.vocabCount} key vocabularies
-      </div>
-    </button>
-  )
+async function translateToVietnamese(text: string): Promise<string> {
+  if (!text.trim()) return ""
+  try {
+    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(text)}`
+    const res = await fetch(url)
+    if (!res.ok) return ""
+    const data = (await res.json()) as Array<Array<[string, ...unknown[]]>>
+    return data[0]?.map((s) => s[0]).filter(Boolean).join("") || ""
+  } catch {
+    return ""
+  }
 }
+
+function formatTime(seconds: number): string {
+  if (isNaN(seconds)) return "00:00"
+  const m = Math.floor(seconds / 60)
+  const s = Math.floor(seconds % 60)
+  return `${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`
+}
+
+// ─── VocabCard ───────────────────────────────────────────────────────────────
 
 function VocabCard({ vocab }: { vocab: PronunciationVocabDto }): ReactElement {
   const { savedWords, addWord, removeWord } = useVocabStore()
+  const isSaved = savedWords.some((w) => w.word.toLowerCase() === vocab.word.toLowerCase())
 
-  const isSaved = savedWords.some(
-    (w) => w.word.toLowerCase() === vocab.word.toLowerCase()
-  )
+  const playAudio = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    if (vocab.audioUrl) {
+      const audio = new Audio(vocab.audioUrl)
+      audio.play().catch(() => {
+        if ("speechSynthesis" in window) {
+          const u = new SpeechSynthesisUtterance(vocab.word)
+          u.lang = "en-US"
+          window.speechSynthesis.speak(u)
+        }
+      })
+    } else if ("speechSynthesis" in window) {
+      const u = new SpeechSynthesisUtterance(vocab.word)
+      u.lang = "en-US"
+      window.speechSynthesis.speak(u)
+    }
+  }
 
-  const handleSaveToggle = (e: React.MouseEvent): void => {
+  const toggleSave = (e: React.MouseEvent) => {
     e.stopPropagation()
     if (isSaved) {
       removeWord(vocab.word)
@@ -69,62 +79,33 @@ function VocabCard({ vocab }: { vocab: PronunciationVocabDto }): ReactElement {
     }
   }
 
-  const playAudio = (e: React.MouseEvent): void => {
-    e.stopPropagation()
-    if (vocab.audioUrl) {
-      const audio = new Audio(vocab.audioUrl)
-      audio.play().catch((err) => {
-        console.warn("Audio URL play failed, falling back to speech synthesis", err)
-        speakFallback()
-      })
-    } else {
-      speakFallback()
-    }
-  }
-
-  const speakFallback = (): void => {
-    if ("speechSynthesis" in window) {
-      const utterance = new SpeechSynthesisUtterance(vocab.word)
-      utterance.lang = "en-US"
-      window.speechSynthesis.speak(utterance)
-    }
-  }
-
   return (
     <div className="pp-vocab-card">
-      <div className="pp-vocab-card__header">
-        <div className="pp-vocab-card__word-section">
-          <span className="pp-vocab-card__word">{vocab.word}</span>
-          <span className="pp-vocab-card__ipa">{vocab.ipa}</span>
+      <div className="pp-vocab-card-header">
+        <div className="pp-vocab-word-section">
+          <span className="pp-vocab-word">{vocab.word}</span>
+          <span className="pp-vocab-ipa">{vocab.ipa}</span>
         </div>
-        <div className="pp-vocab-card__actions">
-          <button
-            onClick={playAudio}
-            className="pp-vocab-card__audio-btn"
-            aria-label={`Play pronunciation of ${vocab.word}`}
-          >
+        <div className="pp-vocab-actions">
+          <button onClick={playAudio} className="pp-vocab-audio-btn" aria-label={`Play ${vocab.word}`}>
             🔊 Listen
           </button>
-          <button
-            onClick={handleSaveToggle}
-            className={`pp-vocab-card__save-btn ${isSaved ? "saved" : ""}`}
-          >
-            {isSaved ? "✓ Đã lưu" : "+ Lưu từ"}
+          <button onClick={toggleSave} className={`pp-vocab-save-btn ${isSaved ? "saved" : ""}`}>
+            {isSaved ? "✓ Saved" : "+ Save"}
           </button>
         </div>
       </div>
-
-      <div className="pp-vocab-card__body">
-        <div className="pp-vocab-card__field">
-          <span className="pp-vocab-card__field-label">Ý nghĩa</span>
-          <p className="pp-vocab-card__meaning">{vocab.meaning}</p>
+      <div className="pp-vocab-card-body">
+        <div>
+          <div className="pp-vocab-field-label">Meaning</div>
+          <p className="pp-vocab-meaning">{vocab.meaning}</p>
         </div>
         {vocab.example && (
-          <div className="pp-vocab-card__field">
-            <span className="pp-vocab-card__field-label">Ví dụ</span>
-            <p className="pp-vocab-card__example">{vocab.example}</p>
+          <div>
+            <div className="pp-vocab-field-label">Example</div>
+            <p className="pp-vocab-example">{vocab.example}</p>
             {vocab.exampleTranslation && (
-              <p className="pp-vocab-card__translation">{vocab.exampleTranslation}</p>
+              <p className="pp-vocab-translation">{vocab.exampleTranslation}</p>
             )}
           </div>
         )}
@@ -133,29 +114,7 @@ function VocabCard({ vocab }: { vocab: PronunciationVocabDto }): ReactElement {
   )
 }
 
-/**
- * Helper to translate English text to Vietnamese using the public translation endpoint.
- */
-async function translateToVietnamese(text: string): Promise<string> {
-  if (!text || !text.trim()) return ""
-  try {
-    const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=vi&dt=t&q=${encodeURIComponent(
-      text
-    )}`
-    const res = await fetch(url)
-    if (!res.ok) return ""
-    const data = (await res.json()) as Array<Array<[string, ...unknown[]]>>
-    return (
-      data[0]
-        ?.map((segment) => segment[0])
-        .filter(Boolean)
-        .join("") || ""
-    )
-  } catch (error) {
-    console.error("Failed to translate transcript sentence:", error)
-    return ""
-  }
-}
+// ─── TopicDetail ─────────────────────────────────────────────────────────────
 
 function TopicDetail({
   detail,
@@ -165,311 +124,200 @@ function TopicDetail({
   onBack: () => void
 }): ReactElement {
   const [activeTab, setActiveTab] = useState<"shadowing" | "vocab">("shadowing")
-
-  // Dictionary lookup hook
-  const {
-    dict,
-    loading: dictLoading,
-    lookup,
-    close: closeDict,
-    save: saveDict,
-  } = useDictionary()
-
-  // Sentence translation states
   const [translations, setTranslations] = useState<Record<string, string>>({})
   const [translatingIds, setTranslatingIds] = useState<Record<string, boolean>>({})
 
-  // Custom YouTube Shadowing hook
+  const { dict, loading: dictLoading, lookup, close: closeDict, save: saveDict } = useDictionary()
+
   const {
-    isPlaying,
-    playbackSpeed,
-    isLooping,
-    currentTime,
-    duration,
-    isPlayerReady,
-    selectedSentence,
-    activeSentence,
-    playSentence,
-    clearSelectedSentence,
-    togglePlay,
-    setSpeed,
-    toggleLoop,
-    seekTo,
+    isPlaying, playbackSpeed, isLooping, currentTime, duration,
+    isPlayerReady, selectedSentence, activeSentence,
+    playSentence, clearSelectedSentence, togglePlay, setSpeed, toggleLoop,
   } = useYoutubeShadowing(detail.videoUrl, detail.sentences || [])
 
-  // Legacy HTML5 Audio Player state (for graceful fallback if videoUrl is missing)
+  // Legacy audio player (fallback)
+  const audioRef = useRef<HTMLAudioElement | null>(null)
   const [legacyPlaying, setLegacyPlaying] = useState(false)
   const [legacyTime, setLegacyTime] = useState(0)
   const [legacyDuration, setLegacyDuration] = useState(0)
-  const audioRef = useRef<HTMLAudioElement | null>(null)
 
-  const toggleLegacyPlay = (): void => {
+  const toggleLegacyPlay = () => {
     if (!audioRef.current) return
-    if (legacyPlaying) {
-      audioRef.current.pause()
-      setLegacyPlaying(false)
-    } else {
-      audioRef.current.play()
-      setLegacyPlaying(true)
-    }
+    if (legacyPlaying) { audioRef.current.pause(); setLegacyPlaying(false) }
+    else { audioRef.current.play(); setLegacyPlaying(true) }
   }
 
-  const handleLegacyTimeUpdate = (): void => {
-    if (audioRef.current) {
-      setLegacyTime(audioRef.current.currentTime)
-    }
+  const handleWordClick = (word: string, context: string) => {
+    const clean = word.toLowerCase().replace(/[.,/#!$%^&*;:{}=\-_`~()?"'"]/g, "").trim()
+    if (clean) lookup(clean, context)
   }
 
-  const handleLegacyLoadedMetadata = (): void => {
-    if (audioRef.current) {
-      setLegacyDuration(audioRef.current.duration || 0)
-    }
-  }
-
-  const handleLegacySliderChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ): void => {
-    const val = parseFloat(e.target.value)
-    if (audioRef.current) {
-      audioRef.current.currentTime = val
-      setLegacyTime(val)
-    }
-  }
-
-  const handleLegacyEnded = (): void => {
-    setLegacyPlaying(false)
-    setLegacyTime(0)
-  }
-
-  const formatTime = (seconds: number): string => {
-    if (isNaN(seconds)) return "00:00"
-    const mins = Math.floor(seconds / 60)
-    const secs = Math.floor(seconds % 60)
-    return `${mins.toString().padStart(2, "0")}:${secs
-      .toString()
-      .padStart(2, "0")}`
-  }
-
-  const handleWordClick = (word: string, contextSentence: string): void => {
-    // Strip trailing or leading punctuation markers for precise lookup dictionary queries
-    const cleanWord = word
-      .toLowerCase()
-      .replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"'“]/g, "")
-      .trim()
-    if (cleanWord) {
-      lookup(cleanWord, contextSentence)
-    }
-  }
-
-  const handleTranslateSentence = async (
-    e: React.MouseEvent,
-    sentenceId: string,
-    text: string
-  ): Promise<void> => {
-    e.stopPropagation() // Avoid triggering play sentence bounds
-    if (translations[sentenceId]) {
-      setTranslations((prev) => {
-        const next = { ...prev }
-        delete next[sentenceId]
-        return next
-      })
+  const handleTranslate = async (e: React.MouseEvent, id: string, text: string) => {
+    e.stopPropagation()
+    if (translations[id]) {
+      setTranslations((p) => { const n = { ...p }; delete n[id]; return n })
       return
     }
-
-    setTranslatingIds((prev) => ({ ...prev, [sentenceId]: true }))
-    try {
-      const translated = await translateToVietnamese(text)
-      setTranslations((prev) => ({ ...prev, [sentenceId]: translated }))
-    } catch (err) {
-      console.error("Sentence translation error:", err)
-    } finally {
-      setTranslatingIds((prev) => ({ ...prev, [sentenceId]: false }))
-    }
+    setTranslatingIds((p) => ({ ...p, [id]: true }))
+    const t = await translateToVietnamese(text)
+    setTranslations((p) => ({ ...p, [id]: t }))
+    setTranslatingIds((p) => ({ ...p, [id]: false }))
   }
 
-  const renderClickableText = (text: string): ReactElement[] => {
-    return text.split(/\s+/).map((word, idx) => {
-      return (
-        <span
-          key={idx}
-          className="pp-word-token"
-          onClick={(e) => {
-            e.stopPropagation()
-            handleWordClick(word, text)
-          }}
-        >
-          {word}{" "}
-        </span>
-      )
-    })
-  }
+  const renderClickable = (text: string): ReactElement[] =>
+    text.split(/\s+/).map((word, i) => (
+      <span
+        key={i}
+        className="pp-word-token"
+        onClick={(e) => { e.stopPropagation(); handleWordClick(word, text) }}
+      >
+        {word}{" "}
+      </span>
+    ))
 
-  const hasVideo = detail.videoUrl && detail.videoUrl.trim() !== ""
+  const hasVideo = !!detail.videoUrl?.trim()
 
   return (
-    <div className="pp-detail">
-      {/* Navigation */}
-      <div className="pp-detail__nav">
-        <button
-          id="pronunciation-back-btn"
-          onClick={onBack}
-          className="pp-detail__back-btn"
-        >
-          ← Back to Topics
+    <>
+      {/* Back nav */}
+      <div className="pp-detail-nav">
+        <button id="pronunciation-back-btn" onClick={onBack} className="pp-back-btn">
+          ← Back
         </button>
-        <h2 className="pp-detail__title">{detail.title}</h2>
+        <h2 className="pp-detail-topic-title">{detail.title}</h2>
       </div>
 
-      <div className="pp-detail-grid">
-        {/* LEFT COLUMN: Player (YouTube Shadowing or Graceful Fallback) */}
-        <div className="pp-detail-left">
+      <div className="pp-detail-layout">
+        {/* LEFT — Player */}
+        <div>
           {hasVideo ? (
-            <div className="pp-youtube-wrapper">
-              <div className="pp-video">
-                {/* Standard Youtube Iframe element targeted by the API */}
-                <div
-                  id="shadowing-youtube-player"
-                  style={{ width: "100%", height: "100%" }}
-                />
+            <div className="pp-card pp-player-card">
+              <div className="pp-video-container">
+                <div id="shadowing-youtube-player" style={{ width: "100%", height: "100%" }} />
               </div>
-
-              {/* Premium Controls */}
-              <div className="pp-youtube-controls">
+              {/* Controls */}
+              <div className="pp-yt-controls">
                 <div className="pp-yt-controls-left">
                   <button
                     onClick={togglePlay}
                     disabled={!isPlayerReady}
-                    className={`pp-yt-control-btn ${isPlaying ? "active" : ""}`}
+                    className={`pp-yt-btn ${isPlaying ? "active" : ""}`}
                   >
                     {isPlaying ? "⏸ Pause" : "▶ Play"}
                   </button>
-
                   <button
                     onClick={toggleLoop}
                     disabled={!isPlayerReady}
-                    className={`pp-yt-control-btn ${isLooping ? "active" : ""}`}
+                    className={`pp-yt-btn ${isLooping ? "active" : ""}`}
                   >
-                    🔁 Loop Sentence
+                    🔁 Loop
                   </button>
-
                   {selectedSentence && (
-                    <button
-                      onClick={clearSelectedSentence}
-                      className="pp-yt-control-btn"
-                    >
-                      Clear Selection
+                    <button onClick={clearSelectedSentence} className="pp-yt-btn">
+                      ✕ Clear
                     </button>
                   )}
                 </div>
 
-                <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-                  <span
-                    style={{ fontSize: 11, fontWeight: 700, color: "#64748b" }}
-                  >
-                    SPEED:
-                  </span>
-                  {[0.75, 1, 1.25, 1.5].map((speed) => (
+                <div className="pp-speed-group">
+                  <span className="pp-speed-label">Speed:</span>
+                  {[0.75, 1, 1.25, 1.5].map((s) => (
                     <button
-                      key={speed}
-                      onClick={() => setSpeed(speed)}
+                      key={s}
+                      onClick={() => setSpeed(s)}
                       disabled={!isPlayerReady}
-                      className={`pp-yt-control-btn ${
-                        playbackSpeed === speed ? "active" : ""
-                      }`}
+                      className={`pp-yt-btn ${playbackSpeed === s ? "active" : ""}`}
                       style={{ padding: "4px 8px", fontSize: "11px" }}
                     >
-                      {speed}x
+                      {s}x
                     </button>
                   ))}
                 </div>
 
-                <div className="pp-yt-status-chip">
+                <span className="pp-yt-status">
                   {selectedSentence
-                    ? `Shadowing (Sentence ${selectedSentence.orderIndex + 1})`
-                    : "Continuous Playback"}
-                  {" · "}
-                  {formatTime(currentTime)} / {formatTime(duration)}
-                </div>
+                    ? `Shadowing · Sentence ${selectedSentence.orderIndex + 1}`
+                    : "Continuous"}{" "}
+                  · {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
               </div>
             </div>
           ) : (
-            // GRACEFUL LEGACY FALLBACK (Audio + Raw Passage text)
-            <>
+            <div className="pp-card">
               {detail.audioUrl && (
-                <div className="pp-custom-player">
+                <div className="pp-audio-player">
                   <audio
                     ref={audioRef}
                     src={detail.audioUrl}
-                    onTimeUpdate={handleLegacyTimeUpdate}
-                    onLoadedMetadata={handleLegacyLoadedMetadata}
-                    onEnded={handleLegacyEnded}
+                    onTimeUpdate={() => audioRef.current && setLegacyTime(audioRef.current.currentTime)}
+                    onLoadedMetadata={() => audioRef.current && setLegacyDuration(audioRef.current.duration || 0)}
+                    onEnded={() => { setLegacyPlaying(false); setLegacyTime(0) }}
                   />
-                  <button
-                    onClick={toggleLegacyPlay}
-                    className="pp-player-play-btn"
-                    aria-label={legacyPlaying ? "Pause" : "Play"}
-                  >
+                  <button onClick={toggleLegacyPlay} className="pp-audio-play-btn">
                     {legacyPlaying ? "⏸" : "▶"}
                   </button>
-                  <div className="pp-player-progress-container">
+                  <div className="pp-audio-progress">
                     <input
                       type="range"
                       min={0}
                       max={legacyDuration || 100}
                       value={legacyTime}
-                      onChange={handleLegacySliderChange}
-                      className="pp-player-slider"
+                      onChange={(e) => {
+                        const v = parseFloat(e.target.value)
+                        if (audioRef.current) audioRef.current.currentTime = v
+                        setLegacyTime(v)
+                      }}
+                      className="pp-audio-slider"
                     />
-                    <div className="pp-player-timers">
+                    <div className="pp-audio-timers">
                       <span>{formatTime(legacyTime)}</span>
                       <span>{formatTime(legacyDuration)}</span>
                     </div>
                   </div>
                 </div>
               )}
-
-              <div className="pp-passage">
-                <span className="pp-passage__label">Reading Passage</span>
-                <p className="pp-passage__text">{detail.paragraph}</p>
-              </div>
-            </>
+              {detail.paragraph && (
+                <div className="pp-passage-block">
+                  <span className="pp-passage-label">Reading Passage</span>
+                  <p className="pp-passage-text">{detail.paragraph}</p>
+                </div>
+              )}
+            </div>
           )}
 
-          {/* Passage description text at the bottom */}
+          {/* Transcript overview (below video) */}
           {hasVideo && detail.paragraph && (
-            <div className="pp-passage" style={{ marginTop: "16px" }}>
-              <span className="pp-passage__label">
-                Full Topic Transcript Overview
-              </span>
-              <p className="pp-passage__text">{detail.paragraph}</p>
+            <div className="pp-card" style={{ marginTop: 16 }}>
+              <div className="pp-passage-block">
+                <span className="pp-passage-label">Full Transcript Overview</span>
+                <p className="pp-passage-text">{detail.paragraph}</p>
+              </div>
             </div>
           )}
         </div>
 
-        {/* RIGHT COLUMN: Premium Workspace Tabs (Shadowing sentences & Key Vocabulary) */}
-        <div className="pp-detail-right">
-          <div className="pp-workspace-tabs">
+        {/* RIGHT — Workspace tabs */}
+        <div className="pp-card pp-workspace-card">
+          <div className="pp-tabs">
             <button
+              className={`pp-tab-btn ${activeTab === "shadowing" ? "active" : ""}`}
               onClick={() => setActiveTab("shadowing")}
-              className={`pp-tab-btn ${
-                activeTab === "shadowing" ? "active" : ""
-              }`}
             >
-              🎙️ Shadowing Practice
+              🎙️ Shadowing
             </button>
             <button
-              onClick={() => setActiveTab("vocab")}
               className={`pp-tab-btn ${activeTab === "vocab" ? "active" : ""}`}
+              onClick={() => setActiveTab("vocab")}
             >
-              📚 Key Vocabulary ({detail.vocabs.length})
+              📚 Vocabulary ({detail.vocabs.length})
             </button>
           </div>
 
           {activeTab === "shadowing" ? (
-            <div className="pp-shadowing-list">
-              {detail.sentences && detail.sentences.length > 0 ? (
-                detail.sentences.map((sentence) => {
-                  const isSentenceActive = activeSentence?.id === sentence.id
+            detail.sentences?.length > 0 ? (
+              <div className="pp-shadowing-list">
+                {detail.sentences.map((sentence: PronunciationSentenceDto) => {
+                  const isActive = activeSentence?.id === sentence.id
                   const isTranslating = translatingIds[sentence.id]
                   const hasTranslation = !!translations[sentence.id]
 
@@ -477,79 +325,46 @@ function TopicDetail({
                     <div
                       key={sentence.id}
                       onClick={() => playSentence(sentence)}
-                      className={`pp-sentence-row ${
-                        isSentenceActive ? "active" : ""
-                      }`}
+                      className={`pp-sentence-row ${isActive ? "active" : ""}`}
                     >
-                      <div className="pp-sentence-header">
+                      <div className="pp-sentence-meta">
                         <span className="pp-sentence-time">
-                          ⏱ {formatTime(sentence.startTime)} -{" "}
-                          {formatTime(sentence.endTime)}
+                          ⏱ {formatTime(sentence.startTime)} – {formatTime(sentence.endTime)}
                         </span>
                         <button
-                          onClick={(e) =>
-                            handleTranslateSentence(
-                              e,
-                              sentence.id,
-                              sentence.text
-                            )
-                          }
-                          className="pp-sentence-translate-btn"
+                          onClick={(e) => handleTranslate(e, sentence.id, sentence.text)}
+                          className="pp-translate-btn"
                         >
-                          {isTranslating
-                            ? "Translating..."
-                            : hasTranslation
-                            ? "✕ Hide Trans"
-                            : "🌐 Translate"}
+                          {isTranslating ? "..." : hasTranslation ? "✕ Hide" : "🌐 Translate"}
                         </button>
                       </div>
-
-                      <div
-                        className="pp-sentence-text"
-                        style={{
-                          fontSize: "14.5px",
-                          lineHeight: "1.7",
-                          color: "#374151",
-                        }}
-                      >
-                        {renderClickableText(sentence.text)}
+                      <div className="pp-sentence-text">
+                        {renderClickable(sentence.text)}
                       </div>
-
                       {hasTranslation && (
-                        <p className="pp-sentence-translation-text">
-                          {translations[sentence.id]}
-                        </p>
+                        <div className="pp-sentence-translation">{translations[sentence.id]}</div>
                       )}
                     </div>
                   )
-                })
-              ) : (
-                <div className="pp-vocab-empty">
-                  No shadowing sentences synced for this topic yet. You can
-                  still use the Full Transcript view below the video.
-                </div>
-              )}
-            </div>
+                })}
+              </div>
+            ) : (
+              <div className="pp-tab-empty">
+                No sentences synced yet. Use the transcript overview below the video.
+              </div>
+            )
           ) : (
-            // VOCABULARY TAB
-            <>
-              {detail.vocabs.length > 0 ? (
-                <div className="pp-vocab__list">
-                  {detail.vocabs.map((v) => (
-                    <VocabCard key={v.id} vocab={v} />
-                  ))}
-                </div>
-              ) : (
-                <div className="pp-vocab-empty">
-                  No vocabulary lists available.
-                </div>
-              )}
-            </>
+            detail.vocabs.length > 0 ? (
+              <div className="pp-vocab-list">
+                {detail.vocabs.map((v) => <VocabCard key={v.id} vocab={v} />)}
+              </div>
+            ) : (
+              <div className="pp-tab-empty">No vocabulary added for this topic yet.</div>
+            )
           )}
         </div>
       </div>
 
-      {/* Dictionary drawer panel */}
       {dict && (
         <DictionaryPanel
           dict={dict}
@@ -558,145 +373,118 @@ function TopicDetail({
           onSave={saveDict}
         />
       )}
+    </>
+  )
+}
+
+// ─── Skeleton ────────────────────────────────────────────────────────────────
+
+function TopicListSkeleton(): ReactElement {
+  return (
+    <div className="pp-skeleton-grid">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div key={i} className="pp-skeleton-card">
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <div className="pp-skeleton-line" style={{ width: 44, height: 44, borderRadius: 12, flexShrink: 0 }} />
+            <div className="pp-skeleton-line" style={{ height: 18, flex: 1 }} />
+          </div>
+          <div className="pp-skeleton-line" style={{ height: 13, width: "50%" }} />
+        </div>
+      ))}
     </div>
   )
 }
 
-// ── Main page ──────────────────────────────────────────────────────────────
-
-type ViewState =
-  | { type: "list" }
-  | { type: "detail"; id: string }
+// ─── Main Page ───────────────────────────────────────────────────────────────
 
 export default function PronunciationPracticePage(): ReactElement {
-  const [view, setView] = useState<ViewState>({ type: "list" })
-  const [topics, setTopics] = useState<PronunciationTopicListItemDto[]>([])
-  const [detail, setDetail] = useState<PronunciationTopicDetailDto | null>(null)
-  const [isLoading, setIsLoading] = useState(false)
-  const [isDetailLoading, setIsDetailLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
-  const [hasLoadedList, setHasLoadedList] = useState(false)
+  const [selectedId, setSelectedId] = useState<string | null>(null)
 
-  const handleSelectTopic = async (id: string): Promise<void> => {
-    setIsDetailLoading(true)
-    setError(null)
-    try {
-      const data = await getPronunciationTopicDetail(id)
-      setDetail(data)
-      setView({ type: "detail", id })
-    } catch {
-      setError("Unable to load topic details. Please try again.")
-    } finally {
-      setIsDetailLoading(false)
-    }
-  }
+  const { data: topics, isLoading: topicsLoading, error: topicsError } = usePronunciationTopics()
+  const { data: detail, isLoading: detailLoading, error: detailError } = usePronunciationTopicDetail(selectedId)
 
-  const handleBack = (): void => {
-    setView({ type: "list" })
-    setDetail(null)
-  }
-
-  // Load list on mount
-  useEffect(() => {
-    if (view.type === "list" && !hasLoadedList) {
-      setIsLoading(true)
-      setError(null)
-      getPronunciationTopics()
-        .then((data) => {
-          setTopics(data)
-          setHasLoadedList(true)
-        })
-        .catch(() => {
-          setError("Unable to load topics. Please try again.")
-        })
-        .finally(() => {
-          setIsLoading(false)
-        })
-    }
-  }, [view.type, hasLoadedList])
+  const handleBack = () => setSelectedId(null)
 
   return (
     <MainLayout>
-      <div
-        style={{
-          display: "flex",
-          gap: 30,
-          maxWidth: 1200,
-          margin: "0 auto",
-          padding: "30px 20px",
-          alignItems: "flex-start",
-          height: "calc(100vh - 80px)",
-          overflow: "hidden",
-        }}
-      >
-        {/* SIDEBAR */}
-        <GeneralPracticeSidebar />
+      <div className="pp-page-wrapper">
+        <div style={{ display: "flex", gap: 30, maxWidth: 1200, margin: "0 auto", alignItems: "flex-start" }}>
+          {/* Sidebar */}
+          <GeneralPracticeSidebar />
 
-        {/* WORKSPACE CONTENT */}
-        <div
-          style={{
-            flex: 1,
-            minWidth: 0,
-            display: "flex",
-            flexDirection: "column",
-            overflowY: "auto",
-            height: "100%",
-          }}
-        >
-          <div className="pp-container">
-            {/* Page header */}
-            {view.type === "list" && (
-              <div className="pp-header">
-                <div className="pp-header__title-row">
-                  <span className="pp-header__icon">🎙️</span>
-                  <h1 className="pp-header__title">Pronunciation Practice</h1>
-                </div>
-                <p className="pp-header__subtitle">
-                  Choose a passage to practise reading aloud with IPA guide and key vocabulary.
-                </p>
-              </div>
-            )}
+          {/* Main content */}
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="pp-page-container" style={{ maxWidth: "100%", padding: 0 }}>
 
-            {/* Error */}
-            {error && (
-              <div className="pp-error" role="alert">
-                {error}
-              </div>
-            )}
-
-            {/* Loading spinner */}
-            {(isLoading || isDetailLoading) && (
-              <div
-                className="pp-loading"
-                aria-busy="true"
-                aria-label="Loading"
-              >
-                <span className="pp-loading__spinner">⟳</span>
-                Loading…
-              </div>
-            )}
-
-            {/* Topic list */}
-            {!isLoading && !isDetailLoading && view.type === "list" && (
-              <>
-                {topics.length === 0 && hasLoadedList && !error && (
-                  <div className="pp-empty">
-                    <div className="pp-empty__icon">📭</div>
-                    No pronunciation topics available yet. Check back soon!
+              {/* Page header — only on list view */}
+              {!selectedId && (
+                <div className="pp-page-header">
+                  <div className="pp-page-header-icon">🎙️</div>
+                  <div className="pp-page-header-text">
+                    <h1>Pronunciation Practice</h1>
+                    <p>Choose a topic to practise with YouTube shadowing, IPA guide and key vocabulary.</p>
                   </div>
-                )}
-                <div className="pp-topic-grid">
-                  {topics.map((t) => (
-                    <TopicCard key={t.id} topic={t} onSelect={handleSelectTopic} />
-                  ))}
                 </div>
-              </>
-            )}
+              )}
 
-            {/* Topic detail */}
-            {!isDetailLoading && view.type === "detail" && detail && (
-              <TopicDetail detail={detail} onBack={handleBack} />
-            )}
+              {/* Error */}
+              {(topicsError || detailError) && (
+                <div className="pp-error-card">
+                  ⚠️ {(topicsError || detailError) instanceof Error
+                    ? (topicsError || detailError)!.message
+                    : "Unable to load data. Please try again."}
+                </div>
+              )}
+
+              {/* List view */}
+              {!selectedId && (
+                <>
+                  {topicsLoading ? (
+                    <TopicListSkeleton />
+                  ) : topics && topics.length === 0 ? (
+                    <div className="pp-empty-state">
+                      <div className="pp-empty-state-icon">📭</div>
+                      <h3>No topics yet</h3>
+                      <p>Pronunciation topics will appear here once they're added.</p>
+                    </div>
+                  ) : (
+                    <div className="pp-topic-grid">
+                      {(topics ?? []).map((topic) => (
+                        <button
+                          key={topic.id}
+                          id={`pronunciation-topic-${topic.id}`}
+                          onClick={() => setSelectedId(topic.id)}
+                          className="pp-topic-card"
+                        >
+                          <div className="pp-topic-card-header">
+                            <div className="pp-topic-card-icon-wrap">🎙️</div>
+                            <span className="pp-topic-card-title">{topic.title}</span>
+                          </div>
+                          <div className="pp-topic-card-meta">
+                            <span className="pp-topic-card-badge">
+                              📚 {topic.vocabCount} vocabularies
+                            </span>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </>
+              )}
+
+              {/* Detail view */}
+              {selectedId && (
+                detailLoading ? (
+                  <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 300, color: "#64748b", fontSize: 15 }}>
+                    <span style={{ marginRight: 8, display: "inline-block", animation: "pp-shimmer 1.4s infinite" }}>⟳</span>
+                    Loading topic…
+                  </div>
+                ) : detail ? (
+                  <TopicDetail detail={detail} onBack={handleBack} />
+                ) : null
+              )}
+
+            </div>
           </div>
         </div>
       </div>
