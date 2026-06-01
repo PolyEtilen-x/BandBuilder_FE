@@ -585,11 +585,6 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
 }
 
-.account-summary-card.sticky-sidebar {
-  position: sticky;
-  top: 24px;
-}
-
 .account-summary-card h3 {
   font-size: 16px;
   font-weight: 800;

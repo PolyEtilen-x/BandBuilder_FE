@@ -40,6 +40,14 @@ export default function ResultExplainPage() {
     retry: false
   })
 
+  // Fetch detailed Graded attempt data to get the exact bandScore
+  const { data: attemptDetail } = useQuery({
+    queryKey: ["attempt-detail", attemptId],
+    queryFn: () => userApi.getAttemptDetail(attemptId!).then((res: any) => res.data),
+    enabled: !!attemptId && attemptId !== "undefined",
+    staleTime: 1000 * 60 * 5,
+  })
+
   // Filter explanations based on user choice
   const filteredExplanations = explanationData?.explanations.filter((item) => {
     const isCorrect = item.userAnswer?.trim().toLowerCase() === item.correctAnswer.trim().toLowerCase()
@@ -58,6 +66,22 @@ export default function ResultExplainPage() {
     },
     { correct: 0, incorrect: 0 }
   ) || { correct: 0, incorrect: 0 }
+
+  const attemptScore = useMemo(() => {
+    if (attemptDetail) {
+      const score = attemptDetail.bandScore != null ? attemptDetail.bandScore : (attemptDetail.score != null ? attemptDetail.score : null)
+      if (score != null) {
+        return {
+          score,
+          isBand: attemptDetail.bandScore != null && attemptDetail.bandScore <= 9
+        }
+      }
+    }
+    // Fallback: calculate raw percentage accuracy from explanations list
+    const total = explanationData?.explanations.length || 0
+    const rawScore = total > 0 ? Math.round((stats.correct / total) * 100) : 0
+    return { score: rawScore, isBand: false }
+  }, [attemptDetail, explanationData, stats.correct])
 
   const recommendations = useMemo(() => {
     if (stats.incorrect === 0) {
@@ -127,9 +151,8 @@ export default function ResultExplainPage() {
               <section className="profile-hero-card">
                 <div className="user-profile-info">
                   <div className="profile-avatar-wrapper">
-                    <span className="visualizer-score-large">
-                      {explanationData.skill.slice(0, 3)}
-                    </span>
+                    <span className="visualizer-score-large">{attemptScore.score}</span>
+                    <span className="visualizer-unit-sub">{attemptScore.isBand ? "Band" : "%"}</span>
                   </div>
 
                   <div className="user-meta-info">

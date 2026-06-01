@@ -57,7 +57,7 @@ export default function PracticeSidebar() {
     // Click another skill → change skill, keep same mode
     if (s !== activeSkill) {
       setSidebar({ skill: s, mode, subSection: mode === "single" ? 1 : null })
-      navigate(`/practice/${s}`)
+      navigate(`/practice-ielts/${s}`)
     }
   }
 
@@ -65,7 +65,7 @@ export default function PracticeSidebar() {
     if (s !== activeSkill) {
       // if click skill = no active → active and change page
       setSidebar({ skill: s, mode: m, subSection: m === "single" ? 1 : null })
-      navigate(`/practice/${s}`)
+      navigate(`/practice-ielts/${s}`)
     } else {
       setSidebar({
         skill: activeSkill,
