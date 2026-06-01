@@ -47,12 +47,8 @@ export const routes = [
     element: <ProtectedRoute><ResultPage /></ProtectedRoute>,
   },
   {
-    path: "/practice-ielts/explain/:attemptId",
+    path: "/practice-ielts/explain/:id",
     element: <ProtectedRoute><ResultExplainPage /></ProtectedRoute>,
-  },
-  {
-    path: "/practice-ielts/review/:id",
-    element: <ProtectedRoute><PracticeTestPage mode="review" /></ProtectedRoute>,
   },
   {
     path: "/materials/vocabulary",

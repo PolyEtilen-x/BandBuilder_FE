@@ -241,7 +241,7 @@ export default function ResultPage() {
                     className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl font-bold text-[11px] transition-all shadow-sm hover:shadow cursor-pointer select-none border-0"
                   >
                     <Sparkles size={13} className="text-indigo-200 animate-pulse" />
-                    {attemptDetail?.hasExplanation 
+                    {attemptDetail?.hasExplanation
                       ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
                       : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
                     }
@@ -330,7 +330,7 @@ export default function ResultPage() {
 
               <div className="action-buttons">
                 <button
-                  onClick={() => navigate(`/practice-ielts/review/${id}`)}
+                  onClick={() => navigate(`/practice-ielts/explain/${id}`)}
                   className="primary-btn cursor-pointer"
                 >
                   {t("result_btn_review")} <ChevronRight size={18} />
