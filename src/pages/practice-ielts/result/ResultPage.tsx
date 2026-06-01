@@ -330,7 +330,7 @@ export default function ResultPage() {
 
               <div className="action-buttons">
                 <button
-                  onClick={() => navigate(`/practice-ielts/explain/${id}`)}
+                  onClick={() => attemptId && navigate(`/practice-ielts/explain/${attemptId}`)}
                   className="primary-btn cursor-pointer"
                 >
                   {t("result_btn_review")} <ChevronRight size={18} />
