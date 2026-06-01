@@ -7,6 +7,7 @@ import { practiceApi } from "@/api/practice.api"
 import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
+import { PageContainer, Section, Card } from "@/components/ui/LayoutPrimitives"
 
 import "./ResultPage.css"
 
@@ -139,15 +140,62 @@ export default function ResultPage() {
     return { total, correct, wrong, skipped, score, isBand: false, details }
   }, [attemptDetail, examData, answers, sidebar.skill, attemptSkill])
 
+  const recommendations = useMemo(() => {
+    if (!stats) return []
+    const acc = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0
+    if (acc >= 80) {
+      return language === "vi"
+        ? [
+            "Xuất sắc! Bạn đã làm chủ hoàn toàn kỹ năng này với độ chính xác cực cao.",
+            "Hãy duy trì phong độ bằng cách thử thách các đề thi đầy đủ (Full Practice Tests) dưới áp lực phòng thi thật.",
+            "Xem lại các lỗi sai nhỏ (nếu có) để triệt tiêu hoàn toàn những sơ suất không đáng có."
+          ]
+        : [
+            "Outstanding! You have fully mastered this skill with exceptional accuracy.",
+            "Keep up the momentum by challenging yourself with Full Practice Tests under real exam conditions.",
+            "Review minor slip-ups (if any) to eliminate any remaining careless mistakes."
+          ]
+    } else if (acc >= 50) {
+      return language === "vi"
+        ? [
+            "Kỹ năng nền tảng khá tốt, tuy nhiên bạn vẫn có thể mắc phải các 'bẫy thông tin' (distractors) hoặc hiểu sai ý từ khóa.",
+            "Nên tập trung luyện tập lại các dạng câu hỏi có phần trăm chính xác thấp nhất ở bảng dưới.",
+            "Sử dụng tính năng 'Giải thích bằng AI' bên dưới để sửa đổi tư duy chọn đáp án."
+          ]
+        : [
+            "Your foundation is decent, but you are still prone to information distractors or misinterpreting keywords.",
+            "Focus on practicing the specific question types that yielded the lowest accuracy in the metrics below.",
+            "Use the 'Explain with AI' feature to correct and refine your answer selection mindset."
+          ]
+    } else {
+      return language === "vi"
+        ? [
+            "Kỹ năng hiện tại cần được củng cố kỹ lưỡng hơn về cả từ vựng và phương pháp định vị thông tin.",
+            "Hãy học thuộc các bộ từ khóa và đồng nghĩa (synonyms) trước khi tiếp tục làm đề tính giờ.",
+            "Kích hoạt 'Giải thích bằng AI' cho các câu sai để nắm rõ lộ trình tư duy giải câu hỏi."
+          ]
+        : [
+            "Your current skill level requires rigorous reinforcement of both vocabulary and keyword-matching strategies.",
+            "Learn essential synonyms and paraphrasing groups before taking more timed quizzes.",
+            "Activate 'Explain with AI' on incorrect answers to fully comprehend the logic pathway."
+          ]
+    }
+  }, [stats, language])
+
   if (isLoading) return (
     <MainLayout>
-      <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
+      <div className="loading-state-wrapper">
+        <div className="loader-ring"></div>
+        <p className="loading-text">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</p>
+      </div>
     </MainLayout>
   )
 
   if (!stats || stats.total === 0) return (
     <MainLayout>
-      <div className="error-state">
+      <div className="error-state-card">
+        <XCircle size={48} className="error-icon" />
+        <h3>{language === "vi" ? "Thiếu Dữ Liệu" : "Missing Data"}</h3>
         <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
         <button onClick={() => navigate("/practice-ielts")} className="primary-btn" style={{ width: "auto" }}>
           {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
@@ -158,132 +206,181 @@ export default function ResultPage() {
 
   return (
     <MainLayout>
-      <div className="result-page-container">
+      <PageContainer className="result-page-container">
 
-        {/* LEFT CONTENT */}
-        <div className="result-left-column">
+        {/* LEFT CONTENT COLUMN */}
+        <Section className="result-left-column">
           
-          {/* HEADER INFO BLOCK (Skill Badge + Page Title + Page Subtitle) */}
-          <div className="overview-card">
-            <span className="skill-badge">
-              {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
-            </span>
-            {attemptId && (
-              <span className="attempt-id">
-                Attempt ID: {attemptId.slice(0, 8)}...
-              </span>
-            )}
-            <h1 className="page-title">
-              {stats.isBand
-                ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
-                : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
-              }
-            </h1>
-            <p className="page-subtitle">
-              {stats.isBand
-                ? `${language === "vi" ? "Kết quả bài thi đạt Band Score:" : "Achieved Band Score:"} ${stats.score}`
-                : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác." : "accuracy."}`
-              }
-            </p>
+          {/* 1. RESULT OVERVIEW SECTION */}
+          <Card className="overview-card-premium">
+            <div className="overview-flex">
+              <div className="overview-text-section">
+                <div className="badge-row">
+                  <span className="skill-badge-premium">
+                    {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
+                  </span>
+                  {attemptId && (
+                    <span className="attempt-badge">
+                      ID: {attemptId.slice(0, 8)}
+                    </span>
+                  )}
+                </div>
+                
+                <h1 className="result-main-title">
+                  {stats.isBand
+                    ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
+                    : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
+                  }
+                </h1>
+                
+                <p className="result-main-subtitle">
+                  {stats.isBand
+                    ? `${language === "vi" ? "Bạn đã đạt mức điểm Band Score cực kỳ ấn tượng:" : "You achieved an impressive Band Score of:"} ${stats.score}`
+                    : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác hoàn hảo." : "perfect accuracy."}`
+                  }
+                </p>
 
-            {/* STAT ROW */}
-            <div className="stat-grid">
-              <div className="stat-item correct">
-                <div className="stat-label">{t("result_correct")}</div>
-                <div className="stat-number correct">{stats.correct}</div>
+                {/* STAT GRID */}
+                <div className="stat-grid-premium">
+                  <div className="stat-box correct">
+                    <span className="stat-box-label">{t("result_correct")}</span>
+                    <span className="stat-box-value">{stats.correct}</span>
+                  </div>
+                  <div className="stat-box wrong">
+                    <span className="stat-box-label">{t("result_wrong")}</span>
+                    <span className="stat-box-value">{stats.wrong}</span>
+                  </div>
+                  <div className="stat-box skipped">
+                    <span className="stat-box-label">{t("result_skipped")}</span>
+                    <span className="stat-box-value">{stats.skipped}</span>
+                  </div>
+                </div>
               </div>
-              <div className="stat-item wrong">
-                <div className="stat-label">{t("result_wrong")}</div>
-                <div className="stat-number wrong">{stats.wrong}</div>
-              </div>
-              <div className="stat-item skipped">
-                <div className="stat-label">{t("result_skipped")}</div>
-                <div className="stat-number skipped">{stats.skipped}</div>
+
+              {/* ARC/CIRCLE SCORE VISUALIZER */}
+              <div className="score-visualizer-container">
+                <div className="score-ring-outer">
+                  <div className="score-ring-inner">
+                    <span className="visualizer-score">{stats.score}</span>
+                    <span className="visualizer-unit">{stats.isBand ? "Band" : "%"}</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
+          </Card>
 
-          {/* PERF BY TYPE DETAILS CARD */}
-          <div className="details-card">
-            <div className="details-header">
+          {/* 2. PERFORMANCE METRICS (BY QUESTION TYPE) */}
+          <Card className="metrics-card-premium">
+            <div className="section-header-premium">
+              <HelpCircle size={20} className="section-icon" />
               <h2>{t("result_perf_by_type")}</h2>
             </div>
-            <div className="details-list">
-              {stats.details.map((item: any, idx: number) => (
-                <div key={idx} className="details-item">
-                  <div className="item-info">
-                    <div className="item-icon">
-                      <HelpCircle size={20} />
+            <div className="metrics-list-premium">
+              {stats.details.map((item: any, idx: number) => {
+                const percent = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0
+                return (
+                  <div key={idx} className="metric-row-premium">
+                    <div className="metric-item-meta">
+                      <span className="metric-type-title">{item.type.replace(/_/g, " ")}</span>
+                      <span className="metric-question-count">
+                        {item.total} {language === "vi" ? "câu hỏi" : "questions"}
+                      </span>
                     </div>
-                    <div>
-                      <div className="item-type">{item.type.replace(/_/g, " ")}</div>
-                      <div className="item-count">{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
-                    </div>
-                  </div>
-                  <div className="item-progress-container">
-                    <div className="progress-text">
-                      <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
-                      <div className="progress-label">{t("result_accuracy")}</div>
-                    </div>
-                    <div className="progress-bar-bg">
-                      <div
-                        className="progress-bar-fill"
-                        style={{ width: `${(item.correct / item.total) * 100}%` }}
-                      />
+                    
+                    <div className="metric-progress-wrapper">
+                      <div className="progress-bar-background">
+                        <div
+                          className={`progress-bar-fill-premium ${percent >= 80 ? 'high' : percent >= 50 ? 'medium' : 'low'}`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
+                      <span className="progress-percent-label">{percent}%</span>
                     </div>
                   </div>
+                )
+              })}
+            </div>
+          </Card>
+
+          {/* 3. RECOMMENDATIONS SECTION (Lộ trình học tập) */}
+          <Card className="recommendations-card-premium">
+            <div className="section-header-premium">
+              <Sparkles size={20} className="section-icon text-amber-500" />
+              <h2>{language === "vi" ? "Lộ Trình Cải Thiện Cá Nhân Hóa" : "Personalized Improvement Plan"}</h2>
+            </div>
+            <p className="rec-intro">
+              {language === "vi"
+                ? "Dựa trên phân tích kết quả bài thi của bạn, Giám khảo AI khuyên bạn nên thực hiện các bước sau:"
+                : "Based on your test session analytics, the AI Examiner recommends following these customized steps:"}
+            </p>
+            <div className="recommendation-list">
+              {recommendations.map((rec, i) => (
+                <div key={i} className="recommendation-item">
+                  <div className="recommendation-bullet">{i + 1}</div>
+                  <p className="recommendation-text">{rec}</p>
                 </div>
               ))}
             </div>
-          </div>
+          </Card>
 
-          {/* DETAILED ANSWERS KEY */}
-          <div className="details-card">
-            <div className="details-header">
-              <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+          {/* 4. QUESTION REVIEW SECTION */}
+          <Card className="review-card-premium">
+            <div className="review-card-header-flex">
+              <div className="review-header-title">
+                <h2>{language === "vi" ? "Xem Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+                <p className="review-header-subtitle">
+                  {language === "vi"
+                    ? "Nhấp vào nút giải thích AI bên cạnh để nhận phân tích chi tiết của từng đáp án."
+                    : "Click the AI explanation button next to any question to parse detailed errors."}
+                </p>
+              </div>
+              
               {attemptId && (
                 <button
                   onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
-                  className="primary-btn"
-                  style={{ width: "auto" }}
+                  className="primary-glow-btn"
                 >
-                  <Sparkles size={13} className="animate-pulse" />
-                  {attemptDetail?.hasExplanation
-                    ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
-                    : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
-                  }
+                  <Sparkles size={16} />
+                  <span>
+                    {attemptDetail?.hasExplanation
+                      ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
+                      : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                    }
+                  </span>
                 </button>
               )}
             </div>
             
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div className="questions-review-list">
               {attemptDetail ? (
                 (attemptDetail.answers || []).map((ans: any, idx: number) => (
-                  <div key={idx} className="question-item">
-                    <div className="question-info">
-                      <div className={`question-number ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : ''}`}>
+                  <div key={idx} className="review-question-row">
+                    <div className="q-row-left">
+                      <div className={`q-number-badge ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
                         {idx + 1}
                       </div>
-                      <div>
-                        <div className="question-title">
-                          {language === "vi" ? `Câu hỏi: ${ans.questionId.replace(/_/g, " ")}` : `Question: ${ans.questionId.replace(/_/g, " ")}`}
+                      
+                      <div className="q-meta-content">
+                        <div className="q-title-label">
+                          {language === "vi" ? `Câu hỏi ${idx + 1}` : `Question ${idx + 1}`}
+                          <span className="q-id-sub">({ans.questionId.replace(/_/g, " ")})</span>
                         </div>
-                        <div className="answer-row">
+                        <div className="q-user-ans">
                           {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
-                          <span className={`answer-badge ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
-                            {ans.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
+                          <span className={`ans-val ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
+                            {ans.userAnswer || (language === "vi" ? "Chưa trả lời" : "Not answered")}
                           </span>
                         </div>
                       </div>
                     </div>
 
-                    <div style={{ textAlign: "right" }}>
-                      <div style={{ fontSize: "13px", color: "#64748b" }}>
-                        {language === "vi" ? "Đáp án đúng: " : "Correct Answer: "}
-                        <span style={{ fontWeight: 800, color: "#1e293b" }}>{ans.correctAnswer || "N/A"}</span>
+                    <div className="q-row-right">
+                      <div className="q-correct-ans">
+                        <span className="correct-ans-label">{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</span>
+                        <span className="correct-ans-value">{ans.correctAnswer || "N/A"}</span>
                       </div>
                       {ans.timeSpentSec != null && (
-                        <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                        <div className="time-spent-badge">
                           ⏱️ {ans.timeSpentSec}s
                         </div>
                       )}
@@ -291,62 +388,102 @@ export default function ResultPage() {
                   </div>
                 ))
               ) : (
-                <p style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>
+                <p className="no-answers-placeholder">
                   {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
                 </p>
               )}
             </div>
-          </div>
-        </div>
+          </Card>
 
-        {/* RIGHT SIDEBAR COLUMN */}
-        <div className="result-right-column">
-          <div className="analysis-panel">
-            <div className="analysis-header">
-              <div className="item-icon">
-                <Clock size={20} />
+          {/* 5. UPGRADE CTA CARD */}
+          <Card className="upgrade-cta-card-premium">
+            <div className="upgrade-cta-glow-overlay"></div>
+            <div className="upgrade-cta-layout">
+              <div className="upgrade-cta-text">
+                <div className="premium-label-badge">
+                  <Sparkles size={13} />
+                  <span>{language === "vi" ? "MỞ KHÓA TRỌN VẸN" : "PREMIUM ACCESS"}</span>
+                </div>
+                <h3>{language === "vi" ? "Bứt Phá Band Điểm Cùng BandBuilder Premium" : "Accelerate Your Score with BandBuilder Premium"}</h3>
+                <p>
+                  {language === "vi"
+                    ? "Mở khóa giải thích AI không giới hạn, phân tích phát âm chuyên sâu từng âm tiết và lộ trình sửa lỗi ngữ pháp tự động."
+                    : "Unlock unlimited expert AI answer breakdowns, detailed pronunciation AI voice analysis, and automated grammar correction pathways."}
+                </p>
+                <div className="cta-benefit-grid">
+                  <div className="benefit-item">
+                    <CheckCircle2 size={16} />
+                    <span>{language === "vi" ? "Vô hạn phân tích AI" : "Unlimited AI analytics"}</span>
+                  </div>
+                  <div className="benefit-item">
+                    <CheckCircle2 size={16} />
+                    <span>{language === "vi" ? "Chữa nói chi tiết 1-1" : "1-on-1 speaking feedback"}</span>
+                  </div>
+                  <div className="benefit-item">
+                    <CheckCircle2 size={16} />
+                    <span>{language === "vi" ? "Tối ưu hóa từ vựng nâng band" : "Band-boosting vocabulary tools"}</span>
+                  </div>
+                </div>
               </div>
-              <div className="analysis-label">{t("result_analysis")}</div>
+              <div className="upgrade-cta-action">
+                <button onClick={() => navigate("/upgrade")} className="upgrade-cta-btn-animated">
+                  <span>{language === "vi" ? "Nâng Cấp Ngay" : "Upgrade Premium"}</span>
+                  <ChevronRight size={16} />
+                </button>
+              </div>
+            </div>
+          </Card>
+        </Section>
+
+        {/* RIGHT COLUMN SIDEBAR */}
+        <Section className="result-right-column">
+          
+          {/* ACCURACY CIRCLE PANEL */}
+          <Card className="sticky-analysis-panel">
+            <div className="analysis-header-flex">
+              <Clock size={18} className="analysis-header-icon" />
+              <div className="analysis-header-label">{t("result_analysis")}</div>
             </div>
 
-            <div className="band-score">
-              {stats.score}
-              <span className="band-score-unit">
-                {stats.isBand ? "Band" : "%"}
-              </span>
+            <div className="score-large-display">
+              <span className="score-number-large">{stats.score}</span>
+              <span className="score-unit-large">{stats.isBand ? "Band" : "%"}</span>
             </div>
-            <p className="analysis-text">
+            
+            <p className="analysis-paragraph">
               {t("result_analysis_text")}
             </p>
 
-            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+            <div className="sidebar-action-buttons">
               <button
                 onClick={() => attemptId && navigate(`/practice-ielts/explain/${attemptId}`)}
-                className="primary-btn"
+                className="sidebar-primary-btn"
               >
-                {t("result_btn_review")} <ChevronRight size={18} />
+                <span>{t("result_btn_review")}</span>
+                <ChevronRight size={16} />
               </button>
               <button
                 onClick={() => {
                   clearAnswers()
                   navigate("/practice-ielts")
                 }}
-                className="secondary-btn"
+                className="sidebar-secondary-btn"
               >
                 {t("result_btn_more")}
               </button>
             </div>
-          </div>
+          </Card>
 
-          <div className="tip-card">
-            <h3 className="tip-title">{t("result_tip_title")}</h3>
-            <p className="tip-text">
+          {/* SIDEBAR TIPS */}
+          <Card className="sidebar-tip-card">
+            <h3 className="tip-header-title">💡 {t("result_tip_title")}</h3>
+            <p className="tip-paragraph-content">
               {t("result_tip_text")}
             </p>
-          </div>
-        </div>
+          </Card>
+        </Section>
 
-      </div>
+      </PageContainer>
     </MainLayout>
   )
 }
