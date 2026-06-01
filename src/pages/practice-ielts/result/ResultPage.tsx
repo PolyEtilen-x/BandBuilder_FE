@@ -8,7 +8,7 @@ import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 
-import "./ResultPage.css"
+import styles from "./ResultPage.module.css"
 
 export default function ResultPage() {
   const location = useLocation()
@@ -141,15 +141,15 @@ export default function ResultPage() {
 
   if (isLoading) return (
     <MainLayout>
-      <div className="loading-state">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
+      <div className={styles.loadingState}>{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</div>
     </MainLayout>
   )
 
   if (!stats || stats.total === 0) return (
     <MainLayout>
-      <div className="error-state">
+      <div className={styles.errorState}>
         <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
-        <button onClick={() => navigate("/practice-ielts")} className="back-home-btn cursor-pointer">
+        <button onClick={() => navigate("/practice-ielts")} className={styles.primaryBtn} style={{ width: "auto" }}>
           {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
         </button>
       </div>
@@ -158,203 +158,194 @@ export default function ResultPage() {
 
   return (
     <MainLayout>
-      <div className="result-page-container">
-        <main className="result-main">
-          <div className="result-grid">
+      <div className={styles.pageWrapper}>
 
-            {/* LEFT CONTENT */}
-            <div className="result-left-column">
-              <div className="overview-card">
-                <div className="overview-content">
-                  <h1 className="overview-title">
-                    {stats.isBand
-                      ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
-                      : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
-                    }
-                  </h1>
-                  <p className="overview-subtitle">
-                    {stats.isBand
-                      ? `${language === "vi" ? "Kết quả bài thi đạt Band Score:" : "Achieved Band Score:"} ${stats.score}`
-                      : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác." : "accuracy."}`
-                    }
-                  </p>
+        {/* LEFT CONTENT */}
+        <div className={styles.leftColumn}>
+          
+          {/* HEADER INFO BLOCK (Skill Badge + Page Title + Page Subtitle) */}
+          <div className={styles.sectionCard}>
+            <span className={styles.skillBadge}>
+              {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
+            </span>
+            {attemptId && (
+              <span className={styles.attemptId}>
+                Attempt ID: {attemptId.slice(0, 8)}...
+              </span>
+            )}
+            <h1 className={styles.pageTitle}>
+              {stats.isBand
+                ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
+                : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
+              }
+            </h1>
+            <p className={styles.pageSubtitle}>
+              {stats.isBand
+                ? `${language === "vi" ? "Kết quả bài thi đạt Band Score:" : "Achieved Band Score:"} ${stats.score}`
+                : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác." : "accuracy."}`
+              }
+            </p>
 
-                  <div className="stats-grid">
-                    <div className="stat-box correct">
-                      <div className="stat-label">{t("result_correct")}</div>
-                      <div className="stat-value">{stats.correct}</div>
-                    </div>
-                    <div className="stat-box wrong">
-                      <div className="stat-label">{t("result_wrong")}</div>
-                      <div className="stat-value">{stats.wrong}</div>
-                    </div>
-                    <div className="stat-box skipped">
-                      <div className="stat-label">{t("result_skipped")}</div>
-                      <div className="stat-value">{stats.skipped}</div>
-                    </div>
-                  </div>
-                </div>
+            {/* STAT ROW */}
+            <div className={styles.statGrid}>
+              <div className={`${styles.statItem} ${styles.correct}`}>
+                <div className={styles.statLabel}>{t("result_correct")}</div>
+                <div className={`${styles.statNumber} ${styles.correct}`}>{stats.correct}</div>
               </div>
-
-              <div className="details-card">
-                <div className="details-header">
-                  <h2>{t("result_perf_by_type")}</h2>
-                </div>
-                <div className="details-list">
-                  {stats.details.map((item: any, idx: number) => (
-                    <div key={idx} className="details-item">
-                      <div className="item-info">
-                        <div className="item-icon">
-                          <HelpCircle size={20} />
-                        </div>
-                        <div className="item-text">
-                          <div className="item-type">{item.type.replace(/_/g, " ")}</div>
-                          <div className="item-count">{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
-                        </div>
-                      </div>
-                      <div className="item-progress-container">
-                        <div className="progress-text">
-                          <div className="progress-percent">{Math.round((item.correct / item.total) * 100)}%</div>
-                          <div className="progress-label">{t("result_accuracy")}</div>
-                        </div>
-                        <div className="progress-bar-bg">
-                          <div
-                            className="progress-bar-fill"
-                            style={{ width: `${(item.correct / item.total) * 100}%` }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className={`${styles.statItem} ${styles.wrong}`}>
+                <div className={styles.statLabel}>{t("result_wrong")}</div>
+                <div className={`${styles.statNumber} ${styles.wrong}`}>{stats.wrong}</div>
               </div>
-
-              {/* DETAILED ANSWERS KEY */}
-              <div className="details-card" style={{ marginTop: "24px" }}>
-                <div className="details-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", marginBottom: "20px" }}>
-                  <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
-                  {attemptId && (
-                    <button
-                      onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
-                      className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl font-bold text-[11px] transition-all shadow-sm hover:shadow cursor-pointer select-none border-0"
-                    >
-                      <Sparkles size={13} className="text-indigo-200 animate-pulse" />
-                      {attemptDetail?.hasExplanation
-                        ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
-                        : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
-                      }
-                    </button>
-                  )}
-                </div>
-                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                  {attemptDetail ? (
-                    (attemptDetail.answers || []).map((ans: any, idx: number) => (
-                      <div key={idx} style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        padding: "16px 20px",
-                        borderRadius: "16px",
-                        background: ans.isCorrect === true ? "rgba(22, 163, 74, 0.05)" : ans.isCorrect === false ? "rgba(220, 38, 38, 0.05)" : "var(--color-surface-muted)",
-                        border: `1px solid ${ans.isCorrect === true ? "rgba(22, 163, 74, 0.15)" : ans.isCorrect === false ? "rgba(220, 38, 38, 0.15)" : "var(--color-border)"}`,
-                        transition: "all 0.2s"
-                      }}>
-                        <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
-                          <div style={{
-                            width: "36px",
-                            height: "36px",
-                            borderRadius: "50%",
-                            background: ans.isCorrect === true ? "var(--color-success)" : ans.isCorrect === false ? "var(--color-danger)" : "var(--color-text-secondary)",
-                            color: "#fff",
-                            display: "flex",
-                            justifyContent: "center",
-                            alignItems: "center",
-                            fontWeight: 800,
-                            fontSize: "14px"
-                          }}>
-                            {idx + 1}
-                          </div>
-                          <div>
-                            <div style={{ fontSize: "14px", fontWeight: 700, color: "#1e293b", textTransform: "capitalize" }}>
-                              {language === "vi" ? `Câu hỏi: ${ans.questionId.replace(/_/g, " ")}` : `Question: ${ans.questionId.replace(/_/g, " ")}`}
-                            </div>
-                            <div style={{ fontSize: "13px", color: "#64748b", marginTop: "4px" }}>
-                              {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
-                              <span style={{ fontWeight: 700, color: ans.isCorrect === true ? "#15803d" : ans.isCorrect === false ? "#b91c1c" : "#475569" }}>
-                                {ans.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
-                              </span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div style={{ textAlign: "right" }}>
-                          <div style={{ fontSize: "13px", color: "#64748b" }}>
-                            {language === "vi" ? "Đáp án đúng: " : "Correct Answer: "}
-                            <span style={{ fontWeight: 800, color: "#1e293b" }}>{ans.correctAnswer || "N/A"}</span>
-                          </div>
-                          {ans.timeSpentSec != null && (
-                            <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
-                              ⏱️ {ans.timeSpentSec}s
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <p style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>
-                      {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
-                    </p>
-                  )}
-                </div>
+              <div className={`${styles.statItem} ${styles.skipped}`}>
+                <div className={styles.statLabel}>{t("result_skipped")}</div>
+                <div className={`${styles.statNumber} ${styles.skipped}`}>{stats.skipped}</div>
               </div>
             </div>
-
-            {/* RIGHT SIDEBAR */}
-            <div className="result-right-column">
-              <div className="analysis-card">
-                <div className="analysis-header">
-                  <div className="analysis-icon-box">
-                    <Clock size={20} color="#60a5fa" />
-                  </div>
-                  <div className="analysis-label">{t("result_analysis")}</div>
-                </div>
-
-                <div className="score-display">
-                  {stats.score}{stats.isBand ? <span className="score-unit" style={{ fontSize: "1.8rem", marginLeft: 6 }}>Band</span> : <span className="score-unit">%</span>}
-                </div>
-                <p className="analysis-text">
-                  {t("result_analysis_text")}
-                </p>
-
-                <div className="action-buttons">
-                  <button
-                    onClick={() => attemptId && navigate(`/practice-ielts/explain/${attemptId}`)}
-                    className="primary-btn cursor-pointer"
-                  >
-                    {t("result_btn_review")} <ChevronRight size={18} />
-                  </button>
-                  <button
-                    onClick={() => {
-                      clearAnswers()
-                      navigate("/practice-ielts")
-                    }}
-                    className="secondary-btn cursor-pointer"
-                  >
-                    {t("result_btn_more")}
-                  </button>
-                </div>
-              </div>
-
-              <div className="tip-card">
-                <h3 className="tip-title">{t("result_tip_title")}</h3>
-                <p className="tip-text">
-                  {t("result_tip_text")}
-                </p>
-              </div>
-            </div>
-
           </div>
-        </main>
+
+          {/* PERF BY TYPE DETAILS CARD */}
+          <div className={styles.sectionCard}>
+            <div className={styles.detailsHeader}>
+              <h2>{t("result_perf_by_type")}</h2>
+            </div>
+            <div className={styles.detailsList}>
+              {stats.details.map((item: any, idx: number) => (
+                <div key={idx} className={styles.detailsItem}>
+                  <div className={styles.itemInfo}>
+                    <div className={styles.itemIcon}>
+                      <HelpCircle size={20} />
+                    </div>
+                    <div>
+                      <div className={styles.itemType}>{item.type.replace(/_/g, " ")}</div>
+                      <div className={styles.itemCount}>{item.total} {language === "vi" ? "câu hỏi" : "questions"}</div>
+                    </div>
+                  </div>
+                  <div className={styles.itemProgressContainer}>
+                    <div className={styles.progressText}>
+                      <div className={styles.progressPercent}>{Math.round((item.correct / item.total) * 100)}%</div>
+                      <div className={styles.progressLabel}>{t("result_accuracy")}</div>
+                    </div>
+                    <div className={styles.progressBarBg}>
+                      <div
+                        className={styles.progressBarFill}
+                        style={{ width: `${(item.correct / item.total) * 100}%` }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* DETAILED ANSWERS KEY */}
+          <div className={styles.sectionCard}>
+            <div className={styles.detailsHeader}>
+              <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+              {attemptId && (
+                <button
+                  onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
+                  className={styles.primaryBtn}
+                  style={{ width: "auto" }}
+                >
+                  <Sparkles size={13} className="animate-pulse" />
+                  {attemptDetail?.hasExplanation
+                    ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
+                    : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                  }
+                </button>
+              )}
+            </div>
+            
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {attemptDetail ? (
+                (attemptDetail.answers || []).map((ans: any, idx: number) => (
+                  <div key={idx} className={styles.questionItem}>
+                    <div className={styles.questionInfo}>
+                      <div className={`${styles.questionNumber} ${ans.isCorrect === true ? styles.correct : ans.isCorrect === false ? styles.wrong : ""}`}>
+                        {idx + 1}
+                      </div>
+                      <div>
+                        <div className={styles.questionTitle}>
+                          {language === "vi" ? `Câu hỏi: ${ans.questionId.replace(/_/g, " ")}` : `Question: ${ans.questionId.replace(/_/g, " ")}`}
+                        </div>
+                        <div className={styles.answerRow}>
+                          {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
+                          <span className={`${styles.answerBadge} ${ans.isCorrect === true ? styles.correct : ans.isCorrect === false ? styles.wrong : styles.skipped}`}>
+                            {ans.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontSize: "13px", color: "#64748b" }}>
+                        {language === "vi" ? "Đáp án đúng: " : "Correct Answer: "}
+                        <span style={{ fontWeight: 800, color: "#1e293b" }}>{ans.correctAnswer || "N/A"}</span>
+                      </div>
+                      {ans.timeSpentSec != null && (
+                        <div style={{ fontSize: "11px", color: "#94a3b8", marginTop: "4px" }}>
+                          ⏱️ {ans.timeSpentSec}s
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <p style={{ textAlign: "center", color: "#94a3b8", padding: "20px" }}>
+                  {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* RIGHT SIDEBAR COLUMN */}
+        <div className={styles.rightColumn}>
+          <div className={styles.analysisPanel}>
+            <div className={styles.analysisHeader}>
+              <div className={styles.itemIcon}>
+                <Clock size={20} />
+              </div>
+              <div className={styles.analysisLabel}>{t("result_analysis")}</div>
+            </div>
+
+            <div className={styles.bandScore}>
+              {stats.score}
+              <span className={styles.bandScoreUnit}>
+                {stats.isBand ? "Band" : "%"}
+              </span>
+            </div>
+            <p className={styles.analysisText}>
+              {t("result_analysis_text")}
+            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              <button
+                onClick={() => attemptId && navigate(`/practice-ielts/explain/${attemptId}`)}
+                className={styles.primaryBtn}
+              >
+                {t("result_btn_review")} <ChevronRight size={18} />
+              </button>
+              <button
+                onClick={() => {
+                  clearAnswers()
+                  navigate("/practice-ielts")
+                }}
+                className={styles.secondaryBtn}
+              >
+                {t("result_btn_more")}
+              </button>
+            </div>
+          </div>
+
+          <div className={styles.tipCard}>
+            <h3 className={styles.tipTitle}>{t("result_tip_title")}</h3>
+            <p className={styles.tipText}>
+              {t("result_tip_text")}
+            </p>
+          </div>
+        </div>
+
       </div>
     </MainLayout>
   )

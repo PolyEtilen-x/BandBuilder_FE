@@ -1,0 +1,417 @@
+/* ==========================================================================
+   CSS MODULE FOR PRACTICE RESULTS PAGE
+   ========================================================================== */
+
+.pageWrapper {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: var(--space-6);
+  padding: var(--space-8) var(--space-10);
+  align-items: start;
+}
+
+@media (max-width: 1024px) {
+  .pageWrapper {
+    grid-template-columns: 1fr;
+    padding: var(--space-4);
+  }
+}
+
+.leftColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.rightColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.sectionCard {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+
+.skillBadge {
+  display: inline-block;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  background: #eff6ff;
+  color: #1e40af;
+  margin-bottom: var(--space-3);
+  text-transform: uppercase;
+}
+
+.attemptId {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-left: var(--space-2);
+}
+
+.pageTitle {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: var(--space-2) 0 var(--space-1);
+}
+
+.pageSubtitle {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+/* STAT ROW */
+.statGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+  margin: var(--space-4) 0;
+}
+
+@media (max-width: 640px) {
+  .statGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.statItem {
+  border-radius: var(--radius-md);
+  padding: var(--space-4);
+  border: 1px solid;
+  display: flex;
+  flex-direction: column;
+}
+
+.statItem.correct {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.statItem.wrong {
+  background: #fef2f2;
+  border-color: #fecaca;
+}
+
+.statItem.skipped {
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+}
+
+.statLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.statNumber {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+}
+
+.statNumber.correct { color: var(--color-success); }
+.statNumber.wrong   { color: var(--color-danger); }
+.statNumber.skipped { color: var(--color-text-primary); }
+
+/* QUESTION ITEM CARD */
+.questionItem {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: var(--space-4) var(--space-5);
+  margin-bottom: var(--space-3);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.questionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.questionInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.questionNumber {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--color-surface-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+  flex-shrink: 0;
+}
+
+.questionNumber.correct {
+  background: var(--color-success);
+  color: #fff;
+}
+
+.questionNumber.wrong {
+  background: var(--color-danger);
+  color: #fff;
+}
+
+.questionTitle {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.answerRow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.answerBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.answerBadge.wrong {
+  background: #fee2e2;
+  color: #b91c1c;
+}
+
+.answerBadge.correct {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+/* ANALYSIS PANEL (cột phải) */
+.analysisPanel {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  position: sticky;
+  top: var(--space-6);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.analysisHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.analysisLabel {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.bandScore {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.bandScoreUnit {
+  font-size: var(--font-size-lg);
+  color: var(--color-primary);
+  margin-left: var(--space-1);
+}
+
+.analysisText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.6;
+}
+
+/* DETAILS PERF */
+.detailsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.detailsHeader h2 {
+  font-size: var(--font-size-md);
+  font-weight: var(--font-weight-bold);
+  margin: 0;
+}
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.detailsItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+}
+
+.itemInfo {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.itemIcon {
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+}
+
+.itemType {
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+}
+
+.itemCount {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.itemProgressContainer {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.progressText {
+  text-align: right;
+}
+
+.progressPercent {
+  font-weight: var(--font-weight-bold);
+}
+
+.progressLabel {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+}
+
+.progressBarBg {
+  width: 80px;
+  height: 6px;
+  background: var(--color-border);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progressBarFill {
+  height: 100%;
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+
+/* BUTTONS */
+.primaryBtn {
+  background: var(--color-primary);
+  color: #fff;
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  width: 100%;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  transition: opacity 150ms ease;
+}
+
+.primaryBtn:hover {
+  opacity: 0.9;
+}
+
+.secondaryBtn {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  color: var(--color-text-primary);
+  padding: var(--space-3) var(--space-5);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  font-size: var(--font-size-sm);
+  width: 100%;
+  cursor: pointer;
+  transition: background 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.secondaryBtn:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.tipCard {
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+}
+
+.tipTitle {
+  font-weight: var(--font-weight-bold);
+  margin-bottom: var(--space-2);
+}
+
+.tipText {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  line-height: 1.5;
+}
+
+/* LOADING & ERROR */
+.loadingState {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-secondary);
+}
+
+.errorState {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+  gap: var(--space-4);
+  color: var(--color-text-secondary);
+}
