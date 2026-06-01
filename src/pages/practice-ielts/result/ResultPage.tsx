@@ -265,8 +265,8 @@ export default function ResultPage() {
                         alignItems: "center",
                         padding: "16px 20px",
                         borderRadius: "16px",
-                        background: ans.isCorrect === true ? "#f0fdf4" : ans.isCorrect === false ? "#fef2f2" : "#f8fafc",
-                        border: `1px solid ${ans.isCorrect === true ? "#bbf7d0" : ans.isCorrect === false ? "#fecaca" : "#e2e8f0"}`,
+                        background: ans.isCorrect === true ? "rgba(22, 163, 74, 0.05)" : ans.isCorrect === false ? "rgba(220, 38, 38, 0.05)" : "var(--color-surface-muted)",
+                        border: `1px solid ${ans.isCorrect === true ? "rgba(22, 163, 74, 0.15)" : ans.isCorrect === false ? "rgba(220, 38, 38, 0.15)" : "var(--color-border)"}`,
                         transition: "all 0.2s"
                       }}>
                         <div style={{ display: "flex", gap: "16px", alignItems: "center" }}>
@@ -274,7 +274,7 @@ export default function ResultPage() {
                             width: "36px",
                             height: "36px",
                             borderRadius: "50%",
-                            background: ans.isCorrect === true ? "#22c55e" : ans.isCorrect === false ? "#ef4444" : "#94a3b8",
+                            background: ans.isCorrect === true ? "var(--color-success)" : ans.isCorrect === false ? "var(--color-danger)" : "var(--color-text-secondary)",
                             color: "#fff",
                             display: "flex",
                             justifyContent: "center",
