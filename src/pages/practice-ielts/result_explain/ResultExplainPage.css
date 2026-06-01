@@ -1,20 +1,35 @@
-/* ==========================================================================
-   AI ANSWER EXPLANATIONS WORKSPACE (ResultExplainPage) STYLES
-   ========================================================================== */
-
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 .explain-page-container {
@@ -580,7 +595,8 @@
   gap: 20px;
 }
 
-.explain-text-row, .tip-box-row {
+.explain-text-row,
+.tip-box-row {
   display: flex;
   gap: 12px;
 }
@@ -665,6 +681,13 @@
 
 /* PULSE ANIMATION UTILITY */
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: .5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: .5;
+  }
 }
