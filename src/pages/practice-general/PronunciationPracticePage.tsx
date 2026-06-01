@@ -1,4 +1,4 @@
-import { useState, useRef, ReactElement } from "react"
+import { useState, useRef, useEffect, ReactElement } from "react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import GeneralPracticeSidebar from "@/components/general_practice/GeneralPracticeSidebar"
 import DictionaryPanel from "@/components/dictionary/DictionaryPanel"
@@ -134,6 +134,20 @@ function TopicDetail({
     isPlayerReady, selectedSentence, activeSentence,
     playSentence, clearSelectedSentence, togglePlay, setSpeed, toggleLoop,
   } = useYoutubeShadowing(detail.videoUrl, detail.sentences || [])
+
+  const listRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    if (activeSentence && activeTab === "shadowing") {
+      const activeEl = listRef.current?.querySelector(`.pp-sentence-row[data-sentence-id="${activeSentence.id}"]`)
+      if (activeEl) {
+        activeEl.scrollIntoView({
+          behavior: "smooth",
+          block: "nearest",
+        })
+      }
+    }
+  }, [activeSentence, activeTab])
 
   // Legacy audio player (fallback)
   const audioRef = useRef<HTMLAudioElement | null>(null)
@@ -315,7 +329,7 @@ function TopicDetail({
 
           {activeTab === "shadowing" ? (
             detail.sentences?.length > 0 ? (
-              <div className="pp-shadowing-list">
+              <div ref={listRef} className="pp-shadowing-list">
                 {detail.sentences.map((sentence: PronunciationSentenceDto) => {
                   const isActive = activeSentence?.id === sentence.id
                   const isTranslating = translatingIds[sentence.id]
@@ -324,6 +338,7 @@ function TopicDetail({
                   return (
                     <div
                       key={sentence.id}
+                      data-sentence-id={sentence.id}
                       onClick={() => playSentence(sentence)}
                       className={`pp-sentence-row ${isActive ? "active" : ""}`}
                     >
