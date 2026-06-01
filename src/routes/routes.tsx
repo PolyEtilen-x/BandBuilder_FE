@@ -1,4 +1,5 @@
 import { lazy } from "react"
+import { ProtectedRoute } from "@/guard/route.guard"
 const Home = lazy(() => import("@/pages/home/home"))
 const PracticePage = lazy(() => import("@/pages/practice-ielts/PracticePage"))
 const PracticeTestPage = lazy(() => import("@/pages/practice-ielts/PracticeTestPage"))
@@ -6,18 +7,14 @@ const CallWithAiPage = lazy(() => import("@/pages/call/CallWithAiPage"))
 const LoginSuccess = lazy(() => import("@/pages/loginsuccess"))
 const VocabPage = lazy(() => import("@/pages/materials/VocabPage"))
 const GrammarPage = lazy(() => import("@/pages/materials/GrammarPage"))
-import { ProtectedRoute } from "@/guard/route.guard"
 const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
 const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))
-const ResultPage = lazy(() => import("@/pages/practice-ielts/ResultPage"))
+const ResultPage = lazy(() => import("@/pages/practice-ielts/result/ResultPage"))
+const ResultExplainPage = lazy(() => import("@/pages/practice-ielts/result_explain/ResultExplainPage"))
 const RoadmapSetupPage = lazy(() => import("@/pages/roadmap/RoadmapSetupPage"))
 const RoadmapPage = lazy(() => import("@/pages/roadmap/RoadmapPage"))
-const PronunciationPracticePage = lazy(
-  () => import("@/pages/practice-general/PronunciationPracticePage")
-)
-const SampleWritingsPage = lazy(
-  () => import("@/pages/practice-general/SampleWritingsPage")
-)
+const PronunciationPracticePage = lazy(() => import("@/pages/practice-general/PronunciationPracticePage"))
+const SampleWritingsPage = lazy(() => import("@/pages/practice-general/SampleWritingsPage"))
 const AdminPage = lazy(() => import("@/pages/admin/AdminPage"))
 
 export const routes = [
@@ -48,6 +45,10 @@ export const routes = [
   {
     path: "/practice-ielts/result/:id",
     element: <ProtectedRoute><ResultPage /></ProtectedRoute>,
+  },
+  {
+    path: "/practice-ielts/explain/:attemptId",
+    element: <ProtectedRoute><ResultExplainPage /></ProtectedRoute>,
   },
   {
     path: "/practice-ielts/review/:id",

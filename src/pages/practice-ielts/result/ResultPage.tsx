@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react"
 import { useLocation, useNavigate, useParams, useSearchParams } from "react-router-dom"
 import { usePracticeStore } from "@/services/practice/practice.store"
-import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight } from "lucide-react"
+import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight, Sparkles } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
 import { practiceApi } from "@/api/practice.api"
 import { userApi } from "@/api/user.api"
@@ -233,8 +233,20 @@ export default function ResultPage() {
 
             {/* DETAILED ANSWERS KEY */}
             <div className="details-card" style={{ marginTop: "24px" }}>
-              <div className="details-header" style={{ borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", marginBottom: "20px" }}>
+              <div className="details-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", borderBottom: "1px solid #f1f5f9", paddingBottom: "16px", marginBottom: "20px" }}>
                 <h2>{language === "vi" ? "Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+                {attemptId && (
+                  <button
+                    onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
+                    className="flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white rounded-xl font-bold text-[11px] transition-all shadow-sm hover:shadow cursor-pointer select-none border-0"
+                  >
+                    <Sparkles size={13} className="text-indigo-200 animate-pulse" />
+                    {attemptDetail?.hasExplanation 
+                      ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
+                      : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                    }
+                  </button>
+                )}
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
                 {attemptDetail ? (

@@ -9,5 +9,8 @@ export const userApi = {
     apiClient.patch<UserProfileDTO["user"]>("/user/profile", data),
 
   getAttemptDetail: (attemptId: string) =>
-    apiClient.get<any>(`/user/attempts/${attemptId}`)
+    apiClient.get<any>(`/user/attempts/${attemptId}`),
+
+  getAttemptExplanation: (attemptId: string) =>
+    apiClient.post<any>(`/user/attempts/${attemptId}/explain`)
 }
