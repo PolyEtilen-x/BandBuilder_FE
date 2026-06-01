@@ -143,7 +143,7 @@ function TopicDetail({
       if (activeEl) {
         activeEl.scrollIntoView({
           behavior: "smooth",
-          block: "nearest",
+          block: "center",
         })
       }
     }
