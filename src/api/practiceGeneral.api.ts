@@ -232,3 +232,73 @@ export async function deleteWritingSampleEssayAdmin(
   return res.data
 }
 
+// ── Admin Pronunciation Vocabs & Sentences CRUD API ───────────────────────
+
+export async function updatePronunciationTopicAdmin(
+  id: string,
+  dto: { title?: string; paragraph?: string; videoUrl?: string | null; audioUrl?: string | null }
+): Promise<PronunciationTopicDetailDto> {
+  const res = await apiClient.patch<PronunciationTopicDetailDto>(
+    `/admin/pronunciation/topics/${id}`,
+    dto
+  )
+  return res.data
+}
+
+export async function createPronunciationVocabAdmin(
+  topicId: string,
+  dto: { word: string; ipa: string; meaning: string; audioUrl?: string; example: string; exampleTranslation: string }
+): Promise<any> {
+  const res = await apiClient.post(`/admin/pronunciation/topics/${topicId}/vocabs`, dto)
+  return res.data
+}
+
+export async function updatePronunciationVocabAdmin(
+  id: string,
+  dto: any
+): Promise<any> {
+  const res = await apiClient.patch(`/admin/pronunciation/vocabs/${id}`, dto)
+  return res.data
+}
+
+export async function deletePronunciationVocabAdmin(
+  id: string
+): Promise<any> {
+  const res = await apiClient.delete(`/admin/pronunciation/vocabs/${id}`)
+  return res.data
+}
+
+export async function createPronunciationSentenceAdmin(
+  topicId: string,
+  dto: { text: string; startTime: number; endTime: number; orderIndex: number }
+): Promise<any> {
+  const res = await apiClient.post(`/admin/pronunciation/topics/${topicId}/sentences`, dto)
+  return res.data
+}
+
+export async function updatePronunciationSentenceAdmin(
+  id: string,
+  dto: any
+): Promise<any> {
+  const res = await apiClient.patch(`/admin/pronunciation/sentences/${id}`, dto)
+  return res.data
+}
+
+export async function deletePronunciationSentenceAdmin(
+  id: string
+): Promise<any> {
+  const res = await apiClient.delete(`/admin/pronunciation/sentences/${id}`)
+  return res.data
+}
+
+export async function scrapeYoutubeTranscriptAdmin(
+  videoUrl: string
+): Promise<{ title: string; paragraph: string; sentences: any[] }> {
+  const res = await apiClient.post<{ title: string; paragraph: string; sentences: any[] }>(
+    "/admin/pronunciation/scrape-transcript",
+    { videoUrl }
+  )
+  return res.data
+}
+
+

@@ -49,6 +49,7 @@ export interface ShadowingTopic {
   id: string
   title: string
   videoUrl: string
+  audioUrl?: string
   vocabCount: number
   sentencesCount: number
   paragraph: string

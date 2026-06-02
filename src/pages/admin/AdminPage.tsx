@@ -11,8 +11,9 @@ import {
 import DashboardTab from "./components/DashboardTab"
 import TestsTab from "./components/TestsTab"
 import PackagesTab from "./components/PackagesTab"
-import ShadowingTab from "./components/ShadowingTab"
+import ShadowingTab from "./components/shadowing/ShadowingTab"
 import UsersTab from "./components/UsersTab"
+import WritingSamplesTab from "./components/writing/WritingSamplesTab"
 import {
   getPronunciationTopics,
   createPronunciationTopicAdmin,
@@ -28,10 +29,11 @@ import {
   Youtube, 
   Users, 
   ArrowLeft,
-  BellRing
+  BellRing,
+  FileText
 } from "lucide-react"
 
-type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users"
+type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users" | "writing"
 
 // Custom hook for responsive layout resizing
 export function useWindowSize() {
@@ -255,6 +257,7 @@ export default function AdminPage() {
         title: newTopic.title,
         paragraph: newTopic.paragraph,
         videoUrl: newTopic.videoUrl,
+        audioUrl: newTopic.audioUrl,
         sentences: normalizedSentences,
         vocabs: [] // từ vựng khởi tạo rỗng, thêm bằng CRUD từ vựng sau
       })
@@ -510,6 +513,14 @@ export default function AdminPage() {
             </button>
 
             <button
+              onClick={() => setActiveTab("writing")}
+              style={styles.navItem(activeTab === "writing")}
+            >
+              <FileText size={16} style={{ flexShrink: 0 }} />
+              IELTS Writing Samples
+            </button>
+
+            <button
               onClick={() => setActiveTab("users")}
               style={styles.navItem(activeTab === "users")}
             >
@@ -588,6 +599,10 @@ export default function AdminPage() {
               users={users} 
               onAdjustCredits={handleAdjustCredits} 
             />
+          )}
+
+          {activeTab === "writing" && (
+            <WritingSamplesTab />
           )}
         </div>
       </main>

@@ -1,0 +1,396 @@
+/* src/pages/admin/components/writing/writing-admin.css */
+
+.writing-admin-container {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+
+.writing-admin-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  border-bottom: 1px solid #e5e7eb;
+  padding-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.writing-admin-title {
+  font-size: 22px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.writing-admin-subtitle {
+  font-size: 13px;
+  color: #6b7280;
+  margin-top: 4px;
+  margin-bottom: 0;
+}
+
+.writing-admin-create-btn {
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 700;
+  padding: 10px 16px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: opacity 0.15s ease;
+}
+
+.writing-admin-create-btn:hover {
+  opacity: 0.9;
+}
+
+.writing-admin-create-btn:disabled {
+  background: #cbd5e1;
+  cursor: not-allowed;
+}
+
+.writing-admin-filter-bar {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.writing-admin-search-wrapper {
+  position: relative;
+  flex: 1;
+  min-width: 220px;
+  max-width: 400px;
+}
+
+.writing-admin-search-input {
+  width: 100%;
+  height: 36px;
+  background: #f9fafb;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding-left: 36px;
+  padding-right: 12px;
+  font-size: 13px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.writing-admin-search-input:focus {
+  border-color: #2563eb;
+}
+
+.writing-admin-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.writing-admin-filter-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.writing-admin-filter-btn:hover {
+  background: #f9fafb;
+}
+
+.writing-admin-filter-btn-active {
+  border-color: #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+}
+
+.writing-admin-grid-list {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+@media (max-width: 1024px) {
+  .writing-admin-grid-list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .writing-admin-grid-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+.writing-admin-topic-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.03);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 16px;
+  cursor: pointer;
+  text-align: left;
+  width: 100%;
+  box-sizing: border-box;
+  transition: all 0.15s ease;
+}
+
+.writing-admin-topic-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.writing-admin-topic-card-active {
+  border: 2px solid #2563eb;
+}
+
+.writing-admin-badge-task-1 {
+  font-size: 10px;
+  font-weight: 750;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.writing-admin-badge-task-2 {
+  font-size: 10px;
+  font-weight: 750;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #f5f3ff;
+  color: #5b21b6;
+  border: 1px solid #ddd6fe;
+}
+
+.writing-admin-badge-category {
+  font-size: 11px;
+  color: #6b7280;
+  font-weight: 600;
+}
+
+.writing-admin-card-prompt {
+  font-size: 13px;
+  color: #374151;
+  margin: 0;
+  line-height: 1.5;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.writing-admin-card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-top: 1px solid #f3f4f6;
+  padding-top: 12px;
+}
+
+.writing-admin-count-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.writing-admin-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 9999;
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  color: #1f2937;
+  border-radius: 12px;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 320px;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.writing-admin-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(15, 23, 42, 0.3);
+  backdrop-filter: blur(4px);
+  z-index: 1500;
+  display: flex;
+  align-items: center;
+  justifyContent: center;
+  padding: 16px;
+}
+
+.writing-admin-modal-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.writing-admin-modal-header {
+  padding: 18px 24px;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.writing-admin-modal-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: 75vh;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+.writing-admin-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.writing-admin-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #4b5563;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.writing-admin-text-input {
+  height: 38px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.15s ease;
+}
+
+.writing-admin-text-input:focus {
+  border-color: #2563eb;
+}
+
+.writing-admin-textarea {
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  font-size: 13px;
+  outline: none;
+  line-height: 1.5;
+  min-height: 100px;
+  resize: vertical;
+  font-family: inherit;
+  transition: border-color 0.15s ease;
+}
+
+.writing-admin-textarea:focus {
+  border-color: #2563eb;
+}
+
+.writing-admin-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: #ffffff;
+  border-left: 1px solid #e5e7eb;
+  width: 100%;
+  max-width: 680px;
+  height: 100%;
+  z-index: 1200;
+  display: flex;
+  flex-direction: column;
+  box-shadow: -10px 0 30px -5px rgba(0, 0, 0, 0.06);
+  box-sizing: border-box;
+}
+
+.writing-admin-essay-card {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.writing-admin-badge-band-high {
+  font-size: 11px;
+  font-weight: 750;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+}
+
+.writing-admin-badge-band-mid {
+  font-size: 11px;
+  font-weight: 750;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #eff6ff;
+  color: #1e40af;
+  border: 1px solid #bfdbfe;
+}
+
+.writing-admin-badge-band-low {
+  font-size: 11px;
+  font-weight: 750;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background: #fcf8e3;
+  color: #8a6d3b;
+  border: 1px solid #faebcc;
+}
