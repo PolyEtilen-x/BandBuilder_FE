@@ -39,11 +39,23 @@ export interface PronunciationTopicDetailDto {
 
 export type WritingTaskType = "TASK_1" | "TASK_2"
 
+export interface EssayAnalysis {
+  taskAchievement?: number
+  coherenceCohesion?: number
+  lexicalResource?: number
+  grammaticalRange?: number
+  strengths?: string[]
+  improvements?: string[]
+  overallComment?: string
+}
+
 export interface WritingSampleTopicListItemDto {
   id: string
   taskType: WritingTaskType
   category: string
-  promptPreview: string
+  prompt: string
+  imageUrl: string | null
+  essayCount: number
 }
 
 export interface WritingEssayDto {
@@ -51,7 +63,7 @@ export interface WritingEssayDto {
   bandScore: number
   essayText: string
   essayTranslation: string
-  analysis: Record<string, unknown> | null
+  analysis: EssayAnalysis | null
 }
 
 export interface WritingSampleTopicDetailDto {
