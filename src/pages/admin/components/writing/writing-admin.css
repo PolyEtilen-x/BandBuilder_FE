@@ -258,7 +258,7 @@
   z-index: 1500;
   display: flex;
   align-items: center;
-  justifyContent: center;
+  justify-content: center;
   padding: 16px;
 }
 
