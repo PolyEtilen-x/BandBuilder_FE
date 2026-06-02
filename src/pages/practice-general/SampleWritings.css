@@ -889,6 +889,85 @@
   font-weight: 500;
 }
 
+/* Band-boosting Vocab Section */
+.sw-ai-vocab-section {
+  background: #ffffff;
+  border: 1px solid var(--color-border-light);
+  border-radius: var(--radius-md);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.sw-ai-heading--vocab {
+  color: #7c3aed;
+  border-bottom-color: rgba(124, 58, 237, 0.2);
+}
+
+.sw-ai-vocab-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+
+@media (min-width: 640px) {
+  .sw-ai-vocab-grid {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+}
+
+.sw-ai-vocab-item {
+  background: #fbf9ff;
+  border: 1px solid #ede9fe;
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  transition: all var(--transition-smooth);
+}
+
+.sw-ai-vocab-item:hover {
+  transform: translateY(-2px);
+  border-color: #c084fc;
+  box-shadow: 0 4px 12px rgba(124, 58, 237, 0.08);
+}
+
+.sw-ai-vocab-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 8px;
+  flex-wrap: wrap;
+}
+
+.sw-ai-vocab-phrase {
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #7c3aed;
+  background: #f5f3ff;
+  padding: 2px 8px;
+  border-radius: 6px;
+}
+
+.sw-ai-vocab-meaning {
+  font-size: 12px;
+  font-weight: 700;
+  color: #047857;
+}
+
+.sw-ai-vocab-context {
+  margin: 0;
+  font-size: 12.5px;
+  line-height: 1.5;
+  color: var(--color-text-gray);
+  font-style: italic;
+}
+
+.sw-ai-vocab-context strong {
+  font-style: normal;
+  color: var(--color-text-dark);
+  font-weight: 700;
+}
+
+
 /* Sidebar (Desktop Panels) */
 .sw-sidebar {
   display: flex;

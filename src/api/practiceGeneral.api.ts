@@ -15,7 +15,10 @@ export interface PronunciationVocabDto {
 export interface PronunciationTopicListItemDto {
   id: string
   title: string
+  paragraph: string
+  videoUrl: string | null
   vocabCount: number
+  sentencesCount: number
 }
 
 export interface PronunciationSentenceDto {
@@ -39,6 +42,12 @@ export interface PronunciationTopicDetailDto {
 
 export type WritingTaskType = "TASK_1" | "TASK_2"
 
+export interface KeyVocabularyItem {
+  phrase: string
+  meaning: string
+  context: string
+}
+
 export interface EssayAnalysis {
   taskAchievement?: number
   coherenceCohesion?: number
@@ -47,7 +56,9 @@ export interface EssayAnalysis {
   strengths?: string[]
   improvements?: string[]
   overallComment?: string
+  keyVocabulary?: KeyVocabularyItem[]
 }
+
 
 export interface WritingSampleTopicListItemDto {
   id: string
@@ -125,3 +136,99 @@ export async function getWritingSampleTopicDetail(
   )
   return res.data
 }
+
+// ── Admin Pronunciation CRUD API ───────────────────────────────────────────
+
+/**
+ * Create a new pronunciation topic (admin).
+ */
+export async function createPronunciationTopicAdmin(
+  dto: {
+    title: string
+    paragraph: string
+    videoUrl?: string
+    audioUrl?: string
+    vocabs?: any[]
+    sentences?: any[]
+  }
+): Promise<PronunciationTopicDetailDto> {
+  const res = await apiClient.post<PronunciationTopicDetailDto>(
+    "/admin/pronunciation/topics",
+    dto
+  )
+  return res.data
+}
+
+/**
+ * Delete a pronunciation topic (admin).
+ */
+export async function deletePronunciationTopicAdmin(
+  id: string
+): Promise<{ success: boolean; message: string }> {
+  const res = await apiClient.delete<{ success: boolean; message: string }>(
+    `/admin/pronunciation/topics/${id}`
+  )
+  return res.data
+}
+
+// ── Admin Writing Samples CRUD API ─────────────────────────────────────────
+
+export interface CreateWritingSampleTopicDto {
+  taskType: "TASK_1" | "TASK_2"
+  category: string
+  prompt: string
+  imageUrl?: string
+}
+
+export interface CreateWritingSampleEssayDto {
+  bandScore: number
+  essayText: string
+  essayTranslation: string
+  analysis?: any
+}
+
+export async function createWritingSampleTopicAdmin(
+  dto: CreateWritingSampleTopicDto
+): Promise<any> {
+  const res = await apiClient.post("/admin/writing-samples/topics", dto)
+  return res.data
+}
+
+export async function updateWritingSampleTopicAdmin(
+  id: string,
+  dto: Partial<CreateWritingSampleTopicDto>
+): Promise<any> {
+  const res = await apiClient.patch(`/admin/writing-samples/topics/${id}`, dto)
+  return res.data
+}
+
+export async function deleteWritingSampleTopicAdmin(
+  id: string
+): Promise<any> {
+  const res = await apiClient.delete(`/admin/writing-samples/topics/${id}`)
+  return res.data
+}
+
+export async function createWritingSampleEssayAdmin(
+  topicId: string,
+  dto: CreateWritingSampleEssayDto
+): Promise<any> {
+  const res = await apiClient.post(`/admin/writing-samples/topics/${topicId}/essays`, dto)
+  return res.data
+}
+
+export async function updateWritingSampleEssayAdmin(
+  id: string,
+  dto: Partial<CreateWritingSampleEssayDto>
+): Promise<any> {
+  const res = await apiClient.patch(`/admin/writing-samples/essays/${id}`, dto)
+  return res.data
+}
+
+export async function deleteWritingSampleEssayAdmin(
+  id: string
+): Promise<any> {
+  const res = await apiClient.delete(`/admin/writing-samples/essays/${id}`)
+  return res.data
+}
+

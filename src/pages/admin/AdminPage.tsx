@@ -13,6 +13,11 @@ import TestsTab from "./components/TestsTab"
 import PackagesTab from "./components/PackagesTab"
 import ShadowingTab from "./components/ShadowingTab"
 import UsersTab from "./components/UsersTab"
+import {
+  getPronunciationTopics,
+  createPronunciationTopicAdmin,
+  deletePronunciationTopicAdmin
+} from "@/api/practiceGeneral.api"
 
 import logoImg from "@/assets/logo.png"
 
@@ -58,6 +63,20 @@ export default function AdminPage() {
       setToastMessage(null)
     }, 3000)
   }
+
+  useEffect(() => {
+    if (activeTab === "shadowing") {
+      const loadTopics = async () => {
+        try {
+          const data = await getPronunciationTopics()
+          setTopics(data as any)
+        } catch (e: any) {
+          showToast("Lỗi khi tải danh sách bài phát âm: " + e.message)
+        }
+      }
+      loadTopics()
+    }
+  }, [activeTab])
 
   // ==================================================================
   // MOCK DATA INITIALIZATION
@@ -163,26 +182,7 @@ export default function AdminPage() {
     { id: "p4", name: "Gói VIP Custom", price: 900000, credits: 2500, bonus: 600, isActive: false, sortOrder: 4 },
   ])
 
-  const [topics, setTopics] = useState<ShadowingTopic[]>([
-    {
-      id: "sh1",
-      title: "IELTS Speaking Part 1 - Job & Career Shadowing",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      vocabCount: 5,
-      sentencesCount: 12,
-      paragraph: "Working in the digital era poses multiple challenges. A successful professional needs robust adaptability and continuous learning tools. Shadowing high-quality resources bridges the conversational fluency gap.",
-      sentences: []
-    },
-    {
-      id: "sh2",
-      title: "Environment, Pollution and Climate Change Vocabulary",
-      videoUrl: "https://www.youtube.com/embed/dQw4w9WgXcQ",
-      vocabCount: 8,
-      sentencesCount: 16,
-      paragraph: "Protecting our fragile biosphere requires rapid legislative interventions. Greenhouse emissions have surged in industrial areas, triggering severe ecological imbalances worldwide.",
-      sentences: []
-    }
-  ])
+  const [topics, setTopics] = useState<ShadowingTopic[]>([])
 
   const [users, setUsers] = useState<UserAdmin[]>([
     { id: "u1", name: "Nguyễn Hoàng Việt", email: "viet.nguyen@gmail.com", role: "STUDENT", balance: 350, joinDate: "2026-05-01" },
@@ -241,20 +241,41 @@ export default function AdminPage() {
     }
   }
 
-  const handleAddTopic = (newTopic: Omit<ShadowingTopic, "id" | "vocabCount" | "sentencesCount">) => {
-    const created: ShadowingTopic = {
-      ...newTopic,
-      id: `sh-${Date.now().toString().slice(-6)}`,
-      vocabCount: 5,
-      sentencesCount: newTopic.sentences.length
+  const handleAddTopic = async (newTopic: Omit<ShadowingTopic, "id" | "vocabCount" | "sentencesCount">) => {
+    try {
+      // Chuẩn hóa mảng sentences để gửi lên API backend
+      const normalizedSentences = newTopic.sentences.map(s => ({
+        text: s.text,
+        startTime: s.startTime,
+        endTime: s.endTime,
+        orderIndex: s.orderIndex
+      }))
+
+      await createPronunciationTopicAdmin({
+        title: newTopic.title,
+        paragraph: newTopic.paragraph,
+        videoUrl: newTopic.videoUrl,
+        sentences: normalizedSentences,
+        vocabs: [] // từ vựng khởi tạo rỗng, thêm bằng CRUD từ vựng sau
+      })
+
+      const data = await getPronunciationTopics()
+      setTopics(data as any)
+      showToast(`Đã tạo học liệu shadowing từ YouTube thành công!`)
+    } catch (e: any) {
+      showToast(`Lỗi khi tạo học liệu phát âm: ${e.message || e}`)
     }
-    setTopics(prev => [created, ...prev])
-    showToast(`Đã tạo học liệu shadowing từ YouTube thành công!`)
   }
 
-  const handleDeleteTopic = (id: string) => {
-    setTopics(prev => prev.filter(t => t.id !== id))
-    showToast(`Đã xoá học liệu phát âm.`)
+  const handleDeleteTopic = async (id: string) => {
+    try {
+      await deletePronunciationTopicAdmin(id)
+      const data = await getPronunciationTopics()
+      setTopics(data as any)
+      showToast(`Đã xoá học liệu phát âm thành công.`)
+    } catch (e: any) {
+      showToast(`Lỗi khi xóa học liệu phát âm: ${e.message || e}`)
+    }
   }
 
   const handleAdjustCredits = (userId: string, amount: number, type: "BONUS" | "REFUND", reason: string) => {

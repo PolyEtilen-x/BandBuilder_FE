@@ -180,6 +180,29 @@ function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElemen
           </div>
         )}
       </div>
+      
+      {analysis.keyVocabulary && analysis.keyVocabulary.length > 0 && (
+        <div className="sw-ai-vocab-section">
+          <span className="sw-ai-heading sw-ai-heading--vocab">
+            <Sparkles size={13} style={{ marginRight: 6 }} /> Band-Boosting Vocabulary & Collocations
+          </span>
+          <div className="sw-ai-vocab-grid">
+            {analysis.keyVocabulary.map((item, idx) => (
+              <div key={idx} className="sw-ai-vocab-item">
+                <div className="sw-ai-vocab-header">
+                  <span className="sw-ai-vocab-phrase">{item.phrase}</span>
+                  <span className="sw-ai-vocab-meaning">{item.meaning}</span>
+                </div>
+                {item.context && (
+                  <p className="sw-ai-vocab-context">
+                    <strong>Context:</strong> "{item.context}"
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {analysis.overallComment && (
         <div className="sw-ai-overall">
