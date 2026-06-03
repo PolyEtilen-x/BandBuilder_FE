@@ -28,7 +28,9 @@ export default function EditProfileModal({ open, onClose, initialData }: Props) 
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    updateProfile({ fullName, avatarUrl }, {
+    const trimmedName = fullName.trim()
+    if (!trimmedName) return
+    updateProfile({ fullName: trimmedName, avatarUrl: avatarUrl.trim() }, {
       onSuccess: () => {
         onClose()
       }

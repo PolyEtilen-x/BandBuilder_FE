@@ -6,14 +6,13 @@ import {
   Transaction,
   PracticeTest,
   CreditPackage,
-  ShadowingTopic,
-  UserAdmin
+  ShadowingTopic
 } from "./types"
 import DashboardTab from "./components/DashboardTab"
 import TestsTab from "./components/TestsTab"
 import PackagesTab from "./components/PackagesTab"
 import ShadowingTab from "./components/shadowing/ShadowingTab"
-import UsersTab from "./components/UsersTab"
+import UsersTab from "./components/user/UsersTab"
 import WritingSamplesTab from "./components/writing/WritingSamplesTab"
 import MaterialsTab from "./components/materials/MaterialsTab"
 import {
@@ -208,13 +207,7 @@ export default function AdminPage() {
 
   const [topics, setTopics] = useState<ShadowingTopic[]>([])
 
-  const [users, setUsers] = useState<UserAdmin[]>([
-    { id: "u1", name: "Nguyễn Hoàng Việt", email: "viet.nguyen@gmail.com", role: "STUDENT", balance: 350, joinDate: "2026-05-01" },
-    { id: "u2", name: "Huỳnh Thị Mỹ Lan", email: "lan.huynh@yahoo.com", role: "STUDENT", balance: 145, joinDate: "2026-05-12" },
-    { id: "u3", name: "Trần Đăng Đức", email: "duc.tran@outlook.com", role: "STUDENT", balance: 12, joinDate: "2026-05-20" },
-    { id: "u4", name: "Lê Tuyết Mai", email: "mai.le@gmail.com", role: "STUDENT", balance: 300, joinDate: "2026-05-24" },
-    { id: "u5", name: "Admin BandBuilder", email: "admin@bandbuilder.com", role: "ADMIN", balance: 99999, joinDate: "2026-04-01" }
-  ])
+
 
   // ==================================================================
   // HANDLERS AND STATED MUTATORS
@@ -223,12 +216,6 @@ export default function AdminPage() {
   const handleApproveTransaction = (txId: string) => {
     setTransactions(prev => prev.map(t => {
       if (t.id === txId) {
-        setUsers(prevUsers => prevUsers.map(u => {
-          if (u.email === t.email) {
-            return { ...u, balance: u.balance + t.credits }
-          }
-          return u
-        }))
         showToast(`Duyệt thành công giao dịch ${t.sePayTxId}! Đã cộng +${t.credits} credits vào tài khoản.`)
         return { ...t, status: "COMPLETED" as const }
       }
@@ -303,15 +290,7 @@ export default function AdminPage() {
     }
   }
 
-  const handleAdjustCredits = (userId: string, amount: number, type: "BONUS" | "REFUND", reason: string) => {
-    setUsers(prev => prev.map(u => {
-      if (u.id === userId) {
-        showToast(`Đã điều chỉnh thành công! ${type === "BONUS" ? "Tặng" : "Trừ"} ${Math.abs(amount)} Credits ví của ${u.name}.`)
-        return { ...u, balance: u.balance + amount }
-      }
-      return u
-    }))
-  }
+
 
   // Pure CSS inline styles declarations
   const styles = {
@@ -622,10 +601,7 @@ export default function AdminPage() {
               />
             } />
             <Route path="users" element={
-              <UsersTab 
-                users={users} 
-                onAdjustCredits={handleAdjustCredits} 
-              />
+              <UsersTab />
             } />
             <Route path="writing-samples" element={
               <WritingSamplesTab />

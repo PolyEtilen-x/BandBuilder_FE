@@ -1,13 +1,11 @@
-// src/pages/admin/components/PackagesTab.tsx
-
 import { useState, useEffect } from "react"
 import { CreditPackage } from "../types"
-import { 
-  Zap, 
-  Sparkles, 
-  Coins, 
-  Edit3, 
-  EyeOff, 
+import {
+  Zap,
+  Sparkles,
+  Coins,
+  Edit3,
+  EyeOff,
   Eye,
   X
 } from "lucide-react"
@@ -415,12 +413,12 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                 <X size={18} />
               </button>
             </div>
-            
+
             <form onSubmit={handleEditSubmit}>
               <div style={styles.modalBody}>
                 <div style={styles.formGroup}>
                   <label style={styles.label}>Tên gói nạp</label>
-                  <input 
+                  <input
                     type="text"
                     required
                     value={editName}
@@ -432,7 +430,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div style={styles.formGroup}>
                     <label style={styles.label}>Giá tiền (VND)</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       min={0}
@@ -444,7 +442,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
 
                   <div style={styles.formGroup}>
                     <label style={styles.label}>Sort Order</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       min={0}
@@ -458,7 +456,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                 <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
                   <div style={styles.formGroup}>
                     <label style={styles.label}>Credits Gốc</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       min={0}
@@ -470,7 +468,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
 
                   <div style={styles.formGroup}>
                     <label style={styles.label}>Credits Bonus</label>
-                    <input 
+                    <input
                       type="number"
                       required
                       min={0}
@@ -487,7 +485,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                     <span style={{ fontSize: "13px", fontWeight: 700, color: "#1f2937", display: "block" }}>Trạng thái kinh doanh</span>
                     <span style={{ fontSize: "10px", color: "#6b7280", display: "block", marginTop: "2px" }}>Hiển thị gói này trực tuyến để học viên mua.</span>
                   </div>
-                  
+
                   <button
                     type="button"
                     onClick={() => setEditActive(!editActive)}

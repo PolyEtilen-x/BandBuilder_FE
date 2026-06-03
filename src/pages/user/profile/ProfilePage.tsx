@@ -56,10 +56,10 @@ export default function ProfilePage() {
             <div className="user-profile-info">
               <div className="profile-avatar-wrapper">
                 {user.avatarUrl ? (
-                  <img src={user.avatarUrl} alt={user.fullName} className="user-avatar-img" />
+                  <img src={user.avatarUrl} alt={user.fullName || "User Avatar"} className="user-avatar-img" />
                 ) : (
                   <div className="user-avatar-placeholder">
-                    {user.fullName.charAt(0).toUpperCase()}
+                    {(user.fullName || user.email || "G").charAt(0).toUpperCase()}
                   </div>
                 )}
                 {user.isPro && <div className="pro-badge-icon"><Award size={14} /></div>}
@@ -67,7 +67,7 @@ export default function ProfilePage() {
 
               <div className="user-meta-info">
                 <div className="user-name-row">
-                  <h1>{user.fullName}</h1>
+                  <h1>{user.fullName || "Guest"}</h1>
                   <span className={`membership-tag ${user.isPro ? 'pro' : 'basic'}`}>
                     {user.isPro ? t("profile_membership_pro") : t("profile_membership_basic")}
                   </span>
@@ -194,8 +194,8 @@ export default function ProfilePage() {
         open={openEditModal}
         onClose={() => setOpenEditModal(false)}
         initialData={{
-          fullName: user.fullName,
-          avatarUrl: user.avatarUrl
+          fullName: user.fullName || "",
+          avatarUrl: user.avatarUrl || ""
         }}
       />
     </MainLayout>

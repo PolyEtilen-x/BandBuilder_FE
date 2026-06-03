@@ -1,13 +1,11 @@
-// src/pages/admin/components/DashboardTab.tsx
-
 import { useState, useEffect } from "react"
 import { Transaction } from "../types"
-import { 
-  TrendingUp, 
-  DollarSign, 
-  Search, 
-  CheckCircle, 
-  Clock, 
+import {
+  TrendingUp,
+  DollarSign,
+  Search,
+  CheckCircle,
+  Clock,
   XCircle,
   FileCheck
 } from "lucide-react"
@@ -53,11 +51,11 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
 
   // Filter transactions
   const filteredTransactions = transactions.filter(t => {
-    const matchesSearch = 
+    const matchesSearch =
       t.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.sePayTxId.toLowerCase().includes(searchTerm.toLowerCase()) ||
       t.memo.toLowerCase().includes(searchTerm.toLowerCase())
-    
+
     const matchesStatus = statusFilter === "ALL" || t.status === statusFilter
 
     return matchesSearch && matchesStatus
@@ -387,7 +385,7 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
         <div style={styles.chartContainer}>
           <h3 style={styles.chartTitle}>Xu hướng Doanh thu 7 ngày qua</h3>
           <p style={styles.chartSubtitle}>Biểu diễn dòng tiền chuyển khoản nhận về qua hệ thống API SePay thụ động.</p>
-          
+
           <div style={styles.svgContainer}>
             <div style={styles.customChartBarTrack}>
               {chartData.map((d, i) => (
@@ -409,7 +407,7 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
         {/* Right Column SePay */}
         <div style={styles.sePayPanel}>
           <h3 style={styles.panelTitle}>Thông số Cổng SePay</h3>
-          
+
           <div style={styles.infoRow}>
             <span style={styles.infoLabel}>Endpoint Webhook</span>
             <span style={styles.infoValue(true)}>/api/sepay/webhook</span>
@@ -443,7 +441,7 @@ export default function DashboardTab({ transactions, onApproveTransaction }: Pro
           </h3>
 
           <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-            <input 
+            <input
               type="text"
               placeholder="Tìm email, mã giao dịch..."
               value={searchTerm}

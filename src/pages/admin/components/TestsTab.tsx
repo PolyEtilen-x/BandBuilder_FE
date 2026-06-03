@@ -1,14 +1,12 @@
-// src/pages/admin/components/TestsTab.tsx
-
 import { useState, useEffect } from "react"
 import { PracticeTest } from "../types"
-import { 
-  Search, 
-  Plus, 
-  Trash2, 
-  Eye, 
+import {
+  Search,
+  Plus,
+  Trash2,
+  Eye,
   Code,
-  Check, 
+  Check,
   AlertCircle,
   X
 } from "lucide-react"
@@ -38,7 +36,7 @@ function useWindowSize() {
 export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [skillFilter, setSkillFilter] = useState("ALL")
-  
+
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false)
   const [editingTest, setEditingTest] = useState<PracticeTest | null>(null)
@@ -48,7 +46,7 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
   // Form state
   const [newTitle, setNewTitle] = useState("")
   const [newSkills, setNewSkills] = useState<string[]>([])
-  
+
   const { width } = useWindowSize()
   const isMobile = width < 640
   const isTablet = width < 1024
@@ -395,7 +393,7 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
       {/* FILTER PANEL */}
       <div style={styles.filterBar}>
         <div style={styles.searchWrapper}>
-          <input 
+          <input
             type="text"
             placeholder="Tìm đề thi theo tiêu đề..."
             value={searchTerm}
@@ -480,12 +478,12 @@ export default function TestsTab({ tests, onAddTest, onUpdateTest, onDeleteTest 
                 <X size={20} />
               </button>
             </div>
-            
+
             <form onSubmit={handleCreateTest}>
               <div style={styles.modalBody}>
                 <div style={styles.formGroup}>
                   <label style={styles.label}>Tiêu đề đề thi</label>
-                  <input 
+                  <input
                     type="text"
                     required
                     placeholder="Ví dụ: IELTS Cambridge 19 - Test 2"
