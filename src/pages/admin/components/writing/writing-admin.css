@@ -394,3 +394,196 @@
   color: #8a6d3b;
   border: 1px solid #faebcc;
 }
+
+/* ── Visual Form Editor Styles ────────────────────────────────────────────── */
+
+.writing-admin-mode-toggle-bar {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 8px;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.writing-admin-mode-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: transparent;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.writing-admin-mode-btn:hover {
+  background: rgba(255, 255, 255, 0.5);
+  color: #1e293b;
+}
+
+.writing-admin-mode-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.writing-admin-visual-editor-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  background: #f8fafc;
+  padding: 16px;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+}
+
+.writing-admin-visual-card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+}
+
+.writing-admin-card-title-small {
+  font-size: 12px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 12px;
+}
+
+.writing-admin-subscores-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .writing-admin-subscores-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.writing-admin-label-small {
+  font-size: 9px;
+  font-weight: 700;
+  color: #64748b;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  margin-bottom: 2px;
+  display: inline-block;
+}
+
+.writing-admin-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f1f5f9;
+  padding-bottom: 8px;
+  margin-bottom: 12px;
+}
+
+.writing-admin-section-header .writing-admin-card-title-small {
+  margin-bottom: 0;
+}
+
+.writing-admin-add-item-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  border: 1.5px dashed #2563eb;
+  background: #eff6ff;
+  color: #2563eb;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.writing-admin-add-item-btn:hover {
+  background: #dbeafe;
+}
+
+.writing-admin-empty-list-text {
+  font-size: 12px;
+  color: #94a3b8;
+  font-style: italic;
+  margin: 8px 0;
+  text-align: center;
+}
+
+.writing-admin-list-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.writing-admin-list-item-row {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.writing-admin-delete-item-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #ef4444;
+  width: 38px;
+  height: 38px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.writing-admin-delete-item-btn:hover {
+  background: #fee2e2;
+  color: #dc2626;
+  border-color: #fca5a5;
+}
+
+.writing-admin-vocab-container {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.writing-admin-vocab-header-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 2fr 38px;
+  gap: 8px;
+  font-size: 9px;
+  font-weight: 750;
+  color: #64748b;
+  text-transform: uppercase;
+  padding: 0 4px 4px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.writing-admin-vocab-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 280px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.writing-admin-vocab-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 2fr 38px;
+  gap: 8px;
+  align-items: center;
+}
+

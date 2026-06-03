@@ -1,6 +1,7 @@
 // src/pages/admin/AdminPage.tsx
 
 import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom"
 import { 
   Transaction, 
   PracticeTest, 
@@ -54,7 +55,24 @@ export function useWindowSize() {
 }
 
 export default function AdminPage() {
-  const [activeTab, setActiveTab] = useState<TabType>("dashboard")
+  const { tab } = useParams<{ tab?: string }>()
+  const navigate = useNavigate()
+
+  let activeTab: TabType = "dashboard"
+  if (tab === "writing-samples") {
+    activeTab = "writing"
+  } else if (tab === "tests") {
+    activeTab = "tests"
+  } else if (tab === "packages") {
+    activeTab = "packages"
+  } else if (tab === "shadowing") {
+    activeTab = "shadowing"
+  } else if (tab === "users") {
+    activeTab = "users"
+  } else if (tab === "dashboard") {
+    activeTab = "dashboard"
+  }
+
   const [toastMessage, setToastMessage] = useState<string | null>(null)
   const { width } = useWindowSize()
   const isMobileView = width < 768
@@ -481,7 +499,7 @@ export default function AdminPage() {
           {/* Nav Links */}
           <nav style={styles.navGroup}>
             <button
-              onClick={() => setActiveTab("dashboard")}
+              onClick={() => navigate("/admin")}
               style={styles.navItem(activeTab === "dashboard")}
             >
               <LayoutDashboard size={16} style={{ flexShrink: 0 }} />
@@ -489,7 +507,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("tests")}
+              onClick={() => navigate("/admin/tests")}
               style={styles.navItem(activeTab === "tests")}
             >
               <BookOpen size={16} style={{ flexShrink: 0 }} />
@@ -497,7 +515,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("packages")}
+              onClick={() => navigate("/admin/packages")}
               style={styles.navItem(activeTab === "packages")}
             >
               <CreditCard size={16} style={{ flexShrink: 0 }} />
@@ -505,7 +523,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("shadowing")}
+              onClick={() => navigate("/admin/shadowing")}
               style={styles.navItem(activeTab === "shadowing")}
             >
               <Youtube size={16} style={{ flexShrink: 0 }} />
@@ -513,7 +531,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("writing")}
+              onClick={() => navigate("/admin/writing-samples")}
               style={styles.navItem(activeTab === "writing")}
             >
               <FileText size={16} style={{ flexShrink: 0 }} />
@@ -521,7 +539,7 @@ export default function AdminPage() {
             </button>
 
             <button
-              onClick={() => setActiveTab("users")}
+              onClick={() => navigate("/admin/users")}
               style={styles.navItem(activeTab === "users")}
             >
               <Users size={16} style={{ flexShrink: 0 }} />

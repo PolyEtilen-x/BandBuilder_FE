@@ -76,11 +76,10 @@ function TopicCard({
     >
       <div className="sw-topic-card__meta">
         <span
-          className={`sw-topic-card__task-badge ${
-            topic.taskType === "TASK_1"
+          className={`sw-topic-card__task-badge ${topic.taskType === "TASK_1"
               ? "sw-topic-card__task-badge--task1"
               : "sw-topic-card__task-badge--task2"
-          }`}
+            }`}
         >
           {topic.taskType === "TASK_1" ? "Task 1" : "Task 2"}
         </span>
@@ -91,7 +90,7 @@ function TopicCard({
           ? topic.prompt.substring(0, 165) + "..."
           : topic.prompt || "No prompt available"}
       </p>
-      
+
       <div className="sw-topic-card__footer">
         <span className="sw-topic-card__count">
           <BookOpen size={13} style={{ marginRight: 4 }} />
@@ -119,7 +118,7 @@ function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElemen
           {criteria.map((c) => {
             if (c.score === undefined || c.score === null) return null
             const percentage = (c.score / 9) * 100
-            
+
             let barColor = "linear-gradient(90deg, #94a3b8, #64748b)"
             if (c.score >= 8.0) {
               barColor = "linear-gradient(90deg, #10b981, #047857)"
@@ -136,8 +135,8 @@ function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElemen
                   <span className="sw-ai-criterion-score">Band {c.score.toFixed(1)}</span>
                 </div>
                 <div className="sw-ai-progress-track">
-                  <div 
-                    className="sw-ai-progress-fill" 
+                  <div
+                    className="sw-ai-progress-fill"
                     style={{ width: `${percentage}%`, background: barColor }}
                   />
                 </div>
@@ -180,7 +179,7 @@ function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElemen
           </div>
         )}
       </div>
-      
+
       {analysis.keyVocabulary && analysis.keyVocabulary.length > 0 && (
         <div className="sw-ai-vocab-section">
           <span className="sw-ai-heading sw-ai-heading--vocab">
@@ -214,112 +213,160 @@ function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElemen
   )
 }
 
-function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
-  const [showTranslation, setShowTranslation] = useState(false)
-  const [isAnalysisExpanded, setIsAnalysisExpanded] = useState(false)
-  const [isTextExpanded, setIsTextExpanded] = useState(false)
+const renderParagraphs = (text: string) => {
+  if (!text) return null
+  return text.split(/\n+/).map((para, i) => {
+    const trimmed = para.trim()
+    if (!trimmed) return null
+    return (
+      <p key={i} className="sw-blog-paragraph">
+        {trimmed}
+      </p>
+    )
+  })
+}
 
-  const colors = getBandColor(essay.bandScore)
+function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
   const wordCount = useMemo(() => {
     if (!essay.essayText) return 0
     return essay.essayText.trim().split(/\s+/).filter(Boolean).length
   }, [essay.essayText])
-  
-  const isLong = wordCount > 200
 
   return (
-    <div
-      className="sw-essay-card"
-      style={{
-        background: colors.bg,
-        border: `1px solid ${colors.border}`,
-      }}
-    >
-      <div
-        className="sw-essay-card__header"
-        style={{ borderBottom: `1px solid ${colors.border}` }}
-      >
-        <div className="sw-essay-card__header-left">
-          <span
-            className="sw-essay-card__band-pill"
-            style={{ background: colors.border, color: colors.text }}
-          >
-            Band {essay.bandScore.toFixed(1)}
-          </span>
-          <span className="sw-essay-card__band-label" style={{ color: colors.text }}>
-            Model Essay
-          </span>
-        </div>
-        <div className="sw-essay-card__header-right">
-          <span className="sw-essay-card__wordcount" style={{ color: colors.text }}>
-            <FileText size={13} style={{ marginRight: 4 }} />
-            {wordCount} words
-          </span>
-          <button
-            id={`essay-toggle-translation-${essay.id}`}
-            onClick={() => setShowTranslation((v) => !v)}
-            className="sw-essay-card__translation-btn"
-            style={{ border: `1px solid ${colors.border}`, color: colors.text }}
-          >
-            {showTranslation ? "Hide Translation" : "Translation 🇻🇳"}
-          </button>
-        </div>
-      </div>
-
-      <div className="sw-essay-card__body">
-        <div className={`sw-essay-card__text-container ${!isTextExpanded && isLong ? "sw-essay-card__text-container--collapsed" : ""}`}>
-          <p className="sw-essay-card__text" style={{ color: colors.text }}>
-            {essay.essayText}
-          </p>
-        </div>
-        
-        {isLong && (
-          <button 
-            onClick={() => setIsTextExpanded(!isTextExpanded)}
-            className="sw-essay-card__expand-text-btn"
-            style={{ color: colors.text }}
-          >
-            {isTextExpanded ? (
-              <>Show Less <ChevronUp size={13} style={{ marginLeft: 4 }} /></>
-            ) : (
-              <>Read Full Essay <ChevronDown size={13} style={{ marginLeft: 4 }} /></>
-            )}
-          </button>
-        )}
-
-        {showTranslation && (
-          <div
-            className="sw-essay-card__translation"
-            style={{ borderTop: `1px dashed ${colors.border}` }}
-          >
-            <p className="sw-essay-card__translation-text">
-              {essay.essayTranslation}
-            </p>
-          </div>
-        )}
-      </div>
-
+    <div className="sw-blog-post">
       {essay.analysis && (
-        <div className="sw-analysis-panel" style={{ borderTop: `1px solid ${colors.border}` }}>
-          <button
-            onClick={() => setIsAnalysisExpanded(!isAnalysisExpanded)}
-            className="sw-analysis-panel__trigger"
-            style={{ color: colors.text }}
-          >
-            <span className="sw-analysis-panel__trigger-title">
-              <Sparkles size={14} className="sw-sparkle-icon" />
-              AI Detailed Evaluation
-            </span>
-            <span className="sw-analysis-panel__trigger-icon">
-              {isAnalysisExpanded ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-            </span>
-          </button>
+        <div className="sw-blog-section sw-blog-section--analysis">
+          <h3 className="sw-blog-section-title">
+            <span className="sw-blog-section-number">1.</span> Dàn ý & Phân tích chi tiết (Outline & Analysis)
+          </h3>
 
-          {isAnalysisExpanded && (
-            <div className="sw-analysis-panel__content">
-              <AIAnalysisPanel analysis={essay.analysis} />
+          <div className="sw-blog-analysis-card">
+            {essay.analysis.overallComment && (
+              <div className="sw-blog-overall-comment">
+                <p className="sw-blog-comment-text">{essay.analysis.overallComment}</p>
+              </div>
+            )}
+
+            {/* Criteria Breakdown */}
+            <div className="sw-blog-scores-grid">
+              {[
+                { label: "Task Achievement / Response", score: essay.analysis.taskAchievement },
+                { label: "Coherence & Cohesion", score: essay.analysis.coherenceCohesion },
+                { label: "Lexical Resource", score: essay.analysis.lexicalResource },
+                { label: "Grammatical Range & Accuracy", score: essay.analysis.grammaticalRange }
+              ].map((c, idx) => {
+                if (c.score === undefined || c.score === null) return null
+                const percentage = (c.score / 9) * 100
+
+                let barColor = "var(--color-brand)"
+                if (c.score >= 8.0) barColor = "#10b981"
+                else if (c.score >= 7.0) barColor = "#3b82f6"
+                else if (c.score >= 6.0) barColor = "#f59e0b"
+
+                return (
+                  <div key={idx} className="sw-blog-score-row">
+                    <div className="sw-blog-score-info">
+                      <span className="sw-blog-score-label">{c.label}</span>
+                      <span className="sw-blog-score-val">Band {c.score.toFixed(1)}</span>
+                    </div>
+                    <div className="sw-blog-progress-track">
+                      <div
+                        className="sw-blog-progress-fill"
+                        style={{ width: `${percentage}%`, backgroundColor: barColor }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
             </div>
-          )}
+
+            {/* Strengths & Areas to Improve */}
+            <div className="sw-blog-feedback-grid">
+              {essay.analysis.strengths && essay.analysis.strengths.length > 0 && (
+                <div className="sw-blog-feedback-col sw-blog-feedback-col--strengths">
+                  <h4 className="sw-blog-feedback-title">✓ Điểm mạnh nổi bật (Key Strengths)</h4>
+                  <ul className="sw-blog-feedback-list">
+                    {essay.analysis.strengths.map((s: string, idx: number) => (
+                      <li key={idx} className="sw-blog-feedback-item">
+                        <span className="sw-feedback-bullet">•</span> {s}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {essay.analysis.improvements && essay.analysis.improvements.length > 0 && (
+                <div className="sw-blog-feedback-col sw-blog-feedback-col--improvements">
+                  <h4 className="sw-blog-feedback-title">! Điểm cần cải thiện (Areas to Improve)</h4>
+                  <ul className="sw-blog-feedback-list">
+                    {essay.analysis.improvements.map((imp: string, idx: number) => (
+                      <li key={idx} className="sw-blog-feedback-item">
+                        <span className="sw-feedback-bullet">•</span> {imp}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── 2. BÀI VIẾT MẪU (MODEL ESSAY) ── */}
+      <div className="sw-blog-section sw-blog-section--essay">
+        <div className="sw-blog-essay-header">
+          <h3 className="sw-blog-section-title">
+            <span className="sw-blog-section-number">2.</span> Bài viết mẫu (Model Essay - Band {essay.bandScore.toFixed(1)})
+          </h3>
+          <span className="sw-blog-wordcount">
+            <FileText size={14} style={{ marginRight: 4 }} /> {wordCount} words
+          </span>
+        </div>
+        <div className="sw-blog-essay-card">
+          <div className="sw-blog-essay-text">
+            {renderParagraphs(essay.essayText)}
+          </div>
+        </div>
+      </div>
+
+      {/* ── 3. BẢN DỊCH TIẾNG VIỆT ── */}
+      {essay.essayTranslation && (
+        <div className="sw-blog-section sw-blog-section--translation">
+          <h3 className="sw-blog-section-title">
+            <span className="sw-blog-section-number">3.</span> Bản dịch tiếng Việt (Translation)
+          </h3>
+          <div className="sw-blog-translation-card">
+            {renderParagraphs(essay.essayTranslation)}
+          </div>
+        </div>
+      )}
+
+      {/* ── 4. TỪ VỰNG NỔI BẬT ── */}
+      {essay.analysis?.keyVocabulary && essay.analysis.keyVocabulary.length > 0 && (
+        <div className="sw-blog-section sw-blog-section--vocab">
+          <h3 className="sw-blog-section-title">
+            <span className="sw-blog-section-number">4.</span> Từ vựng & Cấu trúc "ăn điểm" (Vocabulary & Collocations)
+          </h3>
+          <div className="sw-blog-vocab-table-container">
+            <table className="sw-blog-vocab-table">
+              <thead>
+                <tr>
+                  <th>Từ / Cụm từ (Phrase)</th>
+                  <th>Ý nghĩa (Meaning)</th>
+                  <th>Ngữ cảnh sử dụng (Context)</th>
+                </tr>
+              </thead>
+              <tbody>
+                {essay.analysis.keyVocabulary.map((item: any, idx: number) => (
+                  <tr key={idx}>
+                    <td className="sw-blog-vocab-phrase">{item.phrase}</td>
+                    <td className="sw-blog-vocab-meaning">{item.meaning}</td>
+                    <td className="sw-blog-vocab-context">"{item.context}"</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       )}
     </div>
@@ -388,8 +435,16 @@ function TopicDetail({
 
   const bands = useMemo(() => {
     const list = [...new Set(detail.essays.map((e) => e.bandScore))]
-    return list.sort((a, b) => a - b)
+    return list.sort((a, b) => b - a) // Sort descending so highest band is first
   }, [detail.essays])
+
+  // Automatically default active band to the highest band score on load
+  useEffect(() => {
+    if (detail.essays.length > 0 && activeBand === null) {
+      const highest = Math.max(...detail.essays.map((e) => e.bandScore))
+      setActiveBand(highest)
+    }
+  }, [detail.essays, activeBand])
 
   const visibleEssays: WritingEssayDto[] = useMemo(() => {
     if (activeBand !== null) {
@@ -410,11 +465,10 @@ function TopicDetail({
             ← Back
           </button>
           <span
-            className={`sw-detail__task-badge ${
-              detail.taskType === "TASK_1"
+            className={`sw-detail__task-badge ${detail.taskType === "TASK_1"
                 ? "sw-detail__task-badge--task1"
                 : "sw-detail__task-badge--task2"
-            }`}
+              }`}
           >
             {detail.taskType === "TASK_1" ? "Task 1" : "Task 2"}
           </span>
@@ -423,7 +477,7 @@ function TopicDetail({
 
         <div className="sw-prompt-card">
           <div className="sw-prompt-card__header">
-            <span className="sw-prompt-card__label">IELTS Writing Prompt</span>
+            <span className="sw-prompt-card__label">Đề thi IELTS Writing</span>
             <span className="sw-prompt-card__meta-chip">
               {detail.taskType === "TASK_1" ? "⏱ 20 Min · ✍️ Min 150 words" : "⏱ 40 Min · ✍️ Min 250 words"}
             </span>
@@ -441,16 +495,15 @@ function TopicDetail({
         </div>
 
         <div className="sw-band-filter-section">
-          <span className="sw-band-filter-label">Model essays:</span>
+          <span className="sw-band-filter-label">Bài mẫu Band score khác:</span>
           <div className="sw-band-filter">
             <button
               id="band-filter-all"
               onClick={() => setActiveBand(null)}
-              className={`sw-band-btn sw-band-btn--all ${
-                activeBand === null ? "sw-band-btn--all-active" : "sw-band-btn--all-inactive"
-              }`}
+              className={`sw-band-btn sw-band-btn--all ${activeBand === null ? "sw-band-btn--all-active" : "sw-band-btn--all-inactive"
+                }`}
             >
-              All Scores
+              Tất cả bài mẫu
             </button>
             {bands.map((b) => {
               const isActive = activeBand === b
@@ -460,9 +513,8 @@ function TopicDetail({
                   key={b}
                   id={`band-filter-${b}`}
                   onClick={() => setActiveBand(b)}
-                  className={`sw-band-btn sw-band-btn--band ${
-                    isActive ? "sw-band-btn--active" : "sw-band-btn--inactive"
-                  }`}
+                  className={`sw-band-btn sw-band-btn--band ${isActive ? "sw-band-btn--active" : "sw-band-btn--inactive"
+                    }`}
                   style={isActive ? {
                     backgroundColor: colors.text,
                     color: "#ffffff"
@@ -481,7 +533,7 @@ function TopicDetail({
         <div className="sw-essay-list">
           {visibleEssays.length === 0 ? (
             <div className="sw-essay-empty-card">
-              <p className="sw-essay-empty">No essays for this band score yet.</p>
+              <p className="sw-essay-empty">Chưa có bài mẫu nào cho mức điểm này.</p>
             </div>
           ) : (
             visibleEssays.map((e) => <EssayCard key={e.id} essay={e} />)
@@ -523,7 +575,7 @@ export default function SampleWritingsPage(): ReactElement {
   const [activeTask, setActiveTask] = useState<WritingTaskType | "ALL">("ALL")
   const [topics, setTopics] = useState<WritingSampleTopicListItemDto[]>([])
   const [detail, setDetail] = useState<WritingSampleTopicDetailDto | null>(null)
-  
+
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
 
@@ -631,7 +683,7 @@ export default function SampleWritingsPage(): ReactElement {
                     className="sw-search-input"
                   />
                   {searchQuery && (
-                    <button 
+                    <button
                       onClick={() => setSearchQuery("")}
                       className="sw-search-clear"
                     >
@@ -671,9 +723,8 @@ export default function SampleWritingsPage(): ReactElement {
                         <button
                           key={cat}
                           onClick={() => setSelectedCategory(cat)}
-                          className={`sw-cat-chip ${
-                            isActive ? "sw-cat-chip--active" : "sw-cat-chip--inactive"
-                          }`}
+                          className={`sw-cat-chip ${isActive ? "sw-cat-chip--active" : "sw-cat-chip--inactive"
+                            }`}
                         >
                           {cat}
                         </button>
@@ -707,11 +758,11 @@ export default function SampleWritingsPage(): ReactElement {
                     <h3>No topics found</h3>
                     <p>Try refining your search query or choosing another category filter.</p>
                     {(searchQuery || selectedCategory !== "All") && (
-                      <button 
+                      <button
                         onClick={() => {
                           setSearchQuery("")
                           setSelectedCategory("All")
-                        }} 
+                        }}
                         className="sw-empty-card__reset"
                       >
                         Reset filters

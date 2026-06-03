@@ -1,20 +1,20 @@
 import { lazy } from "react"
 import { ProtectedRoute } from "@/guard/route.guard"
-const Home = lazy(() => import("@/pages/home/home"))
-const PracticePage = lazy(() => import("@/pages/practice-ielts/PracticePage"))
-const PracticeTestPage = lazy(() => import("@/pages/practice-ielts/PracticeTestPage"))
-const CallWithAiPage = lazy(() => import("@/pages/call/CallWithAiPage"))
+const Home = lazy(() => import("@/pages/user/home/home"))
+const PracticePage = lazy(() => import("@/pages/user/practice-ielts/PracticePage"))
+const PracticeTestPage = lazy(() => import("@/pages/user/practice-ielts/PracticeTestPage"))
+const CallWithAiPage = lazy(() => import("@/pages/user/call/CallWithAiPage"))
 const LoginSuccess = lazy(() => import("@/pages/loginsuccess"))
-const VocabPage = lazy(() => import("@/pages/materials/VocabPage"))
-const GrammarPage = lazy(() => import("@/pages/materials/GrammarPage"))
-const ProfilePage = lazy(() => import("@/pages/profile/ProfilePage"))
-const UpgradePage = lazy(() => import("@/pages/upgrade/UpgradePage"))
-const ResultPage = lazy(() => import("@/pages/practice-ielts/result/ResultPage"))
-const ResultExplainPage = lazy(() => import("@/pages/practice-ielts/result_explain/ResultExplainPage"))
-const RoadmapSetupPage = lazy(() => import("@/pages/roadmap/RoadmapSetupPage"))
-const RoadmapPage = lazy(() => import("@/pages/roadmap/RoadmapPage"))
-const PronunciationPracticePage = lazy(() => import("@/pages/practice-general/PronunciationPracticePage"))
-const SampleWritingsPage = lazy(() => import("@/pages/practice-general/SampleWritingsPage"))
+const VocabPage = lazy(() => import("@/pages/user/materials/VocabPage"))
+const GrammarPage = lazy(() => import("@/pages/user/materials/GrammarPage"))
+const ProfilePage = lazy(() => import("@/pages/user/profile/ProfilePage"))
+const UpgradePage = lazy(() => import("@/pages/user/upgrade/UpgradePage"))
+const ResultPage = lazy(() => import("@/pages/user/practice-ielts/result/ResultPage"))
+const ResultExplainPage = lazy(() => import("@/pages/user/practice-ielts/result_explain/ResultExplainPage"))
+const RoadmapSetupPage = lazy(() => import("@/pages/user/roadmap/RoadmapSetupPage"))
+const RoadmapPage = lazy(() => import("@/pages/user/roadmap/RoadmapPage"))
+const PronunciationPracticePage = lazy(() => import("@/pages/user/practice-general/PronunciationPracticePage"))
+const SampleWritingsPage = lazy(() => import("@/pages/user/practice-general/SampleWritingsPage"))
 const AdminPage = lazy(() => import("@/pages/admin/AdminPage"))
 
 export const routes = [
@@ -100,6 +100,10 @@ export const routes = [
   },
   {
     path: "/admin",
+    element: <ProtectedRoute><AdminPage /></ProtectedRoute>,
+  },
+  {
+    path: "/admin/:tab",
     element: <ProtectedRoute><AdminPage /></ProtectedRoute>,
   },
 ]
