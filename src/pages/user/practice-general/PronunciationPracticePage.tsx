@@ -10,7 +10,7 @@ import type {
   PronunciationVocabDto,
   PronunciationSentenceDto,
   PronunciationTopicDetailDto,
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 import "./Pronunciation.css"
 
 // ─── Helpers ────────────────────────────────────────────────────────────────

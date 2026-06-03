@@ -16,7 +16,7 @@ import {
   type WritingSampleTopicDetailDto,
   type WritingEssayDto,
   type EssayAnalysis,
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 import "./SampleWritings.css"
 
 // ── Constants ──────────────────────────────────────────────────────────────
@@ -72,8 +72,8 @@ function TopicCard({
       <div className="sw-topic-card__meta">
         <span
           className={`sw-topic-card__task-badge ${topic.taskType === "TASK_1"
-              ? "sw-topic-card__task-badge--task1"
-              : "sw-topic-card__task-badge--task2"
+            ? "sw-topic-card__task-badge--task1"
+            : "sw-topic-card__task-badge--task2"
             }`}
         >
           {topic.taskType === "TASK_1" ? "Task 1" : "Task 2"}
@@ -373,8 +373,8 @@ function TopicDetail({
           </button>
           <span
             className={`sw-detail__task-badge ${detail.taskType === "TASK_1"
-                ? "sw-detail__task-badge--task1"
-                : "sw-detail__task-badge--task2"
+              ? "sw-detail__task-badge--task1"
+              : "sw-detail__task-badge--task2"
               }`}
           >
             {detail.taskType === "TASK_1" ? "Task 1" : "Task 2"}

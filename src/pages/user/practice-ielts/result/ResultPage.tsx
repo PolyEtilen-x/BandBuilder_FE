@@ -3,7 +3,7 @@ import { useLocation, useNavigate, useParams, useSearchParams } from "react-rout
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { ArrowLeft, CheckCircle2, XCircle, HelpCircle, Clock, ChevronRight, Sparkles, ChevronDown, ChevronUp } from "lucide-react"
 import { useQuery } from "@tanstack/react-query"
-import { practiceApi } from "@/api/practice.api"
+import { practiceApi } from "@/api/practice/practice.api"
 import { userApi } from "@/api/user.api"
 import { useUIStore } from "@/services/ui/ui.store"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
@@ -314,112 +314,112 @@ export default function ResultPage() {
             <div className="profile-main-column">
               {/* 1. PERFORMANCE METRICS */}
               <div className="recent-activity-card">
-                    <div className="card-header-row">
-                      <h2>{t("result_perf_by_type")}</h2>
+                <div className="card-header-row">
+                  <h2>{t("result_perf_by_type")}</h2>
+                </div>
+                <div className="metrics-list-premium">
+                  {stats.details.map((item: any, idx: number) => {
+                    const percent = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0
+                    return (
+                      <div key={idx} className="metric-row-premium">
+                        <div className="metric-item-meta">
+                          <span className="metric-type-title">{item.type.replace(/_/g, " ")}</span>
+                          <span className="metric-question-count">
+                            {item.total} {language === "vi" ? "câu hỏi" : "questions"}
+                          </span>
+                        </div>
+
+                        <div className="metric-progress-wrapper">
+                          <div className="progress-bar-background">
+                            <div
+                              className={`progress-bar-fill-premium ${percent >= 80 ? 'high' : percent >= 50 ? 'medium' : 'low'}`}
+                              style={{ width: `${percent}%` }}
+                            />
+                          </div>
+                          <span className="progress-percent-label">{percent}%</span>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+
+              {/* 2. AI RECOMMENDATIONS */}
+              <div className="recent-activity-card">
+                <div className="card-header-row">
+                  <h2>{language === "vi" ? "Lộ Trình Cải Thiện Cá Nhân Hóa" : "Personalized Improvement Plan"}</h2>
+                </div>
+                <p className="rec-intro">
+                  {language === "vi"
+                    ? "Dựa trên phân tích kết quả bài thi của bạn, Giám khảo AI khuyên bạn nên thực hiện các bước sau:"
+                    : "Based on your test session analytics, the AI Examiner recommends following these customized steps:"}
+                </p>
+                <div className="recommendation-list">
+                  {recommendations.map((rec, i) => (
+                    <div key={i} className="recommendation-item">
+                      <div className="recommendation-bullet">{i + 1}</div>
+                      <p className="recommendation-text">{rec}</p>
                     </div>
-                    <div className="metrics-list-premium">
-                      {stats.details.map((item: any, idx: number) => {
-                        const percent = item.total > 0 ? Math.round((item.correct / item.total) * 100) : 0
-                        return (
-                          <div key={idx} className="metric-row-premium">
-                            <div className="metric-item-meta">
-                              <span className="metric-type-title">{item.type.replace(/_/g, " ")}</span>
-                              <span className="metric-question-count">
-                                {item.total} {language === "vi" ? "câu hỏi" : "questions"}
+                  ))}
+                </div>
+              </div>
+
+              {/* 3. QUESTION DETAIL REVIEW */}
+              <div className="recent-activity-card">
+                <div className="card-header-row">
+                  <div>
+                    <h2>{language === "vi" ? "Xem Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+                    <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#64748b" }}>
+                      {language === "vi"
+                        ? "Nhấp vào nút giải thích AI ở trên đầu trang để nhận phân tích chi tiết của toàn bộ đáp án."
+                        : "Click the AI explanation button at the top header to parse detailed errors."}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="questions-review-list">
+                  {attemptDetail ? (
+                    (attemptDetail.answers || []).map((ans: any, idx: number) => (
+                      <div key={idx} className="review-question-row">
+                        <div className="q-row-left">
+                          <div className={`q-number-badge ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
+                            {idx + 1}
+                          </div>
+
+                          <div className="q-meta-content">
+                            <div className="q-title-label">
+                              {language === "vi" ? `Câu hỏi ${idx + 1}` : `Question ${idx + 1}`}
+                              <span className="q-id-sub">({ans.questionId.replace(/_/g, " ")})</span>
+                            </div>
+                            <div className="q-user-ans">
+                              {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
+                              <span className={`ans-val ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
+                                {ans.userAnswer || (language === "vi" ? "Chưa trả lời" : "Not answered")}
                               </span>
                             </div>
-
-                            <div className="metric-progress-wrapper">
-                              <div className="progress-bar-background">
-                                <div
-                                  className={`progress-bar-fill-premium ${percent >= 80 ? 'high' : percent >= 50 ? 'medium' : 'low'}`}
-                                  style={{ width: `${percent}%` }}
-                                />
-                              </div>
-                              <span className="progress-percent-label">{percent}%</span>
-                            </div>
                           </div>
-                        )
-                      })}
-                    </div>
-                  </div>
-
-                  {/* 2. AI RECOMMENDATIONS */}
-                  <div className="recent-activity-card">
-                    <div className="card-header-row">
-                      <h2>{language === "vi" ? "Lộ Trình Cải Thiện Cá Nhân Hóa" : "Personalized Improvement Plan"}</h2>
-                    </div>
-                    <p className="rec-intro">
-                      {language === "vi"
-                        ? "Dựa trên phân tích kết quả bài thi của bạn, Giám khảo AI khuyên bạn nên thực hiện các bước sau:"
-                        : "Based on your test session analytics, the AI Examiner recommends following these customized steps:"}
-                    </p>
-                    <div className="recommendation-list">
-                      {recommendations.map((rec, i) => (
-                        <div key={i} className="recommendation-item">
-                          <div className="recommendation-bullet">{i + 1}</div>
-                          <p className="recommendation-text">{rec}</p>
                         </div>
-                      ))}
-                    </div>
-                  </div>
 
-                  {/* 3. QUESTION DETAIL REVIEW */}
-                  <div className="recent-activity-card">
-                    <div className="card-header-row">
-                      <div>
-                        <h2>{language === "vi" ? "Xem Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
-                        <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#64748b" }}>
-                          {language === "vi"
-                            ? "Nhấp vào nút giải thích AI ở trên đầu trang để nhận phân tích chi tiết của toàn bộ đáp án."
-                            : "Click the AI explanation button at the top header to parse detailed errors."}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="questions-review-list">
-                      {attemptDetail ? (
-                        (attemptDetail.answers || []).map((ans: any, idx: number) => (
-                          <div key={idx} className="review-question-row">
-                            <div className="q-row-left">
-                              <div className={`q-number-badge ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
-                                {idx + 1}
-                              </div>
-
-                              <div className="q-meta-content">
-                                <div className="q-title-label">
-                                  {language === "vi" ? `Câu hỏi ${idx + 1}` : `Question ${idx + 1}`}
-                                  <span className="q-id-sub">({ans.questionId.replace(/_/g, " ")})</span>
-                                </div>
-                                <div className="q-user-ans">
-                                  {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
-                                  <span className={`ans-val ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
-                                    {ans.userAnswer || (language === "vi" ? "Chưa trả lời" : "Not answered")}
-                                  </span>
-                                </div>
-                              </div>
-                            </div>
-
-                            <div className="q-row-right">
-                              <div className="q-correct-ans">
-                                <span className="correct-ans-label">{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</span>
-                                <span className="correct-ans-value">{ans.correctAnswer || "N/A"}</span>
-                              </div>
-                              {ans.timeSpentSec != null && (
-                                <div className="time-spent-badge">
-                                  ⏱️ {ans.timeSpentSec}s
-                                </div>
-                              )}
-                            </div>
+                        <div className="q-row-right">
+                          <div className="q-correct-ans">
+                            <span className="correct-ans-label">{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</span>
+                            <span className="correct-ans-value">{ans.correctAnswer || "N/A"}</span>
                           </div>
-                        ))
-                      ) : (
-                        <p className="no-answers-placeholder">
-                          {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                          {ans.timeSpentSec != null && (
+                            <div className="time-spent-badge">
+                              ⏱️ {ans.timeSpentSec}s
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <p className="no-answers-placeholder">
+                      {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
+                    </p>
+                  )}
+                </div>
+              </div>
             </div>
 
             {/* Right Column Sidebar */}

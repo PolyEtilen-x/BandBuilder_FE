@@ -99,11 +99,7 @@ export const routes = [
     element: <ProtectedRoute><CallWithAiPage /></ProtectedRoute>,
   },
   {
-    path: "/admin",
-    element: <ProtectedRoute><AdminPage /></ProtectedRoute>,
-  },
-  {
-    path: "/admin/:tab",
+    path: "/admin/*",
     element: <ProtectedRoute><AdminPage /></ProtectedRoute>,
   },
 ]

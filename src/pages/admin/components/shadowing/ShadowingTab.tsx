@@ -12,7 +12,7 @@ import {
   updatePronunciationSentenceAdmin,
   deletePronunciationSentenceAdmin,
   PronunciationTopicDetailDto
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 import { FileText, Search, Plus } from "lucide-react"
 
 import ShadowingTopicCard from "./ShadowingTopicCard"
@@ -30,7 +30,7 @@ interface Props {
 export default function ShadowingTab({ topics, onAddTopic, onDeleteTopic }: Props) {
   const [searchTerm, setSearchTerm] = useState("")
   const [toastMessage, setToastMessage] = useState<string | null>(null)
-  
+
   // Topic Creation state
   const [showManualModal, setShowManualModal] = useState(false)
 

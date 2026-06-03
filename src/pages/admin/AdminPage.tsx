@@ -1,13 +1,13 @@
 // src/pages/admin/AdminPage.tsx
 
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom"
-import { 
-  Transaction, 
-  PracticeTest, 
-  CreditPackage, 
-  ShadowingTopic, 
-  UserAdmin 
+import { useNavigate, useLocation, Routes, Route, Navigate } from "react-router-dom"
+import {
+  Transaction,
+  PracticeTest,
+  CreditPackage,
+  ShadowingTopic,
+  UserAdmin
 } from "./types"
 import DashboardTab from "./components/DashboardTab"
 import TestsTab from "./components/TestsTab"
@@ -15,26 +15,27 @@ import PackagesTab from "./components/PackagesTab"
 import ShadowingTab from "./components/shadowing/ShadowingTab"
 import UsersTab from "./components/UsersTab"
 import WritingSamplesTab from "./components/writing/WritingSamplesTab"
+import MaterialsTab from "./components/materials/MaterialsTab"
 import {
   getPronunciationTopics,
   createPronunciationTopicAdmin,
   deletePronunciationTopicAdmin
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 
 import logoImg from "@/assets/logo.png"
 
-import { 
-  LayoutDashboard, 
-  BookOpen, 
-  CreditCard, 
-  Youtube, 
-  Users, 
+import {
+  LayoutDashboard,
+  BookOpen,
+  CreditCard,
+  Youtube,
+  Users,
   ArrowLeft,
   BellRing,
   FileText
 } from "lucide-react"
 
-type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users" | "writing"
+type TabType = "dashboard" | "tests" | "packages" | "shadowing" | "users" | "writing" | "materials"
 
 // Custom hook for responsive layout resizing
 export function useWindowSize() {
@@ -55,21 +56,24 @@ export function useWindowSize() {
 }
 
 export default function AdminPage() {
-  const { tab } = useParams<{ tab?: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
+  const pathname = location.pathname
 
   let activeTab: TabType = "dashboard"
-  if (tab === "writing-samples") {
+  if (pathname.includes("/admin/writing-samples")) {
     activeTab = "writing"
-  } else if (tab === "tests") {
+  } else if (pathname.includes("/admin/tests")) {
     activeTab = "tests"
-  } else if (tab === "packages") {
+  } else if (pathname.includes("/admin/packages")) {
     activeTab = "packages"
-  } else if (tab === "shadowing") {
+  } else if (pathname.includes("/admin/shadowing")) {
     activeTab = "shadowing"
-  } else if (tab === "users") {
+  } else if (pathname.includes("/admin/users")) {
     activeTab = "users"
-  } else if (tab === "dashboard") {
+  } else if (pathname.includes("/admin/materials")) {
+    activeTab = "materials"
+  } else if (pathname.includes("/admin/dashboard") || pathname === "/admin" || pathname === "/admin/") {
     activeTab = "dashboard"
   }
 
@@ -470,7 +474,7 @@ export default function AdminPage() {
 
   return (
     <div style={styles.layoutContainer}>
-      
+
       {/* GLOBAL TOAST */}
       {toastMessage && (
         <div style={styles.toastContainer}>
@@ -539,6 +543,14 @@ export default function AdminPage() {
             </button>
 
             <button
+              onClick={() => navigate("/admin/materials")}
+              style={styles.navItem(activeTab === "materials")}
+            >
+              <BookOpen size={16} style={{ flexShrink: 0 }} />
+              Quản trị Học liệu
+            </button>
+
+            <button
               onClick={() => navigate("/admin/users")}
               style={styles.navItem(activeTab === "users")}
             >
@@ -579,49 +591,50 @@ export default function AdminPage() {
           </div>
         </header>
 
-        {/* CONTAINER FOR ACTIVE TABS */}
+        {/* CONTAINER FOR ACTIVE PAGES */}
         <div style={styles.mainContentArea}>
-          {activeTab === "dashboard" && (
-            <DashboardTab 
-              transactions={transactions} 
-              onApproveTransaction={handleApproveTransaction} 
-            />
-          )}
-
-          {activeTab === "tests" && (
-            <TestsTab 
-              tests={tests}
-              onAddTest={handleAddTest}
-              onUpdateTest={handleUpdateTest}
-              onDeleteTest={handleDeleteTest}
-            />
-          )}
-
-          {activeTab === "packages" && (
-            <PackagesTab 
-              packages={packages} 
-              onUpdatePackage={handleUpdatePackage} 
-            />
-          )}
-
-          {activeTab === "shadowing" && (
-            <ShadowingTab 
-              topics={topics}
-              onAddTopic={handleAddTopic}
-              onDeleteTopic={handleDeleteTopic}
-            />
-          )}
-
-          {activeTab === "users" && (
-            <UsersTab 
-              users={users} 
-              onAdjustCredits={handleAdjustCredits} 
-            />
-          )}
-
-          {activeTab === "writing" && (
-            <WritingSamplesTab />
-          )}
+          <Routes>
+            <Route path="/" element={
+              <DashboardTab 
+                transactions={transactions} 
+                onApproveTransaction={handleApproveTransaction} 
+              />
+            } />
+            <Route path="tests" element={
+              <TestsTab 
+                tests={tests}
+                onAddTest={handleAddTest}
+                onUpdateTest={handleUpdateTest}
+                onDeleteTest={handleDeleteTest}
+              />
+            } />
+            <Route path="packages" element={
+              <PackagesTab 
+                packages={packages} 
+                onUpdatePackage={handleUpdatePackage} 
+              />
+            } />
+            <Route path="shadowing" element={
+              <ShadowingTab 
+                topics={topics}
+                onAddTopic={handleAddTopic}
+                onDeleteTopic={handleDeleteTopic}
+              />
+            } />
+            <Route path="users" element={
+              <UsersTab 
+                users={users} 
+                onAdjustCredits={handleAdjustCredits} 
+              />
+            } />
+            <Route path="writing-samples" element={
+              <WritingSamplesTab />
+            } />
+            <Route path="materials" element={
+              <MaterialsTab />
+            } />
+            <Route path="*" element={<Navigate to="/admin" replace />} />
+          </Routes>
         </div>
       </main>
     </div>

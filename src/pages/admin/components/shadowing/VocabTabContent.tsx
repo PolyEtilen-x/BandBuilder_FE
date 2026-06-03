@@ -1,7 +1,7 @@
 // src/pages/admin/components/shadowing/VocabTabContent.tsx
 
 import React, { useState } from "react"
-import { PronunciationTopicDetailDto, PronunciationVocabDto } from "@/api/practiceGeneral.api"
+import { PronunciationTopicDetailDto, PronunciationVocabDto } from "@/api/practice/practiceGeneral.api"
 import { Plus, Edit2, Trash2 } from "lucide-react"
 import "./shadowing-admin.css"
 

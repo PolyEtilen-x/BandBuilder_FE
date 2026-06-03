@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation, useSearchParams } from "react-router-dom";
-import { practiceApi } from "@/api/practice.api";
+import { practiceApi } from "@/api/practice/practice.api";
 import { useMemo } from "react";
 import { PracticeTestDTO } from "@/data/practices/practice.types";
 

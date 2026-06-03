@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
-import { vocabApi } from "@/api/vocab.api"
+import { vocabApi } from "@/api/materials/vocab.api"
 import { VocabTopic } from "@/data/vocab/vocab.model"
 import "./style.css"
 
 type Props = {
-  topicName: string
-  onBack: () => void
+    topicName: string
+    onBack: () => void
 }
 
 export default function TopicDetail({ topicName, onBack }: Props) {
@@ -17,21 +17,21 @@ export default function TopicDetail({ topicName, onBack }: Props) {
 
     useEffect(() => {
         const load = async () => {
-        try {
-            setLoading(true)
-            const res = await vocabApi.getTopic(decodedName)
-            setTopic(res || null)
-        } catch (err) {
-            console.error(err)
-        } finally {
-            setLoading(false)
-        }
+            try {
+                setLoading(true)
+                const res = await vocabApi.getTopic(decodedName)
+                setTopic(res || null)
+            } catch (err) {
+                console.error(err)
+            } finally {
+                setLoading(false)
+            }
         }
 
         load()
     }, [decodedName])
 
-    const handleSave = async (id: number) => {
+    const handleSave = async (id: string) => {
         const updated = await vocabApi.toggleSave(decodedName, id)
         if (updated) setTopic(updated)
     }
@@ -62,45 +62,45 @@ export default function TopicDetail({ topicName, onBack }: Props) {
                 {topic.vocab_list.map((w) => (
                     <div key={w.id} className="word-card">
 
-                    {/* LEFT */}
-                    <div className="word-content">
-                        <div className="word-top">
-                        <h3>{w.word}</h3>
+                        {/* LEFT */}
+                        <div className="word-content">
+                            <div className="word-top">
+                                <h3>{w.word}</h3>
 
-                        <button
-                            className="audio-btn"
-                            onClick={() => playAudio(w.word)}
-                        >
-                            🔊
-                        </button>
+                                <button
+                                    className="audio-btn"
+                                    onClick={() => playAudio(w.word)}
+                                >
+                                    🔊
+                                </button>
+                            </div>
+
+                            <span className="pronunciation">{w.pronunciation}</span>
+
+                            <p className="meaning">
+                                Vietnamese meaning: {w.meaning}
+                            </p>
+
+                            <p className="example">
+                                Example: "{w.example}"
+                            </p>
+
+                            {w.synonyms && (
+                                <p className="synonyms">
+                                    Synonyms: "{w.synonyms.join(", ")}""
+                                </p>
+                            )}
                         </div>
 
-                        <span className="pronunciation">{w.pronunciation}</span>
-
-                        <p className="meaning">
-                            Vietnamese meaning: {w.meaning}
-                        </p>
-
-                        <p className="example">
-                            Example: "{w.example}"
-                        </p>
-
-                        {w.synonyms && (
-                        <p className="synonyms">
-                            Synonyms: "{w.synonyms.join(", ")}""
-                        </p>
-                        )}
-                    </div>
-
-                    {/* RIGHT */}
-                    <div className="word-action">
-                        <button
-                        className={`save-btn ${w.isSaved ? "saved" : ""}`}
-                        onClick={() => handleSave(w.id)}
-                        >
-                        {w.isSaved ? "Saved" : "Save"}
-                        </button>
-                    </div>
+                        {/* RIGHT */}
+                        <div className="word-action">
+                            <button
+                                className={`save-btn ${w.isSaved ? "saved" : ""}`}
+                                onClick={() => handleSave(w.id)}
+                            >
+                                {w.isSaved ? "Saved" : "Save"}
+                            </button>
+                        </div>
 
                     </div>
                 ))}
@@ -110,19 +110,19 @@ export default function TopicDetail({ topicName, onBack }: Props) {
 }
 
 function formatTopicName(name: string) {
-  const match = name.match(/(LR|SW)_(\d+)/)
-  if (!match) return name
+    const match = name.match(/(LR|SW)_(\d+)/)
+    if (!match) return name
 
-  const type = match[1]
-  const band = match[2]
+    const type = match[1]
+    const band = match[2]
 
-  if (type === "LR") {
-    return `Listening & Reading (Band ${band})`
-  }
+    if (type === "LR") {
+        return `Listening & Reading (Band ${band})`
+    }
 
-  if (type === "SW") {
-    return `Speaking & Writing (Band ${band})`
-  }
+    if (type === "SW") {
+        return `Speaking & Writing (Band ${band})`
+    }
 
-  return name
+    return name
 }

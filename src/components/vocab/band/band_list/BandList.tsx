@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react"
-import { vocabApi } from "@/api/vocab.api"
+import { vocabApi } from "@/api/materials/vocab.api"
 import { VocabTopic } from "@/data/vocab/vocab.model"
 import "./style.css"
 
 type Props = {
   bandIndex: number | null
-  onSelectTopic: (name: string) => void  
+  onSelectTopic: (name: string) => void
 }
 
 export default function BandList({ bandIndex, onSelectTopic }: Props) {
@@ -22,11 +22,11 @@ export default function BandList({ bandIndex, onSelectTopic }: Props) {
         const res = await vocabApi.getTopics()
 
         const filtered = res.filter((t: VocabTopic) => {
-        const match = t.topic.match(/_(\d+)/)
-        if (!match) return false
+          const match = t.topic.match(/_(\d+)/)
+          if (!match) return false
 
-        return Number(match[1]) === currentBand
-      })
+          return Number(match[1]) === currentBand
+        })
 
         setTopics(filtered)
       } catch (err) {
@@ -43,7 +43,7 @@ export default function BandList({ bandIndex, onSelectTopic }: Props) {
 
   return (
     <div className="topic-container">
-    <h1 className="topic-title">Band {currentBand}.0+</h1>
+      <h1 className="topic-title">Band {currentBand}.0+</h1>
       <div className="topic-grid">
         {topics.map((topic, index) => {
           const total = topic.vocab_list.length

@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react"
-import type { PronunciationSentenceDto } from "@/api/practiceGeneral.api"
+import type { PronunciationSentenceDto } from "@/api/practice/practiceGeneral.api"
 
 interface YTPlayer {
   playVideo: () => void

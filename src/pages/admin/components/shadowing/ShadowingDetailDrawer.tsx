@@ -1,7 +1,7 @@
 // src/pages/admin/components/shadowing/ShadowingDetailDrawer.tsx
 
 import React, { useState } from "react"
-import { PronunciationTopicDetailDto } from "@/api/practiceGeneral.api"
+import { PronunciationTopicDetailDto } from "@/api/practice/practiceGeneral.api"
 import { X } from "lucide-react"
 import VocabTabContent from "./VocabTabContent"
 import SentenceTabContent from "./SentenceTabContent"

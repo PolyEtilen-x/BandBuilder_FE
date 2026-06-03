@@ -1,5 +1,5 @@
-import { useState } from "react"
-import data from "@/data/grammar/sentence.data.json"
+import { useState, useEffect } from "react"
+import { grammarApi } from "@/api/materials/grammar.api"
 import "./style.css"
 
 type Props = {
@@ -7,9 +7,26 @@ type Props = {
 }
 
 export default function GrammarSentence({ subItem }: Props) {
-  const [openId, setOpenId] = useState<number | null>(null)
+  const [sentences, setSentences] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [openId, setOpenId] = useState<string | null>(null)
 
-  const toggle = (id: number) => {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true)
+        const res = await grammarApi.getSentences()
+        setSentences(res)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id))
   }
 
@@ -22,26 +39,27 @@ export default function GrammarSentence({ subItem }: Props) {
   }
 
   const filtered = subItem
-    ? data.data.filter((s: any) =>
-        s.category.toLowerCase().includes(categoryMap[subItem].toLowerCase())
-      )
-    : data.data
+    ? sentences.filter((s: any) =>
+      s.category.toLowerCase().includes(categoryMap[subItem].toLowerCase())
+    )
+    : sentences
+
+  if (loading) return <p>Loading...</p>
 
   return (
     <div className="grammar-container">
       <div className="grammar-grid">
 
-        {filtered.map((s: any, index: number) => {
-          const id = index + 1
-          const isOpen = openId === id
+        {filtered.map((s: any) => {
+          const isOpen = openId === s.id
 
           return (
-            <div key={id} className="grammar-card">
+            <div key={s.id} className="grammar-card">
 
               {/* MAIN */}
               <div
                 className="card-main"
-                onClick={() => toggle(id)}
+                onClick={() => toggle(s.id)}
               >
                 <h2 className="tense-name">{s.category}</h2>
 

@@ -1,5 +1,5 @@
-import { useState } from "react"
-import data from "@/data/grammar/tense.data.json"
+import { useState, useEffect } from "react"
+import { grammarApi } from "@/api/materials/grammar.api"
 import "./style.css"
 
 type Props = {
@@ -7,9 +7,26 @@ type Props = {
 }
 
 export default function GrammarTenses({ subItem }: Props) {
-  const [openId, setOpenId] = useState<number | null>(null)
+  const [tenses, setTenses] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [openId, setOpenId] = useState<string | null>(null)
 
-  const toggle = (id: number) => {
+  useEffect(() => {
+    const load = async () => {
+      try {
+        setLoading(true)
+        const res = await grammarApi.getTenses()
+        setTenses(res)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    load()
+  }, [])
+
+  const toggle = (id: string) => {
     setOpenId((prev) => (prev === id ? null : id))
   }
 
@@ -21,14 +38,15 @@ export default function GrammarTenses({ subItem }: Props) {
   }
 
   const filtered = subItem
-    ? data.data.filter((t: any) =>
-        t.tense_name.toLowerCase().includes(groupMap[subItem])
-      )
-    : data.data
+    ? tenses.filter((t: any) =>
+      t.tense_name.toLowerCase().includes(groupMap[subItem])
+    )
+    : tenses
+
+  if (loading) return <p>Loading...</p>
 
   return (
     <div className="grammar-container">
-
       <div className="grammar-grid">
 
         {filtered.map((t) => {

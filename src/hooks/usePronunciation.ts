@@ -4,7 +4,7 @@ import {
   getPronunciationTopicDetail,
   type PronunciationTopicListItemDto,
   type PronunciationTopicDetailDto,
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 
 // 1. Fetch all pronunciation topics (list view)
 export const usePronunciationTopics = () => {

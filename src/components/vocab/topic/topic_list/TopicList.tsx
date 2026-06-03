@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { vocabApi } from "@/api/vocab.api"
+import { vocabApi } from "@/api/materials/vocab.api"
 import { VocabTopic } from "@/data/vocab/vocab.model"
 import "./style.css"
 

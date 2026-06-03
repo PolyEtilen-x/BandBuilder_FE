@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { grammarApi } from "@/api/grammar.api"
+import { grammarApi } from "@/api/materials/grammar.api"
 import { MistakeCategory } from "@/data/grammar/mistake.model"
 import "./style.css"
 

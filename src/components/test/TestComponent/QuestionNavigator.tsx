@@ -1,6 +1,6 @@
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { useNavigate, useParams } from "react-router-dom"
-import { practiceApi } from "@/api/practice.api"
+import { practiceApi } from "@/api/practice/practice.api"
 
 export default function QuestionNavigator({ questionBlocks = [], examId: propExamId, currentUnit, isWriting = false, taskNumber }: any) {
   const { id: urlId } = useParams()

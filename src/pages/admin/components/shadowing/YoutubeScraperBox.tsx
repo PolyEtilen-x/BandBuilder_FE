@@ -1,7 +1,7 @@
 // src/pages/admin/components/shadowing/YoutubeScraperBox.tsx
 
 import React, { useState } from "react"
-import { scrapeYoutubeTranscriptAdmin } from "@/api/practiceGeneral.api"
+import { scrapeYoutubeTranscriptAdmin } from "@/api/practice/practiceGeneral.api"
 import { ShadowingSentence } from "../../types"
 import { Youtube, Link as LinkIcon, Sparkles, Loader2, Check, Clock } from "lucide-react"
 import "./shadowing-admin.css"

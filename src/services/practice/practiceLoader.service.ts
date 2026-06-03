@@ -1,4 +1,4 @@
-import { practiceApi } from "@/api/practice.api"
+import { practiceApi } from "@/api/practice/practice.api"
 import { normalizeTestUnits } from "@/utils/normalizeTestUnits.utils"
 import { PracticeSkill } from "@/data/practices/practiceSkill.model"
 

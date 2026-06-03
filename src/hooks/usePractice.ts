@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { practiceApi } from "@/api/practice.api"
+import { practiceApi } from "@/api/practice/practice.api"
 import { normalizeTestUnits } from "@/utils/normalizeTestUnits.utils"
 
 //1. get all skill for practice

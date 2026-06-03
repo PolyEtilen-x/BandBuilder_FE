@@ -1,4 +1,4 @@
-import { apiClient } from "./apiClient.api"
+import { apiClient } from "../apiClient.api"
 
 // ── DTO types (raw API shape) ──────────────────────────────────────────────
 

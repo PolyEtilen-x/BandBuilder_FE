@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import TopicList from "@/components/vocab/topic/topic_list/TopicList"
-import { vocabApi } from "@/api/vocab.api"
+import { vocabApi } from "@/api/materials/vocab.api"
 import "./style.css"
 
 type Props = {
@@ -82,7 +82,7 @@ export default function Flashcard({ mode }: Props) {
       console.error("Band flashcard error:", err)
     }
   }
-  
+
   if (view === "select") {
     return (
       <div className="flashcard-page">
@@ -95,21 +95,21 @@ export default function Flashcard({ mode }: Props) {
         {mode === "topic" ? (
           <div className="band-container">
 
-        <h2 className="band-title">Choose a topic</h2>
+            <h2 className="band-title">Choose a topic</h2>
 
-        <div className="band-grid">
-          {topics.map((t) => (
-            <div
-              key={t.topic}
-              className="band-card"
-              onClick={() => handleSelectTopic(t.topic)}
-            >
-              <h3>{formatTopicName(t.topic)}</h3>
+            <div className="band-grid">
+              {topics.map((t) => (
+                <div
+                  key={t.topic}
+                  className="band-card"
+                  onClick={() => handleSelectTopic(t.topic)}
+                >
+                  <h3>{formatTopicName(t.topic)}</h3>
+                </div>
+              ))}
             </div>
-          ))}
-        </div>
 
-      </div>
+          </div>
         ) : (
           <div className="band-container">
 
@@ -118,7 +118,7 @@ export default function Flashcard({ mode }: Props) {
               <h3>Listening & Reading</h3>
 
               <div className="band-grid">
-                {[5,6,7,8].map((band) => (
+                {[5, 6, 7, 8].map((band) => (
                   <div
                     key={`LR_${band}`}
                     className="band-card"
@@ -135,7 +135,7 @@ export default function Flashcard({ mode }: Props) {
               <h3>Speaking & Writing</h3>
 
               <div className="band-grid">
-                {[5,6,7,8].map((band) => (
+                {[5, 6, 7, 8].map((band) => (
                   <div
                     key={`SW_${band}`}
                     className="band-card"
@@ -170,53 +170,53 @@ export default function Flashcard({ mode }: Props) {
   return (
     <div className="flashcard-page">
 
-    {/* HEADER */}
-    <div className="flashcard-header">
-      <button onClick={handleBack}>← Back</button>
-      <span>{current + 1} / {words.length}</span>
-    </div>
+      {/* HEADER */}
+      <div className="flashcard-header">
+        <button onClick={handleBack}>← Back</button>
+        <span>{current + 1} / {words.length}</span>
+      </div>
 
-    {/* CENTER */}
-    <div className="flashcard-center">
-      <div
-        className="flashcard"
-        onClick={() => setFlipped(!flipped)}
-      >
-        <div className={`card-inner ${flipped ? "flipped" : ""}`}>
+      {/* CENTER */}
+      <div className="flashcard-center">
+        <div
+          className="flashcard"
+          onClick={() => setFlipped(!flipped)}
+        >
+          <div className={`card-inner ${flipped ? "flipped" : ""}`}>
 
-          {/* FRONT */}
-          <div className="card-front">
-            <h2>{word.word}</h2>
+            {/* FRONT */}
+            <div className="card-front">
+              <h2>{word.word}</h2>
+            </div>
+
+            {/* BACK */}
+            <div className="card-back">
+              <p>Pronunciation: {word.pronunciation}</p>
+              <p>Meaning: {word.meaning}</p>
+              <p>Example: {word.example}</p>
+              <p>Synonyms: {word.synonyms?.join(", ")}</p>
+            </div>
+
           </div>
-
-          {/* BACK */}
-          <div className="card-back">
-            <p>Pronunciation: {word.pronunciation}</p>
-            <p>Meaning: {word.meaning}</p>
-            <p>Example: {word.example}</p>
-            <p>Synonyms: {word.synonyms?.join(", ")}</p>
-          </div>
-
         </div>
       </div>
+
+      {/* ACTION */}
+      <div className="flashcard-actions">
+        <button onClick={prev} disabled={current === 0}>
+          ⏮ Prev
+        </button>
+
+        <button onClick={() => setFlipped(!flipped)}>
+          Flip
+        </button>
+
+        <button onClick={next} disabled={current === words.length - 1}>
+          Next ⏭
+        </button>
+      </div>
+
     </div>
-
-    {/* ACTION */}
-    <div className="flashcard-actions">
-      <button onClick={prev} disabled={current === 0}>
-        ⏮ Prev
-      </button>
-
-      <button onClick={() => setFlipped(!flipped)}>
-        Flip
-      </button>
-
-      <button onClick={next} disabled={current === words.length - 1}>
-        Next ⏭
-      </button>
-    </div>
-
-  </div>
   )
 }
 

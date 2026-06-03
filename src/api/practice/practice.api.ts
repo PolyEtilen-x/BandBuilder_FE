@@ -1,4 +1,4 @@
-import { apiClient } from "./apiClient.api"
+import { apiClient } from "../apiClient.api"
 import { PracticeSubmitDTO, PracticeTestDTO, PracticeTestPreview } from "@/data/practices/practice.types"
 
 export const practiceApi = {

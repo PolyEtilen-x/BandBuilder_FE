@@ -1,7 +1,7 @@
 // src/pages/admin/components/writing/EssaysDrawer.tsx
 
 import React, { useState } from "react"
-import { WritingSampleTopicDetailDto, WritingEssayDto } from "@/api/practiceGeneral.api"
+import { WritingSampleTopicDetailDto, WritingEssayDto } from "@/api/practice/practiceGeneral.api"
 import { X, Plus, Edit2, Trash2 } from "lucide-react"
 import EssayForm from "./EssayForm"
 import "./writing-admin.css"
@@ -120,7 +120,7 @@ export default function EssaysDrawer({
                           </button>
                         </div>
                       </div>
-                      
+
                       <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
                         <p style={{ fontSize: "12px", color: "#374151", margin: 0, lineHeight: 1.5, display: "-webkit-box", WebkitLineClamp: 3, WebkitBoxOrient: "vertical", overflow: "hidden", fontStyle: "italic" }}>
                           "{ess.essayText}"

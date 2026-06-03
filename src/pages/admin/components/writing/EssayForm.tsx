@@ -1,7 +1,7 @@
 // src/pages/admin/components/writing/EssayForm.tsx
 
 import React, { useState, useEffect } from "react"
-import { WritingEssayDto, EssayAnalysis, KeyVocabularyItem } from "@/api/practiceGeneral.api"
+import { WritingEssayDto, EssayAnalysis, KeyVocabularyItem } from "@/api/practice/practiceGeneral.api"
 import { Award, Check, AlertCircle, Plus, Trash2, PenTool, Code } from "lucide-react"
 import "./writing-admin.css"
 

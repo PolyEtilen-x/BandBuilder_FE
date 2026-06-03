@@ -1,7 +1,7 @@
 // src/pages/admin/components/writing/TopicCard.tsx
 
 import React from "react"
-import { WritingSampleTopicListItemDto } from "@/api/practiceGeneral.api"
+import { WritingSampleTopicListItemDto } from "@/api/practice/practiceGeneral.api"
 import { BookOpen, Edit2, Trash2 } from "lucide-react"
 import "./writing-admin.css"
 

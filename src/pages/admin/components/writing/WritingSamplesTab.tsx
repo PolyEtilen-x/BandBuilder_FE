@@ -13,7 +13,7 @@ import {
   deleteWritingSampleEssayAdmin,
   getWritingSampleTopics,
   getWritingSampleTopicDetail
-} from "@/api/practiceGeneral.api"
+} from "@/api/practice/practiceGeneral.api"
 import { Search, Plus, FileText } from "lucide-react"
 import TopicCard from "./TopicCard"
 import TopicModal from "./TopicModal"

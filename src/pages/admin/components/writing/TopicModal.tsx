@@ -1,7 +1,7 @@
 // src/pages/admin/components/writing/TopicModal.tsx
 
 import React, { useState, useEffect } from "react"
-import { WritingSampleTopicListItemDto, WritingTaskType } from "@/api/practiceGeneral.api"
+import { WritingSampleTopicListItemDto, WritingTaskType } from "@/api/practice/practiceGeneral.api"
 import { X } from "lucide-react"
 import "./writing-admin.css"
 
