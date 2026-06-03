@@ -80,6 +80,7 @@ export default function WritingSamplesTab() {
     category: string
     prompt: string
     imageUrl?: string
+    chartDescription?: string
   }) => {
     try {
       if (editingTopic) {

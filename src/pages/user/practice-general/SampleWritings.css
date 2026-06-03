@@ -1905,3 +1905,64 @@
   box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4);
   transform: translateY(-1px);
 }
+
+/* ── Chart Description Box (Task 1 diagram description) ── */
+.sw-chart-description-box {
+  margin-top: 16px;
+  background: linear-gradient(135deg, #f0f7ff 0%, #e8f2ff 100%);
+  border: 1.5px solid #bfdbfe;
+  border-radius: var(--radius-md);
+  padding: 18px 20px;
+}
+
+.sw-chart-description-title {
+  margin: 0 0 10px 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #1e40af;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.sw-chart-description-content p.sw-blog-paragraph {
+  margin: 0 0 8px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #1e3a6e;
+}
+
+.sw-chart-description-content p.sw-blog-paragraph:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Blog Outline Box (Dàn ý section inside EssayCard) ── */
+.sw-blog-outline-box {
+  background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+  border: 1.5px solid #fde047;
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+.sw-blog-outline-title {
+  margin: 0 0 10px 0;
+  font-size: 13.5px;
+  font-weight: 800;
+  color: #854d0e;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.sw-blog-outline-content p.sw-blog-paragraph {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  line-height: 1.7;
+  color: #713f12;
+}
+
+.sw-blog-outline-content p.sw-blog-paragraph:last-child {
+  margin-bottom: 0;
+}

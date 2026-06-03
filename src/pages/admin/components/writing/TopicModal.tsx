@@ -13,6 +13,7 @@ interface TopicModalProps {
     category: string
     prompt: string
     imageUrl?: string
+    chartDescription?: string
   }) => Promise<void>
 }
 
@@ -25,6 +26,7 @@ export default function TopicModal({
   const [topicCategory, setTopicCategory] = useState("")
   const [topicPrompt, setTopicPrompt] = useState("")
   const [topicImageUrl, setTopicImageUrl] = useState("")
+  const [topicChartDescription, setTopicChartDescription] = useState("")
   const [saving, setSaving] = useState(false)
 
   useEffect(() => {
@@ -33,11 +35,13 @@ export default function TopicModal({
       setTopicCategory(editingTopic.category)
       setTopicPrompt(editingTopic.prompt)
       setTopicImageUrl(editingTopic.imageUrl || "")
+      setTopicChartDescription(editingTopic.chartDescription || "")
     } else {
       setTopicType("TASK_1")
       setTopicCategory("")
       setTopicPrompt("")
       setTopicImageUrl("")
+      setTopicChartDescription("")
     }
   }, [editingTopic])
 
@@ -51,7 +55,8 @@ export default function TopicModal({
         taskType: topicType,
         category: topicCategory.trim(),
         prompt: topicPrompt.trim(),
-        imageUrl: topicImageUrl.trim() ? topicImageUrl.trim() : undefined
+        imageUrl: topicImageUrl.trim() ? topicImageUrl.trim() : undefined,
+        chartDescription: topicChartDescription.trim() ? topicChartDescription.trim() : undefined
       })
     } finally {
       setSaving(false)
@@ -122,6 +127,19 @@ export default function TopicModal({
                 className="writing-admin-text-input"
               />
             </div>
+
+            {topicType === "TASK_1" && (
+              <div className="writing-admin-form-group">
+                <label className="writing-admin-label">Mô tả biểu đồ (Chart Description — tùy chọn)</label>
+                <textarea
+                  placeholder={"Nhập mô tả về biểu đồ/bảng số liệu...\nVD: The bar chart shows the amount of waste production in six countries (Korea, Ireland, Norway, Finland, Switzerland and Sweden) between 1980 and 2000."}
+                  value={topicChartDescription}
+                  onChange={(e) => setTopicChartDescription(e.target.value)}
+                  className="writing-admin-textarea"
+                  style={{ minHeight: "100px" }}
+                />
+              </div>
+            )}
           </div>
 
           <div style={{ padding: "16px 24px", background: "#f9fafb", borderTop: "1px solid #e5e7eb", display: "flex", justifyContent: "flex-end", gap: "12px" }}>

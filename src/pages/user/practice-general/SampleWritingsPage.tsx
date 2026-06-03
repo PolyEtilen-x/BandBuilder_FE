@@ -4,11 +4,6 @@ import GeneralPracticeSidebar from "@/components/general_practice/GeneralPractic
 import {
   Search,
   BookOpen,
-  Sparkles,
-  CheckCircle2,
-  AlertTriangle,
-  ChevronDown,
-  ChevronUp,
   FileText,
   Clock,
   Crown,
@@ -102,117 +97,6 @@ function TopicCard({
   )
 }
 
-function AIAnalysisPanel({ analysis }: { analysis: EssayAnalysis }): ReactElement {
-  const criteria = [
-    { key: "taskAchievement", label: "Task Achievement / Response", score: analysis.taskAchievement },
-    { key: "coherenceCohesion", label: "Coherence & Cohesion", score: analysis.coherenceCohesion },
-    { key: "lexicalResource", label: "Lexical Resource", score: analysis.lexicalResource },
-    { key: "grammaticalRange", label: "Grammatical Range & Accuracy", score: analysis.grammaticalRange },
-  ]
-
-  return (
-    <div className="sw-ai-analysis">
-      <div className="sw-ai-criteria">
-        <span className="sw-ai-heading">Band Breakdown</span>
-        <div className="sw-ai-criteria-grid">
-          {criteria.map((c) => {
-            if (c.score === undefined || c.score === null) return null
-            const percentage = (c.score / 9) * 100
-
-            let barColor = "linear-gradient(90deg, #94a3b8, #64748b)"
-            if (c.score >= 8.0) {
-              barColor = "linear-gradient(90deg, #10b981, #047857)"
-            } else if (c.score >= 7.0) {
-              barColor = "linear-gradient(90deg, #3b82f6, #1d4ed8)"
-            } else if (c.score >= 6.0) {
-              barColor = "linear-gradient(90deg, #f59e0b, #b45309)"
-            }
-
-            return (
-              <div key={c.key} className="sw-ai-criterion-row">
-                <div className="sw-ai-criterion-info">
-                  <span className="sw-ai-criterion-label">{c.label}</span>
-                  <span className="sw-ai-criterion-score">Band {c.score.toFixed(1)}</span>
-                </div>
-                <div className="sw-ai-progress-track">
-                  <div
-                    className="sw-ai-progress-fill"
-                    style={{ width: `${percentage}%`, background: barColor }}
-                  />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-
-      <div className="sw-ai-highlights-grid">
-        {analysis.strengths && analysis.strengths.length > 0 && (
-          <div className="sw-ai-highlights sw-ai-highlights--strengths">
-            <span className="sw-ai-heading sw-ai-heading--strengths">
-              <CheckCircle2 size={13} style={{ marginRight: 6 }} /> Key Strengths
-            </span>
-            <ul className="sw-ai-list">
-              {analysis.strengths.map((s, idx) => (
-                <li key={idx} className="sw-ai-list-item">
-                  <span className="sw-ai-bullet sw-ai-bullet--strength">✓</span>
-                  <span className="sw-ai-list-text">{s}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-
-        {analysis.improvements && analysis.improvements.length > 0 && (
-          <div className="sw-ai-highlights sw-ai-highlights--improvements">
-            <span className="sw-ai-heading sw-ai-heading--improvements">
-              <AlertTriangle size={13} style={{ marginRight: 6 }} /> Areas to Improve
-            </span>
-            <ul className="sw-ai-list">
-              {analysis.improvements.map((imp, idx) => (
-                <li key={idx} className="sw-ai-list-item">
-                  <span className="sw-ai-bullet sw-ai-bullet--improve">!</span>
-                  <span className="sw-ai-list-text">{imp}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {analysis.keyVocabulary && analysis.keyVocabulary.length > 0 && (
-        <div className="sw-ai-vocab-section">
-          <span className="sw-ai-heading sw-ai-heading--vocab">
-            <Sparkles size={13} style={{ marginRight: 6 }} /> Band-Boosting Vocabulary & Collocations
-          </span>
-          <div className="sw-ai-vocab-grid">
-            {analysis.keyVocabulary.map((item, idx) => (
-              <div key={idx} className="sw-ai-vocab-item">
-                <div className="sw-ai-vocab-header">
-                  <span className="sw-ai-vocab-phrase">{item.phrase}</span>
-                  <span className="sw-ai-vocab-meaning">{item.meaning}</span>
-                </div>
-                {item.context && (
-                  <p className="sw-ai-vocab-context">
-                    <strong>Context:</strong> "{item.context}"
-                  </p>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {analysis.overallComment && (
-        <div className="sw-ai-overall">
-          <span className="sw-ai-heading">AI Summary & Advice</span>
-          <p className="sw-ai-comment">{analysis.overallComment}</p>
-        </div>
-      )}
-    </div>
-  )
-}
-
 const renderParagraphs = (text: string) => {
   if (!text) return null
   return text.split(/\n+/).map((para, i) => {
@@ -232,28 +116,52 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
     return essay.essayText.trim().split(/\s+/).filter(Boolean).length
   }, [essay.essayText])
 
+  const sectionNum = (n: number) => <span className="sw-blog-section-number">{n}.</span>
+
+  // Compute section numbers dynamically
+  let sectionCounter = 0
+  const nextSec = () => { sectionCounter++; return sectionCounter }
+
+  const hasSec1 = !!essay.analysis
+  const hasSec3 = !!(essay.essayTranslation)
+  const hasSec4 = !!(essay.analysis?.keyVocabulary && essay.analysis.keyVocabulary.length > 0)
+
   return (
     <div className="sw-blog-post">
-      {essay.analysis && (
+
+      {/* ── 1. DÀN Ý & PHÂN TÍCH ── */}
+      {hasSec1 && (
         <div className="sw-blog-section sw-blog-section--analysis">
           <h3 className="sw-blog-section-title">
-            <span className="sw-blog-section-number">1.</span> Dàn ý & Phân tích chi tiết (Outline & Analysis)
+            {sectionNum(nextSec())} Dàn ý &amp; Phân tích chi tiết (Outline &amp; Analysis)
           </h3>
 
           <div className="sw-blog-analysis-card">
-            {essay.analysis.overallComment && (
-              <div className="sw-blog-overall-comment">
-                <p className="sw-blog-comment-text">{essay.analysis.overallComment}</p>
+
+            {/* ── Outline box ── */}
+            {essay.analysis!.outline && (
+              <div className="sw-blog-outline-box">
+                <h4 className="sw-blog-outline-title">📋 Dàn ý (Outline)</h4>
+                <div className="sw-blog-outline-content">
+                  {renderParagraphs(essay.analysis!.outline)}
+                </div>
               </div>
             )}
 
-            {/* Criteria Breakdown */}
+            {/* ── Overall comment ── */}
+            {essay.analysis!.overallComment && (
+              <div className="sw-blog-overall-comment">
+                <p className="sw-blog-comment-text">{essay.analysis!.overallComment}</p>
+              </div>
+            )}
+
+            {/* ── Criteria Breakdown ── */}
             <div className="sw-blog-scores-grid">
               {[
-                { label: "Task Achievement / Response", score: essay.analysis.taskAchievement },
-                { label: "Coherence & Cohesion", score: essay.analysis.coherenceCohesion },
-                { label: "Lexical Resource", score: essay.analysis.lexicalResource },
-                { label: "Grammatical Range & Accuracy", score: essay.analysis.grammaticalRange }
+                { label: "Task Achievement / Response", score: essay.analysis!.taskAchievement },
+                { label: "Coherence & Cohesion", score: essay.analysis!.coherenceCohesion },
+                { label: "Lexical Resource", score: essay.analysis!.lexicalResource },
+                { label: "Grammatical Range & Accuracy", score: essay.analysis!.grammaticalRange },
               ].map((c, idx) => {
                 if (c.score === undefined || c.score === null) return null
                 const percentage = (c.score / 9) * 100
@@ -280,14 +188,14 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
               })}
             </div>
 
-            {/* Strengths & Areas to Improve */}
+            {/* ── Strengths & Areas to Improve ── */}
             <div className="sw-blog-feedback-grid">
-              {essay.analysis.strengths && essay.analysis.strengths.length > 0 && (
+              {essay.analysis!.strengths && essay.analysis!.strengths.length > 0 && (
                 <div className="sw-blog-feedback-col sw-blog-feedback-col--strengths">
                   <h4 className="sw-blog-feedback-title">✓ Điểm mạnh nổi bật (Key Strengths)</h4>
                   <ul className="sw-blog-feedback-list">
-                    {essay.analysis.strengths.map((s: string, idx: number) => (
-                      <li key={idx} className="sw-blog-feedback-item">
+                    {essay.analysis!.strengths.map((s: string, i: number) => (
+                      <li key={i} className="sw-blog-feedback-item">
                         <span className="sw-feedback-bullet">•</span> {s}
                       </li>
                     ))}
@@ -295,12 +203,12 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
                 </div>
               )}
 
-              {essay.analysis.improvements && essay.analysis.improvements.length > 0 && (
+              {essay.analysis!.improvements && essay.analysis!.improvements.length > 0 && (
                 <div className="sw-blog-feedback-col sw-blog-feedback-col--improvements">
                   <h4 className="sw-blog-feedback-title">! Điểm cần cải thiện (Areas to Improve)</h4>
                   <ul className="sw-blog-feedback-list">
-                    {essay.analysis.improvements.map((imp: string, idx: number) => (
-                      <li key={idx} className="sw-blog-feedback-item">
+                    {essay.analysis!.improvements.map((imp: string, i: number) => (
+                      <li key={i} className="sw-blog-feedback-item">
                         <span className="sw-feedback-bullet">•</span> {imp}
                       </li>
                     ))}
@@ -316,7 +224,7 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
       <div className="sw-blog-section sw-blog-section--essay">
         <div className="sw-blog-essay-header">
           <h3 className="sw-blog-section-title">
-            <span className="sw-blog-section-number">2.</span> Bài viết mẫu (Model Essay - Band {essay.bandScore.toFixed(1)})
+            {sectionNum(nextSec())} Bài viết mẫu (Model Essay — Band {essay.bandScore.toFixed(1)})
           </h3>
           <span className="sw-blog-wordcount">
             <FileText size={14} style={{ marginRight: 4 }} /> {wordCount} words
@@ -330,22 +238,22 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
       </div>
 
       {/* ── 3. BẢN DỊCH TIẾNG VIỆT ── */}
-      {essay.essayTranslation && (
+      {hasSec3 && (
         <div className="sw-blog-section sw-blog-section--translation">
           <h3 className="sw-blog-section-title">
-            <span className="sw-blog-section-number">3.</span> Bản dịch tiếng Việt (Translation)
+            {sectionNum(nextSec())} Bản dịch tiếng Việt (Translation)
           </h3>
           <div className="sw-blog-translation-card">
-            {renderParagraphs(essay.essayTranslation)}
+            {renderParagraphs(essay.essayTranslation!)}
           </div>
         </div>
       )}
 
       {/* ── 4. TỪ VỰNG NỔI BẬT ── */}
-      {essay.analysis?.keyVocabulary && essay.analysis.keyVocabulary.length > 0 && (
+      {hasSec4 && (
         <div className="sw-blog-section sw-blog-section--vocab">
           <h3 className="sw-blog-section-title">
-            <span className="sw-blog-section-number">4.</span> Từ vựng & Cấu trúc "ăn điểm" (Vocabulary & Collocations)
+            {sectionNum(nextSec())} Từ vựng &amp; Cấu trúc "ăn điểm" (Vocabulary &amp; Collocations)
           </h3>
           <div className="sw-blog-vocab-table-container">
             <table className="sw-blog-vocab-table">
@@ -357,8 +265,8 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
                 </tr>
               </thead>
               <tbody>
-                {essay.analysis.keyVocabulary.map((item: any, idx: number) => (
-                  <tr key={idx}>
+                {essay.analysis!.keyVocabulary!.map((item: any, i: number) => (
+                  <tr key={i}>
                     <td className="sw-blog-vocab-phrase">{item.phrase}</td>
                     <td className="sw-blog-vocab-meaning">{item.meaning}</td>
                     <td className="sw-blog-vocab-context">"{item.context}"</td>
@@ -435,10 +343,9 @@ function TopicDetail({
 
   const bands = useMemo(() => {
     const list = [...new Set(detail.essays.map((e) => e.bandScore))]
-    return list.sort((a, b) => b - a) // Sort descending so highest band is first
+    return list.sort((a, b) => b - a)
   }, [detail.essays])
 
-  // Automatically default active band to the highest band score on load
   useEffect(() => {
     if (detail.essays.length > 0 && activeBand === null) {
       const highest = Math.max(...detail.essays.map((e) => e.bandScore))
@@ -490,6 +397,14 @@ function TopicDetail({
                 alt="Writing prompt diagram"
                 className="sw-prompt-card__image"
               />
+            </div>
+          )}
+          {detail.chartDescription && (
+            <div className="sw-chart-description-box">
+              <h4 className="sw-chart-description-title">📊 Mô tả biểu đồ</h4>
+              <div className="sw-chart-description-content">
+                {renderParagraphs(detail.chartDescription)}
+              </div>
             </div>
           )}
         </div>
@@ -670,7 +585,7 @@ export default function SampleWritingsPage(): ReactElement {
                   <h1 className="sw-header__title">Sample Writings</h1>
                 </div>
                 <p className="sw-header__subtitle">
-                  Study band 6.0+ to 8.5+ model essays for IELTS Writing Task 1 & Task 2.
+                  Study band 6.0+ to 8.5+ model essays for IELTS Writing Task 1 &amp; Task 2.
                 </p>
 
                 <div className="sw-search-wrapper">

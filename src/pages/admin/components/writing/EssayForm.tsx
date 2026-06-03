@@ -36,6 +36,7 @@ export default function EssayForm({
   const [coherenceCohesion, setCoherenceCohesion] = useState<number>(8.0)
   const [lexicalResource, setLexicalResource] = useState<number>(8.0)
   const [grammaticalRange, setGrammaticalRange] = useState<number>(8.0)
+  const [outline, setOutline] = useState<string>("")
   const [strengths, setStrengths] = useState<string[]>([])
   const [improvements, setImprovements] = useState<string[]>([])
   const [keyVocabulary, setKeyVocabulary] = useState<KeyVocabularyItem[]>([])
@@ -45,13 +46,14 @@ export default function EssayForm({
     if (editingEssay) {
       setEssayBand(editingEssay.bandScore)
       setEssayText(editingEssay.essayText)
-      setEssayTranslation(editingEssay.essayTranslation)
-      
+      setEssayTranslation(editingEssay.essayTranslation ?? "")
+
       const analysis = editingEssay.analysis || {}
       setTaskAchievement(analysis.taskAchievement ?? editingEssay.bandScore ?? 8.0)
       setCoherenceCohesion(analysis.coherenceCohesion ?? editingEssay.bandScore ?? 8.0)
       setLexicalResource(analysis.lexicalResource ?? editingEssay.bandScore ?? 8.0)
       setGrammaticalRange(analysis.grammaticalRange ?? editingEssay.bandScore ?? 8.0)
+      setOutline(analysis.outline ?? "")
       setStrengths(analysis.strengths ?? [])
       setImprovements(analysis.improvements ?? [])
       setKeyVocabulary(analysis.keyVocabulary ?? [])
@@ -64,17 +66,18 @@ export default function EssayForm({
       setEssayBand(8.0)
       setEssayText("")
       setEssayTranslation("")
-      
+
       // Default structured analysis for new essay
       setTaskAchievement(8.0)
       setCoherenceCohesion(8.0)
       setLexicalResource(8.0)
       setGrammaticalRange(8.0)
+      setOutline("")
       setStrengths(["Good usage of academic structures.", "Clear paragraph structuring."])
       setImprovements(["Ensure more cohesive links.", "Vary sentence beginnings."])
       setKeyVocabulary([])
       setOverallComment("An excellent essay showing clean layout and proper vocabulary usage.")
-      
+
       setEssayAnalysisText("")
       setJsonError(null)
       setIsVisualMode(true)
@@ -120,6 +123,7 @@ export default function EssayForm({
           setCoherenceCohesion(parsed.coherenceCohesion ?? essayBand)
           setLexicalResource(parsed.lexicalResource ?? essayBand)
           setGrammaticalRange(parsed.grammaticalRange ?? essayBand)
+          setOutline(parsed.outline ?? "")
           setStrengths(parsed.strengths ?? [])
           setImprovements(parsed.improvements ?? [])
           setKeyVocabulary(parsed.keyVocabulary ?? [])
@@ -130,6 +134,7 @@ export default function EssayForm({
           setCoherenceCohesion(essayBand)
           setLexicalResource(essayBand)
           setGrammaticalRange(essayBand)
+          setOutline("")
           setStrengths([])
           setImprovements([])
           setKeyVocabulary([])
@@ -148,6 +153,7 @@ export default function EssayForm({
         coherenceCohesion,
         lexicalResource,
         grammaticalRange,
+        outline: outline.trim() || undefined,
         strengths: strengths.filter(s => s.trim() !== ""),
         improvements: improvements.filter(imp => imp.trim() !== ""),
         overallComment: overallComment.trim(),
@@ -213,6 +219,7 @@ export default function EssayForm({
         coherenceCohesion,
         lexicalResource,
         grammaticalRange,
+        outline: outline.trim() || undefined,
         strengths: strengths.filter(s => s.trim() !== ""),
         improvements: improvements.filter(imp => imp.trim() !== ""),
         overallComment: overallComment.trim(),
@@ -395,8 +402,19 @@ export default function EssayForm({
           </div>
 
           <div className="writing-admin-visual-card" style={{ marginTop: "16px" }}>
+            <h4 className="writing-admin-card-title-small">2. Dàn ý / Outline (tùy chọn)</h4>
+            <textarea
+              placeholder={"Nhập dàn ý cho bài viết...\nVD:\nIntroduction: Paraphrase the prompt and state overview\nBody 1: Describe the highest values...\nBody 2: Compare remaining countries...\nConclusion: Summarise key trends"}
+              value={outline}
+              onChange={(e) => setOutline(e.target.value)}
+              className="writing-admin-textarea"
+              style={{ minHeight: "100px" }}
+            />
+          </div>
+
+          <div className="writing-admin-visual-card" style={{ marginTop: "16px" }}>
             <div className="writing-admin-section-header">
-              <h4 className="writing-admin-card-title-small">2. Phân tích điểm mạnh (Key Strengths)</h4>
+              <h4 className="writing-admin-card-title-small">3. Phân tích điểm mạnh (Key Strengths)</h4>
               <button
                 type="button"
                 onClick={handleAddStrength}
@@ -435,7 +453,7 @@ export default function EssayForm({
 
           <div className="writing-admin-visual-card" style={{ marginTop: "16px" }}>
             <div className="writing-admin-section-header">
-              <h4 className="writing-admin-card-title-small">3. Điểm cần cải thiện (Areas to Improve)</h4>
+              <h4 className="writing-admin-card-title-small">4. Điểm cần cải thiện (Areas to Improve)</h4>
               <button
                 type="button"
                 onClick={handleAddImprovement}
@@ -474,7 +492,7 @@ export default function EssayForm({
 
           <div className="writing-admin-visual-card" style={{ marginTop: "16px" }}>
             <div className="writing-admin-section-header" style={{ marginBottom: "12px" }}>
-              <h4 className="writing-admin-card-title-small">4. Từ vựng nổi bật (Key Vocabulary)</h4>
+              <h4 className="writing-admin-card-title-small">5. Từ vựng nổi bật (Key Vocabulary)</h4>
               <button
                 type="button"
                 onClick={handleAddVocab}

@@ -53,6 +53,7 @@ export interface EssayAnalysis {
   coherenceCohesion?: number
   lexicalResource?: number
   grammaticalRange?: number
+  outline?: string
   strengths?: string[]
   improvements?: string[]
   overallComment?: string
@@ -66,6 +67,7 @@ export interface WritingSampleTopicListItemDto {
   category: string
   prompt: string
   imageUrl: string | null
+  chartDescription: string | null
   essayCount: number
 }
 
@@ -73,7 +75,7 @@ export interface WritingEssayDto {
   id: string
   bandScore: number
   essayText: string
-  essayTranslation: string
+  essayTranslation?: string | null
   analysis: EssayAnalysis | null
 }
 
@@ -83,6 +85,7 @@ export interface WritingSampleTopicDetailDto {
   category: string
   prompt: string
   imageUrl: string | null
+  chartDescription: string | null
   essays: WritingEssayDto[]
 }
 
@@ -178,13 +181,26 @@ export interface CreateWritingSampleTopicDto {
   category: string
   prompt: string
   imageUrl?: string
+  chartDescription?: string
+}
+
+export interface EssayAnalysisInput {
+  taskAchievement?: number
+  coherenceCohesion?: number
+  lexicalResource?: number
+  grammaticalRange?: number
+  outline?: string
+  strengths?: string[]
+  improvements?: string[]
+  overallComment?: string
+  keyVocabulary?: { phrase: string; meaning: string; context?: string }[]
 }
 
 export interface CreateWritingSampleEssayDto {
   bandScore: number
   essayText: string
-  essayTranslation: string
-  analysis?: any
+  essayTranslation?: string
+  analysis?: EssayAnalysisInput
 }
 
 export async function createWritingSampleTopicAdmin(
