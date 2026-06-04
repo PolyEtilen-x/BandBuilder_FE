@@ -148,56 +148,6 @@ export default function AdminPage() {
     }
   ])
 
-  const [tests, setTests] = useState<PracticeTest[]>([
-    {
-      id: "test-cam19-t1",
-      title: "IELTS Cambridge 19 - Test 1 (Full Practice)",
-      visits: 890,
-      skills: ["listening", "reading", "writing", "speaking"],
-      contentJson: JSON.stringify({
-        title: "IELTS Cambridge 19 - Test 1",
-        questionsCount: 40,
-        sections: [
-          {
-            name: "Section 1: Multiple Choice",
-            questions: [
-              { id: "q1", text: "What is the main topic of the conversation?", options: ["Travel agent bookings", "Hotel check-in details", "Flight cancellation guidelines"], correctAnswer: "A" }
-            ]
-          }
-        ]
-      }, null, 2)
-    },
-    {
-      id: "test-cam19-t2",
-      title: "IELTS Cambridge 19 - Test 2 (Listening & Reading)",
-      visits: 420,
-      skills: ["listening", "reading"],
-      contentJson: JSON.stringify({
-        title: "IELTS Cambridge 19 - Test 2",
-        questionsCount: 40,
-        sections: [
-          {
-            name: "Section 1",
-            questions: [
-              { id: "q1", text: "Fill in the blank: The speaker arrived at ____ o'clock.", correctAnswer: "10" }
-            ]
-          }
-        ]
-      }, null, 2)
-    },
-    {
-      id: "test-speaking-p1",
-      title: "Speaking Part 1: Hobbies & Leisures (Shadowing)",
-      visits: 1250,
-      skills: ["speaking"],
-      contentJson: JSON.stringify({
-        topicName: "Hobbies",
-        prompt: "Tell me about your favorite hobbies in your spare time.",
-        difficulty: "Medium"
-      }, null, 2)
-    }
-  ])
-
   const [packages, setPackages] = useState<CreditPackage[]>([
     { id: "p1", name: "Gói Starter", price: 50000, credits: 100, bonus: 10, isActive: true, sortOrder: 1 },
     { id: "p2", name: "Gói Popular", price: 135000, credits: 300, bonus: 45, isActive: true, sortOrder: 2 },
@@ -221,26 +171,6 @@ export default function AdminPage() {
       }
       return t
     }))
-  }
-
-  const handleAddTest = (newTest: Omit<PracticeTest, "id" | "visits">) => {
-    const created: PracticeTest = {
-      ...newTest,
-      id: `test-${Date.now().toString().slice(-6)}`,
-      visits: 0
-    }
-    setTests(prev => [created, ...prev])
-    showToast(`Đã thêm thành công đề thi mới: ${newTest.title}`)
-  }
-
-  const handleUpdateTest = (id: string, updated: Partial<PracticeTest>) => {
-    setTests(prev => prev.map(t => (t.id === id ? { ...t, ...updated } : t)))
-    showToast(`Đã cập nhật cấu trúc đề thi thành công!`)
-  }
-
-  const handleDeleteTest = (id: string) => {
-    setTests(prev => prev.filter(t => t.id !== id))
-    showToast(`Đã xoá đề thi khỏi hệ thống thành công.`)
   }
 
   const handleUpdatePackage = (id: string, updated: Partial<CreditPackage>) => {
@@ -580,12 +510,7 @@ export default function AdminPage() {
               />
             } />
             <Route path="tests" element={
-              <TestsTab 
-                tests={tests}
-                onAddTest={handleAddTest}
-                onUpdateTest={handleUpdateTest}
-                onDeleteTest={handleDeleteTest}
-              />
+              <TestsTab />
             } />
             <Route path="packages" element={
               <PackagesTab 

@@ -41,13 +41,13 @@ export default function Navbar() {
     const getTranslatedSubmenuLabel = (label: string) => {
         switch (label) {
             case "Practice IELTS Reading":
-                return `Practice Reading`
+                return `Practice IELTS Reading`
             case "Practice IELTS Listening":
-                return `Practice Listening`
+                return `Practice IELTS Listening`
             case "Practice IELTS Writing":
-                return `Practice Writing`
+                return `Practice IELTS Writing`
             case "Practice IELTS Speaking":
-                return `Practice Speaking`
+                return `Practice IELTS Speaking`
             case "Vocabulary":
                 return t("nav_vocab")
             case "Grammar":
