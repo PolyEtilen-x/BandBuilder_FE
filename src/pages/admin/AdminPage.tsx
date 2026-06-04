@@ -9,7 +9,7 @@ import {
   ShadowingTopic
 } from "./types"
 import DashboardTab from "./components/DashboardTab"
-import TestsTab from "./components/TestsTab"
+import TestsTab from "./components/tests/TestsTab"
 import PackagesTab from "./components/PackagesTab"
 import ShadowingTab from "./components/shadowing/ShadowingTab"
 import UsersTab from "./components/user/UsersTab"
