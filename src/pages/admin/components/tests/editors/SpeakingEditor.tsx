@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Trash2, ChevronDown, ChevronUp, Mic } from "lucide-react"
 
 interface SpeakingQuestion {
   id: string
@@ -151,8 +151,9 @@ export default function SpeakingEditor({ value, onChange }: Props) {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div className="info-alert">
-        🎤 Speaking được chia thành 3 phần. Part 1 hỏi về chủ đề quen thuộc, Part 2 là cue card, Part 3 là thảo luận sâu hơn.
+      <div className="info-alert" style={{ display: "flex", alignItems: "center", gap: 6 }}>
+        <Mic size={14} style={{ flexShrink: 0 }} />
+        <span>Speaking được chia thành 3 phần. Part 1 hỏi về chủ đề quen thuộc, Part 2 là cue card, Part 3 là thảo luận sâu hơn.</span>
       </div>
 
       {/* ── Part 1 ── */}

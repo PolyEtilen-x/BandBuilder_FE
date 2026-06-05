@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react"
-import { Search, Plus, Pencil, Trash2, BookOpen, Loader2, Layers } from "lucide-react"
+import { Search, Plus, Pencil, Trash2, BookOpen, Loader2, Layers, Headphones, PenTool, Mic, AlertTriangle } from "lucide-react"
 import { adminPracticeApi, AdminPracticeTestListItem } from "@/api/practice/adminPractice.api"
 import SkillEditorDrawer from "./SkillEditorDrawer"
 import "./TestsTab.css"
@@ -11,11 +11,14 @@ const SKILL_COLORS: Record<string, string> = {
   speaking: "speaking",
 }
 
-const SKILL_ICONS: Record<string, string> = {
-  listening: "🎧",
-  reading: "📖",
-  writing: "",
-  speaking: "🎤",
+const getSkillIcon = (skill: string) => {
+  switch (skill.toLowerCase()) {
+    case "listening": return <Headphones size={13} style={{ marginRight: 4 }} />;
+    case "reading": return <BookOpen size={13} style={{ marginRight: 4 }} />;
+    case "writing": return <PenTool size={13} style={{ marginRight: 4 }} />;
+    case "speaking": return <Mic size={13} style={{ marginRight: 4 }} />;
+    default: return null;
+  }
 }
 
 // ── Create Test Modal ─────────────────────────────────────────────────────────
@@ -135,8 +138,9 @@ function DeleteTestModal({ test, onClose, onDelete }: DeleteModalProps) {
   return (
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-card" onClick={e => e.stopPropagation()}>
-        <div className="modal-header">
-          <h3 style={{ color: "#b91c1c" }}>⚠️ Xóa Đề Thi</h3>
+        <div className="modal-header" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <AlertTriangle size={18} style={{ color: "#b91c1c" }} />
+          <h3 style={{ color: "#b91c1c", margin: 0 }}>Xóa Đề Thi</h3>
           <button className="btn-ghost" onClick={onClose} style={{ padding: "4px 8px" }}>✕</button>
         </div>
         <div className="modal-body">
@@ -191,10 +195,11 @@ function TestCard({ test, onEdit, onRename, onDelete, onOpenSkills }: TestCardPr
             <span
               key={skill}
               className={`tests-skill-tag ${has ? SKILL_COLORS[skill] : ""}`}
-              style={{ opacity: has ? 1 : 0.35 }}
+              style={{ opacity: has ? 1 : 0.35, display: "inline-flex", alignItems: "center" }}
               title={has ? `Đã có nội dung ${skill}` : `Chưa có ${skill}`}
             >
-              {SKILL_ICONS[skill]} {skill}
+              {getSkillIcon(skill)}
+              <span style={{ textTransform: "capitalize" }}>{skill}</span>
               {skill === "writing" && writingCount > 1 && <span style={{ fontSize: 9, marginLeft: 3 }}>×{writingCount}</span>}
             </span>
           )

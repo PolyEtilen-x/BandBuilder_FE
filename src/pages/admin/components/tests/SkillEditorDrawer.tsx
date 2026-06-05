@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react"
-import { X, Loader2, Trash2, Plus, Save } from "lucide-react"
+import { X, Loader2, Trash2, Plus, Save, FileText } from "lucide-react"
 import { adminPracticeApi, AdminPracticeTestDetail } from "@/api/practice/adminPractice.api"
 import ListeningEditor from "./editors/ListeningEditor"
 import ReadingEditor from "./editors/ReadingEditor"
@@ -145,7 +145,7 @@ export default function SkillEditorDrawer({ testId, testTitle, onClose, onChange
           audioUrl: audioUrl || undefined,
           source,
         })
-        alert(`✅ Đã cập nhật phần thi ${activeTab}${skillTypeLower === "writing" ? ` Task ${writingTask}` : ""} thành công!`)
+        alert(`Đã cập nhật phần thi ${activeTab}${skillTypeLower === "writing" ? ` Task ${writingTask}` : ""} thành công!`)
       } else {
         // CREATE new
         await adminPracticeApi.addSkillToTest(testId, {
@@ -154,7 +154,7 @@ export default function SkillEditorDrawer({ testId, testTitle, onClose, onChange
           audioUrl: audioUrl || undefined,
           source,
         })
-        alert(`✅ Đã thêm phần thi ${activeTab}${skillTypeLower === "writing" ? ` Task ${writingTask}` : ""} vào đề thi thành công!`)
+        alert(`Đã thêm phần thi ${activeTab}${skillTypeLower === "writing" ? ` Task ${writingTask}` : ""} vào đề thi thành công!`)
       }
       setDirty(false)
       await loadDetail()
@@ -256,7 +256,9 @@ export default function SkillEditorDrawer({ testId, testTitle, onClose, onChange
         <div className="skill-drawer-header">
           <div>
             <h3>Cấu hình Nội dung Đề Thi</h3>
-            <p className="skill-drawer-subtitle">📄 {testTitle}</p>
+            <p className="skill-drawer-subtitle" style={{ display: "flex", alignItems: "center", gap: 4 }}>
+              <FileText size={12} style={{ color: "#6b7280" }} /> {testTitle}
+            </p>
           </div>
           <button className="btn-ghost" onClick={onClose} style={{ padding: "6px 8px" }}>
             <X size={18} />

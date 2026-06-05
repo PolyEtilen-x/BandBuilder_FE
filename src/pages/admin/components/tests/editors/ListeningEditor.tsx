@@ -1,5 +1,5 @@
 import { useState } from "react"
-import { Plus, Trash2, ChevronDown, ChevronUp } from "lucide-react"
+import { Plus, Trash2, ChevronDown, ChevronUp, BarChart2 } from "lucide-react"
 import QuestionBlockEditor from "../components/QuestionBlockEditor"
 
 const CONTEXT_OPTIONS = [
@@ -120,8 +120,11 @@ export default function ListeningEditor({ value, onChange, audioUrl, onAudioUrlC
       </div>
 
       {/* Summary */}
-      <div className="info-alert">
-        📊 Tổng: <strong>{sections.length} Sections</strong> — <strong>{totalQ} câu hỏi</strong>
+      <div className="info-alert" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <BarChart2 size={15} style={{ flexShrink: 0 }} />
+        <span>
+          Tổng: <strong>{sections.length} Sections</strong> — <strong>{totalQ} câu hỏi</strong>
+        </span>
       </div>
 
       {/* Sections */}
