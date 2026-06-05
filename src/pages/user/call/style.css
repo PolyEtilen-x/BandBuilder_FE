@@ -785,3 +785,13 @@
   background: #3b82f6;
   animation: pulse 1.5s infinite ease-in-out;
 }
+
+.btn-submit-speech {
+  background: #10b981;
+  color: #fff;
+}
+
+.btn-submit-speech:hover {
+  background: #059669;
+  transform: scale(1.05);
+}

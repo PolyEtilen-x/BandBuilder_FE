@@ -437,6 +437,16 @@ export default function CallWithAiPage() {
                     <PhoneOff size={22} />
                   </button>
 
+                  {isRecording && (
+                    <button
+                      onClick={stopLiveRecording}
+                      className="btn-circle btn-submit-speech"
+                      title={language === "vi" ? "Gửi câu trả lời ngay" : "Submit answer now"}
+                    >
+                      <CheckCircle size={22} />
+                    </button>
+                  )}
+
                   <button
                     onClick={() => setSpeakerOn(!isSpeakerOn)}
                     className={`btn-circle btn-mute ${!isSpeakerOn ? "active" : ""}`}
