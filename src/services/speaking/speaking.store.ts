@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { io, Socket } from "socket.io-client"
+import { speakingApi } from "@/api/speaking/speaking.api"
 
 export type DialogueTurn = {
   sender: "ai" | "user"
@@ -141,6 +142,26 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
         metrics: data.metrics,
         corrections: data.corrections,
         callState: "feedback"
+      })
+
+      // Auto-save speaking session to database via NestJS API
+      const dialogue = get().dialogue.map(d => ({
+        sender: d.sender,
+        text: d.text
+      }))
+      const voiceId = get().selectedVoiceId
+
+      speakingApi.saveSession({
+        voiceId,
+        dialogue,
+        overallBand: data.overallBand,
+        fluency: data.metrics.fluency,
+        lexical: data.metrics.lexical,
+        grammar: data.metrics.grammar,
+        pronunciation: data.metrics.pronunciation,
+        corrections: data.corrections
+      }).catch(err => {
+        console.error("Failed to auto-save speaking session to database:", err)
       })
     })
 
