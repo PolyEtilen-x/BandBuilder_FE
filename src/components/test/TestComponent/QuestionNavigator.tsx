@@ -1,12 +1,16 @@
+import { useState } from "react"
 import { usePracticeStore } from "@/services/practice/practice.store"
 import { useNavigate, useParams } from "react-router-dom"
 import { practiceApi } from "@/api/practice/practice.api"
+import { useUIStore } from "@/services/ui/ui.store"
 
 export default function QuestionNavigator({ questionBlocks = [], examId: propExamId, currentUnit, isWriting = false, taskNumber }: any) {
   const { id: urlId } = useParams()
   const examId = propExamId || urlId
   const { answers, startTime, sidebar, clearAnswers } = usePracticeStore()
   const navigate = useNavigate()
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const { language } = useUIStore()
 
   const parseRange = (range: string) => {
     if (!range) return []
@@ -33,8 +37,9 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
   }
 
   const handleFinish = async () => {
-    if (!window.confirm("Are you sure you want to finish the test?")) return
+    if (!window.confirm(language === "vi" ? "Bạn có chắc chắn muốn nộp bài thi không?" : "Are you sure you want to finish the test?")) return
 
+    setIsSubmitting(true)
     try {
       const timeSpentSec = startTime ? Math.floor((Date.now() - startTime) / 1000) : 0
 
@@ -48,7 +53,12 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
         const wordCount = essay.trim() === "" ? 0 : essay.trim().split(/\s+/).length
 
         if (wordCount < minWords) {
-          alert(`Your essay is too short (${wordCount} words). You need at least ${minWords} words for Task ${task}.`)
+          alert(
+            language === "vi"
+              ? `Bài viết của bạn quá ngắn (${wordCount} từ). Bạn cần viết ít nhất ${minWords} từ cho Task ${task}.`
+              : `Your essay is too short (${wordCount} words). You need at least ${minWords} words for Task ${task}.`
+          );
+          setIsSubmitting(false)
           return
         }
 
@@ -97,7 +107,9 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
       })
     } catch (err) {
       console.error("Submit failed:", err)
-      alert("Failed to submit test results. Please try again.")
+      alert(language === "vi" ? "Nộp bài thất bại. Vui lòng thử lại." : "Failed to submit test results. Please try again.")
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -147,13 +159,74 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
 
       <button
         onClick={handleFinish}
+        disabled={isSubmitting}
         style={{
-          padding: "12px 28px", borderRadius: "12px", background: "#0f172a", color: "#fff",
-          border: "none", fontWeight: 800, fontSize: "14px", cursor: "pointer", transition: "all 0.2s"
+          padding: "12px 28px", borderRadius: "12px", background: isSubmitting ? "#64748b" : "#0f172a", color: "#fff",
+          border: "none", fontWeight: 800, fontSize: "14px", cursor: isSubmitting ? "not-allowed" : "pointer", transition: "all 0.2s"
         }}
       >
-        {isWriting ? `SUBMIT TASK ${taskNumber ?? 1}` : "FINISH TEST"}
+        {isWriting
+          ? (language === "vi" ? `NỘP BÀI TASK ${taskNumber ?? 1}` : `SUBMIT TASK ${taskNumber ?? 1}`)
+          : (language === "vi" ? "NỘP BÀI THI" : "FINISH TEST")}
       </button>
+
+      {/* Full screen glassmorphism loading overlay while scoring/submitting */}
+      {isSubmitting && (
+        <div style={{
+          position: "fixed",
+          top: 0,
+          left: 0,
+          width: "100vw",
+          height: "100vh",
+          backgroundColor: "rgba(15, 23, 42, 0.75)",
+          backdropFilter: "blur(8px)",
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          flexDirection: "column",
+          gap: "24px",
+          color: "#ffffff",
+          fontFamily: "'Inter', sans-serif"
+        }}>
+          <div style={{
+            background: "rgba(255, 255, 255, 0.1)",
+            padding: "40px",
+            borderRadius: "24px",
+            boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2)",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            maxWidth: "400px",
+            textAlign: "center",
+            border: "1px solid rgba(255, 255, 255, 0.15)"
+          }}>
+            <div className="submit-scoring-spinner" style={{
+              width: "60px",
+              height: "60px",
+              borderRadius: "50%",
+              border: "4px solid rgba(255, 255, 255, 0.1)",
+              borderTop: "4px solid #3b82f6",
+              animation: "spin 1s linear infinite",
+              marginBottom: "24px"
+            }} />
+            <h3 style={{ fontSize: "20px", fontWeight: 700, margin: "0 0 10px 0", color: "#fff" }}>
+              {language === "vi" ? "Đang chấm điểm..." : "Scoring your essay..."}
+            </h3>
+            <p style={{ fontSize: "14px", color: "#cbd5e1", margin: 0, lineHeight: 1.5 }}>
+              {language === "vi"
+                ? "Trí tuệ nhân tạo (AI) đang chấm điểm và phân tích bài viết của bạn. Quá trình này có thể mất tới 1 phút. Vui lòng không đóng trình duyệt."
+                : "AI is currently scoring and analyzing your essay. This process might take up to 1 minute. Please do not close your browser."}
+            </p>
+          </div>
+          <style>{`
+            @keyframes spin {
+              0% { transform: rotate(0deg); }
+              100% { transform: rotate(360deg); }
+            }
+          `}</style>
+        </div>
+      )}
     </nav>
   )
 }
