@@ -4,13 +4,13 @@ import { useUIStore } from "@/services/ui/ui.store";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { paymentApi } from "@/api/payment.api";
-import { PenTool, Mic, BookOpen, Headphones, Layers, Sparkles, Bot, BarChart2, Target, Trophy, Info } from "lucide-react";
+import { PenTool, Mic, BookOpen, Headphones, Layers, Sparkles, Bot, BarChart2, Target, Trophy, Info, Flame } from "lucide-react";
 import "./style.css";
 
 /* ── Types ─────────────────────────────────────────── */
 interface Stat { value: string; label: string; }
 interface Tool { icon: React.ReactNode; title: string; desc: string; tag: string; color: string; }
-interface Feature { icon: React.ReactNode; title: string; desc: string; }
+interface Feature { icon: React.ReactNode; color: string; title: string; desc: string; }
 interface Step { n: string; title: string; desc: string; }
 interface Testimonial { initials: string; name: string; country: string; score: string; text: string; }
 interface Plan { name: string; price: string; period: string; features: string[]; popular: boolean; }
@@ -35,10 +35,10 @@ const getLocalizedData = (lang: "vi" | "en") => {
   ];
 
   const features = [
-    { icon: <Bot size={28} />, title: lang === "vi" ? "Nhận Xét AI Tức Thì" : "Instant AI Feedback", desc: lang === "vi" ? "Không phải chờ đợi. Nhận điểm số và phân tích nhận xét chi tiết ngay sau khi nộp bài viết, bài nói hay ngữ pháp." : "No waiting. Get a score and detailed commentary the moment you submit — Writing, Speaking or Grammar." },
-    { icon: <BarChart2 size={28} />, title: lang === "vi" ? "Bảng Theo Dõi Tiến Trình" : "Progress Dashboard", desc: lang === "vi" ? "Biểu đồ trực quan theo dõi xu hướng điểm số, tổng thời gian học tập và phân tích điểm số các kỹ năng qua từng ngày." : "Visual charts track band score trends, study time and skill breakdowns across every session." },
-    { icon: <Target size={28} />, title: lang === "vi" ? "Lộ Trình Học Cá Nhân Hóa" : "Personalised Study Path", desc: lang === "vi" ? "Hệ thống tự động phân tích điểm yếu của bạn và đề xuất các bài tập mục tiêu giúp tăng điểm số nhanh nhất." : "Our engine analyses your weak points and recommends the exact exercises that will move your score fastest." },
-    { icon: <Trophy size={28} />, title: lang === "vi" ? "Chuỗi Ngày Học & Bảng Xếp Hạng" : "Streaks & Leaderboards", desc: lang === "vi" ? "Tạo lập thói quen học tập hàng ngày, giành huy hiệu thành tích và cạnh tranh trên bảng xếp hạng với bạn bè quốc tế." : "Build daily study habits, earn achievement badges and compete on weekly leaderboards with learners worldwide." },
+    { icon: <Bot size={22} />, color: "#8b5cf6", title: lang === "vi" ? "Nhận Xét AI Tức Thì" : "Instant AI Feedback", desc: lang === "vi" ? "Không phải chờ đợi. Nhận điểm số và phân tích nhận xét chi tiết ngay sau khi nộp bài viết, bài nói hay ngữ pháp." : "No waiting. Get a score and detailed commentary the moment you submit — Writing, Speaking or Grammar." },
+    { icon: <BarChart2 size={22} />, color: "#10b981", title: lang === "vi" ? "Bảng Theo Dõi Tiến Trình" : "Progress Dashboard", desc: lang === "vi" ? "Biểu đồ trực quan theo dõi xu hướng điểm số, tổng thời gian học tập và phân tích điểm số các kỹ năng qua từng ngày." : "Visual charts track band score trends, study time and skill breakdowns across every session." },
+    { icon: <Target size={22} />, color: "#ec4899", title: lang === "vi" ? "Lộ Trình Học Cá Nhân Hóa" : "Personalised Study Path", desc: lang === "vi" ? "Hệ thống tự động phân tích điểm yếu của bạn và đề xuất các bài tập mục tiêu giúp tăng điểm số nhanh nhất." : "Our engine analyses your weak points and recommends the exact exercises that will move your score fastest." },
+    { icon: <Flame size={22} />, color: "#f97316", title: lang === "vi" ? "Chuỗi Ngày Học & Bảng Xếp Hạng" : "Streaks & Leaderboards", desc: lang === "vi" ? "Tạo lập thói quen học tập hàng ngày, giành huy hiệu thành tích và cạnh tranh trên bảng xếp hạng với bạn bè quốc tế." : "Build daily study habits, earn achievement badges and compete on weekly leaderboards with learners worldwide." },
   ];
 
   const steps = [
@@ -291,7 +291,15 @@ function FeaturesSection({ features }: { features: Feature[] }) {
         <div className={`features-grid ${cls}`}>
           {features.map((f, i) => (
             <div className="feature-card" key={i}>
-              <div className="feature-icon">{f.icon}</div>
+              <div 
+                className="feature-icon-wrap" 
+                style={{ 
+                  background: f.color + "1a", 
+                  color: f.color 
+                }}
+              >
+                {f.icon}
+              </div>
               <h3>{f.title}</h3>
               <p>{f.desc}</p>
             </div>
