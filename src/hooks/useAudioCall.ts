@@ -23,7 +23,7 @@ export function useAudioCall() {
   
   // VAD Parameters
   const SILENCE_THRESHOLD = 0.02 // RMS threshold for silence (balanced for sensitivity and noise tolerance)
-  const SILENCE_DURATION_MS = 1000 // Require 1 second of silence to declare "done"
+  const SILENCE_DURATION_MS = 700 // Require 700ms of silence to declare "done" (lowered from 1000ms for faster detection)
   const hasSpokenRef = useRef(false) // Track if speech was detected first to avoid early VAD triggers
 
   // Clean up references on unmount
