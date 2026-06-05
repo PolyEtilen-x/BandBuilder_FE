@@ -211,68 +211,102 @@ export default function ResultPage() {
       <div className="profile-page-wrapper">
         <div className="profile-main-container">
 
-          {/* TOP SECTION: RESULT HERO CARD */}
-          <section className="profile-hero-card">
-            <div className="user-profile-info">
-              {/* Score Circular Visualizer (Avatar-like block) */}
-              <div className="profile-avatar-wrapper">
-                <span className="visualizer-score-large">{stats.score}</span>
-                <span className="visualizer-unit-sub">{stats.isBand ? "Band" : "%"}</span>
-              </div>
-
-              <div className="user-meta-info">
-                <div className="user-name-row">
-                  <h1>
-                    {stats.isBand
-                      ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
-                      : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
-                    }
-                  </h1>
-                  <span className="membership-tag pro">
-                    {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
-                  </span>
-                </div>
-                <p className="user-email-text">
-                  {stats.isBand
-                    ? `${language === "vi" ? "Bạn đã đạt mức điểm Band Score cực kỳ ấn tượng:" : "You achieved an impressive Band Score of:"} ${stats.score}`
-                    : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác hoàn hảo." : "perfect accuracy."}`
-                  }
-                </p>
+          {/* TOP SECTION: RESULT HERO CARD / WRITING HEADER */}
+          {isWriting ? (
+            <div className="writing-result-header">
+              <h1 className="writing-result-header-title">
+                {language === "vi" ? "Kết Quả IELTS Writing" : "IELTS Writing Results"}
+              </h1>
+              <div className="profile-header-actions">
                 {attemptId && (
-                  <div className="user-credits-info">
-                    <span>Attempt ID: {attemptId.slice(0, 8)}</span>
-                  </div>
+                  <button
+                    onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
+                    className="btn-action-primary cursor-pointer"
+                  >
+                    <Sparkles size={18} />
+                    <span>
+                      {attemptDetail?.hasExplanation
+                        ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
+                        : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                      }
+                    </span>
+                  </button>
                 )}
+                <button
+                  onClick={() => {
+                    clearAnswers()
+                    navigate("/practice-ielts")
+                  }}
+                  className="btn-action-secondary cursor-pointer"
+                >
+                  <ArrowLeft size={18} />
+                  {language === "vi" ? "Luyện tập tiếp" : "Continue Practice"}
+                </button>
               </div>
             </div>
+          ) : (
+            <section className="profile-hero-card">
+              <div className="user-profile-info">
+                {/* Score Circular Visualizer (Avatar-like block) */}
+                <div className="profile-avatar-wrapper">
+                  <span className="visualizer-score-large">{stats.score}</span>
+                  <span className="visualizer-unit-sub">{stats.isBand ? "Band" : "%"}</span>
+                </div>
 
-            <div className="profile-header-actions">
-              {attemptId && (
-                <button
-                  onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
-                  className="btn-action-primary cursor-pointer"
-                >
-                  <Sparkles size={18} />
-                  <span>
-                    {attemptDetail?.hasExplanation
-                      ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
-                      : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                <div className="user-meta-info">
+                  <div className="user-name-row">
+                    <h1>
+                      {stats.isBand
+                        ? (stats.score >= 7.5 ? t("result_score_excellent") : stats.score >= 5.5 ? t("result_score_good") : t("result_score_keep_trying"))
+                        : (stats.score >= 80 ? t("result_score_excellent") : stats.score >= 50 ? t("result_score_good") : t("result_score_keep_trying"))
+                      }
+                    </h1>
+                    <span className="membership-tag pro">
+                      {attemptDetail?.skill || sidebar.skill || attemptSkill || "IELTS"}
+                    </span>
+                  </div>
+                  <p className="user-email-text">
+                    {stats.isBand
+                      ? `${language === "vi" ? "Bạn đã đạt mức điểm Band Score cực kỳ ấn tượng:" : "You achieved an impressive Band Score of:"} ${stats.score}`
+                      : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác hoàn hảo." : "perfect accuracy."}`
                     }
-                  </span>
+                  </p>
+                  {attemptId && (
+                    <div className="user-credits-info">
+                      <span>Attempt ID: {attemptId.slice(0, 8)}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="profile-header-actions">
+                {attemptId && (
+                  <button
+                    onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
+                    className="btn-action-primary cursor-pointer"
+                  >
+                    <Sparkles size={18} />
+                    <span>
+                      {attemptDetail?.hasExplanation
+                        ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
+                        : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                      }
+                    </span>
+                  </button>
+                )}
+                <button
+                  onClick={() => {
+                    clearAnswers()
+                    navigate("/practice-ielts")
+                  }}
+                  className="btn-action-secondary cursor-pointer"
+                >
+                  <ArrowLeft size={18} />
+                  {language === "vi" ? "Luyện tập tiếp" : "Continue Practice"}
                 </button>
-              )}
-              <button
-                onClick={() => {
-                  clearAnswers()
-                  navigate("/practice-ielts")
-                }}
-                className="btn-action-secondary cursor-pointer"
-              >
-                <ArrowLeft size={18} />
-                {language === "vi" ? "Luyện tập tiếp" : "Continue Practice"}
-              </button>
-            </div>
-          </section>
+              </div>
+            </section>
+          )}
 
           {/* STATS SECTION */}
           {!isWriting && (
@@ -312,7 +346,7 @@ export default function ResultPage() {
           )}
 
           {/* BOTTOM SECTION: MAIN CONTENT & SIDEBAR */}
-          <div className="profile-bottom-grid">
+          <div className="profile-bottom-grid" style={isWriting ? { gridTemplateColumns: "1fr" } : undefined}>
 
             {/* Left Content Column */}
             <div className="profile-main-column">
@@ -433,80 +467,82 @@ export default function ResultPage() {
             </div>
 
             {/* Right Column Sidebar */}
-            <div className="profile-sidebar-cards">
+            {!isWriting && (
+              <div className="profile-sidebar-cards">
 
-              {/* Sticky Summary Card */}
-              <div className="account-summary-card sticky-sidebar">
-                <div className="score-large-display-sidebar">
-                  <span className="score-number-large">{stats.score}</span>
-                  <span className="score-unit-large">{stats.isBand ? "Band" : "%"}</span>
-                </div>
-                <h3>{t("result_analysis")}</h3>
-                <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 20 }}>
-                  {t("result_analysis_text")}
-                </p>
+                {/* Sticky Summary Card */}
+                <div className="account-summary-card sticky-sidebar">
+                  <div className="score-large-display-sidebar">
+                    <span className="score-number-large">{stats.score}</span>
+                    <span className="score-unit-large">{stats.isBand ? "Band" : "%"}</span>
+                  </div>
+                  <h3>{t("result_analysis")}</h3>
+                  <p style={{ fontSize: 13, color: "#64748b", lineHeight: 1.6, marginBottom: 20 }}>
+                    {t("result_analysis_text")}
+                  </p>
 
-                <div className="sidebar-action-buttons">
-                  {attemptId && (
+                  <div className="sidebar-action-buttons">
+                    {attemptId && (
+                      <button
+                        onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
+                        className="btn-action-primary cursor-pointer"
+                      >
+                        <span>{t("result_btn_review")}</span>
+                        <ChevronRight size={16} />
+                      </button>
+                    )}
                     <button
-                      onClick={() => navigate(`/practice-ielts/explain/${attemptId}`)}
-                      className="btn-action-primary cursor-pointer"
+                      onClick={() => {
+                        clearAnswers()
+                        navigate("/practice-ielts")
+                      }}
+                      className="btn-action-secondary cursor-pointer"
                     >
-                      <span>{t("result_btn_review")}</span>
-                      <ChevronRight size={16} />
+                      {t("result_btn_more")}
                     </button>
-                  )}
-                  <button
-                    onClick={() => {
-                      clearAnswers()
-                      navigate("/practice-ielts")
-                    }}
-                    className="btn-action-secondary cursor-pointer"
-                  >
-                    {t("result_btn_more")}
+                  </div>
+                </div>
+
+                {/* Pro Upsell Card */}
+                <div className="pro-upsell-card">
+                  <div className="upsell-icon"><Sparkles size={32} /></div>
+                  <h4>{language === "vi" ? "Bứt Phá Điểm Số Cùng Pro" : "Accelerate Scores with Pro"}</h4>
+                  <p>
+                    {language === "vi"
+                      ? "Mở khóa giải thích AI không giới hạn, phân tích phát âm chuyên sâu từng âm tiết và lộ trình sửa lỗi ngữ pháp tự động."
+                      : "Unlock unlimited expert AI answer breakdowns, detailed pronunciation AI voice analysis, and automated grammar correction pathways."}
+                  </p>
+
+                  <div style={{ marginBottom: 20 }}>
+                    <div className="benefit-item">
+                      <CheckCircle2 size={14} />
+                      <span>{language === "vi" ? "Vô hạn phân tích AI" : "Unlimited AI analytics"}</span>
+                    </div>
+                    <div className="benefit-item">
+                      <CheckCircle2 size={14} />
+                      <span>{language === "vi" ? "Chữa nói chi tiết 1-1" : "1-on-1 speaking feedback"}</span>
+                    </div>
+                    <div className="benefit-item">
+                      <CheckCircle2 size={14} />
+                      <span>{language === "vi" ? "Tối ưu hóa từ vựng nâng band" : "Band-boosting vocabulary tools"}</span>
+                    </div>
+                  </div>
+
+                  <button className="cursor-pointer" onClick={() => navigate("/upgrade")}>
+                    {language === "vi" ? "Nâng Cấp Ngay" : "Upgrade Premium"}
                   </button>
                 </div>
-              </div>
 
-              {/* Pro Upsell Card */}
-              <div className="pro-upsell-card">
-                <div className="upsell-icon"><Sparkles size={32} /></div>
-                <h4>{language === "vi" ? "Bứt Phá Điểm Số Cùng Pro" : "Accelerate Scores with Pro"}</h4>
-                <p>
-                  {language === "vi"
-                    ? "Mở khóa giải thích AI không giới hạn, phân tích phát âm chuyên sâu từng âm tiết và lộ trình sửa lỗi ngữ pháp tự động."
-                    : "Unlock unlimited expert AI answer breakdowns, detailed pronunciation AI voice analysis, and automated grammar correction pathways."}
-                </p>
-
-                <div style={{ marginBottom: 20 }}>
-                  <div className="benefit-item">
-                    <CheckCircle2 size={14} />
-                    <span>{language === "vi" ? "Vô hạn phân tích AI" : "Unlimited AI analytics"}</span>
-                  </div>
-                  <div className="benefit-item">
-                    <CheckCircle2 size={14} />
-                    <span>{language === "vi" ? "Chữa nói chi tiết 1-1" : "1-on-1 speaking feedback"}</span>
-                  </div>
-                  <div className="benefit-item">
-                    <CheckCircle2 size={14} />
-                    <span>{language === "vi" ? "Tối ưu hóa từ vựng nâng band" : "Band-boosting vocabulary tools"}</span>
-                  </div>
+                {/* Sidebar Tip Card */}
+                <div className="sidebar-tip-card">
+                  <h3 className="tip-header-title">{t("result_tip_title")}</h3>
+                  <p className="tip-paragraph-content">
+                    {t("result_tip_text")}
+                  </p>
                 </div>
 
-                <button className="cursor-pointer" onClick={() => navigate("/upgrade")}>
-                  {language === "vi" ? "Nâng Cấp Ngay" : "Upgrade Premium"}
-                </button>
               </div>
-
-              {/* Sidebar Tip Card */}
-              <div className="sidebar-tip-card">
-                <h3 className="tip-header-title">{t("result_tip_title")}</h3>
-                <p className="tip-paragraph-content">
-                  {t("result_tip_text")}
-                </p>
-              </div>
-
-            </div>
+            )}
 
           </div>
 

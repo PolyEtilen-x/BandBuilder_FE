@@ -827,3 +827,24 @@
     padding-top: 8px;
   }
 }
+
+.writing-result-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  gap: 16px;
+  background: #fff;
+  border-radius: 20px;
+  padding: 24px 32px;
+  border: 1px solid #f1f5f9;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.writing-result-header-title {
+  font-size: 24px;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0;
+}
