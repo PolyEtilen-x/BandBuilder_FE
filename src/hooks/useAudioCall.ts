@@ -67,7 +67,13 @@ export function useAudioCall() {
 
       mediaStreamRef.current = stream
 
-      const audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      let audioCtx: AudioContext
+      try {
+        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)({ sampleRate: 16000 })
+      } catch (e) {
+        console.warn("Custom sampleRate not supported, falling back to default:", e)
+        audioCtx = new (window.AudioContext || (window as any).webkitAudioContext)()
+      }
       audioContextRef.current = audioCtx
 
       const source = audioCtx.createMediaStreamSource(stream)
