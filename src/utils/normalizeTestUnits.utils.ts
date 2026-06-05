@@ -8,7 +8,7 @@ export interface TestUnit {
   title: string;
   description: string;
   questionBlocks: ReadingQuestionBlock[] | ListeningQuestionBlock[];
-  type: 'reading' | 'listening';
+  type: 'reading' | 'listening' | 'writing' | 'speaking';
   audioUrl?: string;
   imgUrl?: string;
   timeSuggestedMinutes?: number;
@@ -40,6 +40,30 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
       audioUrl: s.audioUrl,
       imgUrl: s.imgUrl,
     }));
+  }
+
+  // Writing
+  if (content?.task) {
+    return [{
+      id: content.task,
+      title: `Writing Task ${content.task}`,
+      description: content.prompt || '',
+      questionBlocks: [],
+      type: 'writing',
+      timeSuggestedMinutes: content.time_minutes,
+    }];
+  }
+
+  // Speaking
+  if (content?.part) {
+    return [{
+      id: content.part,
+      title: `Speaking Part ${content.part}`,
+      description: content.topic || content.scenario || '',
+      questionBlocks: [],
+      type: 'speaking',
+      timeSuggestedMinutes: content.time_minutes,
+    }];
   }
 
   return [];
