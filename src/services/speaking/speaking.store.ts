@@ -21,6 +21,7 @@ export type SpeakingState = {
   isMuted: boolean
   isSpeakerOn: boolean
   isEvaluating: boolean
+  isTtsPlaying: boolean
 
   // Dialogue Transcripts
   dialogue: DialogueTurn[]
@@ -64,6 +65,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   isMuted: false,
   isSpeakerOn: true,
   isEvaluating: false,
+  isTtsPlaying: false,
   dialogue: [],
   overallBand: 0,
   metrics: { fluency: 0, lexical: 0, grammar: 0, pronunciation: 0 },
@@ -91,9 +93,18 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
 
     // Listen for session state synchronization
     socket.on("session_state", (data: { state: "idle" | "calling" | "active" | "thinking" | "feedback" }) => {
-      // If we are evaluating, don't let backend's session_state reset callState prematurely
       if (get().isEvaluating && data.state !== "feedback") {
         set({ callState: "thinking" })
+        return
+      }
+      
+      if (data.state === "active") {
+        // If TTS audio is still playing, keep state in thinking (so mic stays closed)
+        if (get().isTtsPlaying) {
+          set({ callState: "thinking" })
+        } else {
+          set({ callState: "active" })
+        }
       } else {
         set({ callState: data.state })
       }
@@ -146,7 +157,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       } else {
         dialogue.push({ sender: "ai", text: data.token })
       }
-      set({ dialogue, callState: "active" })
+      // AI is replying; ensure microphone remains closed
+      set({ dialogue, callState: "thinking" })
     })
 
     // Listen for full voice feedback analysis
@@ -160,7 +172,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
         metrics: data.metrics,
         corrections: data.corrections,
         callState: "feedback",
-        isEvaluating: false
+        isEvaluating: false,
+        isTtsPlaying: false
       })
 
       // Auto-save speaking session to database via NestJS API
@@ -187,14 +200,21 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
     // Listen for synthesized voice audio streaming
     socket.on("tts_audio", (data: { audio: string }) => {
       console.log("Received synthesized TTS audio buffer chunk. Playing...")
+      set({ isTtsPlaying: true, callState: "thinking" })
       try {
         const audioUrl = `data:audio/mp3;base64,${data.audio}`
         const audio = new Audio(audioUrl)
+        audio.onended = () => {
+          console.log("AI speech finished playing. Setting callState to active.")
+          set({ isTtsPlaying: false, callState: "active" })
+        }
         audio.play().catch(err => {
           console.error("Browser audio playback blocked or failed:", err)
+          set({ isTtsPlaying: false, callState: "active" })
         })
       } catch (err) {
         console.error("Failed to construct or play HTML5 Audio player:", err)
+        set({ isTtsPlaying: false, callState: "active" })
       }
     })
 
@@ -208,7 +228,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       callState: "calling",
       dialogue: [],
       timer: 0,
-      isEvaluating: false
+      isEvaluating: false,
+      isTtsPlaying: false
     })
 
     if (socket) {
@@ -252,7 +273,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       dialogue: [],
       overallBand: 0,
       corrections: [],
-      isEvaluating: false
+      isEvaluating: false,
+      isTtsPlaying: false
     })
   },
 

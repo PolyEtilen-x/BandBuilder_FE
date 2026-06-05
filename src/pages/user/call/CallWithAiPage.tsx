@@ -358,14 +358,17 @@ export default function CallWithAiPage() {
             {(activeState === "active" || (activeState === "thinking" && !isEvaluating)) && (
               <div className="call-card active-call-theme">
                 <div className="call-active-header">
-                  <span className="call-active-status" style={{ color: isRecording ? "#10b981" : activeState === "thinking" ? "#3b82f6" : "#64748b" }}>
-                    <span className={`call-active-indicator ${isRecording ? "recording" : activeState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? "#10b981" : activeState === "thinking" ? "#3b82f6" : "#64748b" }}></span>
+                  <span className="call-active-status" style={{ color: isRecording ? (rmsVolume > 0.03 ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}>
+                    <span className={`call-active-indicator ${isRecording ? (rmsVolume > 0.03 ? "recording" : "listening") : activeState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? (rmsVolume > 0.03 ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}></span>
                     {isConnected
                       ? (isRecording 
-                          ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") 
+                          ? (rmsVolume > 0.03 
+                              ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") 
+                              : (language === "vi" ? "ĐANG NGHE (Hãy nói)..." : "LISTENING (Speak now)...")
+                            )
                           : activeState === "thinking"
-                            ? (language === "vi" ? "AI ĐANG SUY NGHĨ..." : "AI IS THINKING...")
-                            : (language === "vi" ? "AI ĐANG NÓI/CHỜ..." : "WAITING...")
+                            ? (language === "vi" ? "AI ĐANG XỬ LÝ..." : "AI IS PROCESSING...")
+                            : (language === "vi" ? "AI ĐANG NÓI..." : "AI IS SPEAKING...")
                         )
                       : (language === "vi" ? "MÔ PHỎNG HOẠT ĐỘNG" : "SIMULATED CALL ACTIVE")
                     }
