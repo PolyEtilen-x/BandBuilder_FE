@@ -22,6 +22,7 @@ export type SpeakingState = {
   isSpeakerOn: boolean
   isEvaluating: boolean
   isTtsPlaying: boolean
+  currentTtsAudio: HTMLAudioElement | null
 
   // Dialogue Transcripts
   dialogue: DialogueTurn[]
@@ -66,6 +67,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   isSpeakerOn: true,
   isEvaluating: false,
   isTtsPlaying: false,
+  currentTtsAudio: null,
   dialogue: [],
   overallBand: 0,
   metrics: { fluency: 0, lexical: 0, grammar: 0, pronunciation: 0 },
@@ -200,21 +202,33 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
     // Listen for synthesized voice audio streaming
     socket.on("tts_audio", (data: { audio: string }) => {
       console.log("Received synthesized TTS audio buffer chunk. Playing...")
+      
+      // Stop previous playing audio if any to avoid overlap
+      const prevAudio = get().currentTtsAudio
+      if (prevAudio) {
+        try {
+          prevAudio.pause()
+        } catch (e) {
+          console.warn("Failed to pause previous TTS audio:", e)
+        }
+      }
+
       set({ isTtsPlaying: true, callState: "thinking" })
       try {
         const audioUrl = `data:audio/mp3;base64,${data.audio}`
         const audio = new Audio(audioUrl)
         audio.onended = () => {
           console.log("AI speech finished playing. Setting callState to active.")
-          set({ isTtsPlaying: false, callState: "active" })
+          set({ isTtsPlaying: false, callState: "active", currentTtsAudio: null })
         }
+        set({ currentTtsAudio: audio })
         audio.play().catch(err => {
           console.error("Browser audio playback blocked or failed:", err)
-          set({ isTtsPlaying: false, callState: "active" })
+          set({ isTtsPlaying: false, callState: "active", currentTtsAudio: null })
         })
       } catch (err) {
         console.error("Failed to construct or play HTML5 Audio player:", err)
-        set({ isTtsPlaying: false, callState: "active" })
+        set({ isTtsPlaying: false, callState: "active", currentTtsAudio: null })
       }
     })
 
@@ -253,15 +267,29 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   },
 
   hangUp: () => {
-    const { socket } = get()
-    set({ callState: "thinking", isEvaluating: true, timer: 0 })
+    const { socket, currentTtsAudio } = get()
+    if (currentTtsAudio) {
+      try {
+        currentTtsAudio.pause()
+      } catch (e) {
+        console.warn("Failed to pause TTS audio on hangUp:", e)
+      }
+    }
+    set({ callState: "thinking", isEvaluating: true, timer: 0, currentTtsAudio: null })
     if (socket) {
       socket.emit("end_session")
     }
   },
 
   resetStore: () => {
-    const { socket } = get()
+    const { socket, currentTtsAudio } = get()
+    if (currentTtsAudio) {
+      try {
+        currentTtsAudio.pause()
+      } catch (e) {
+        console.warn("Failed to pause TTS audio on resetStore:", e)
+      }
+    }
     if (socket) {
       socket.disconnect()
     }
@@ -274,7 +302,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       overallBand: 0,
       corrections: [],
       isEvaluating: false,
-      isTtsPlaying: false
+      isTtsPlaying: false,
+      currentTtsAudio: null
     })
   },
 

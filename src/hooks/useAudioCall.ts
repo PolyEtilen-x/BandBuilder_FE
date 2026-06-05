@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react"
 import { useSpeakingStore } from "@/services/speaking/speaking.store"
 
-export function useAudioCall() {
+export function useAudioCall(options?: { onVolumeChange?: (volume: number) => void }) {
   const { 
     callState, 
     sendAudioChunk, 
@@ -12,7 +12,8 @@ export function useAudioCall() {
   } = useSpeakingStore()
 
   const [isRecording, setIsRecording] = useState(false)
-  const [rmsVolume, setRmsVolume] = useState(0) // Live volume for visual waveform UI
+  const [isSpeaking, setIsSpeaking] = useState(false)
+  const isSpeakingRef = useRef(false)
 
   // Refs to hold browser Audio objects
   const audioContextRef = useRef<AudioContext | null>(null)
@@ -103,7 +104,18 @@ export function useAudioCall() {
           sum += channelData[i] * channelData[i]
         }
         const rms = Math.sqrt(sum / channelData.length)
-        setRmsVolume(rms)
+        
+        // Trigger callback for real-time waveform visualization without state re-render
+        if (options?.onVolumeChange) {
+          options.onVolumeChange(rms)
+        }
+
+        // Debounced speaking indicator state to reduce React re-renders
+        const speaking = rms > 0.03
+        if (speaking !== isSpeakingRef.current) {
+          isSpeakingRef.current = speaking
+          setIsSpeaking(speaking)
+        }
 
         // Stream raw binary buffer float array back via websocket
         // Convert Float32Array into Int16Array (16-bit PCM) for extreme bandwidth saving
@@ -144,7 +156,13 @@ export function useAudioCall() {
 
   function stopRecordingLoop() {
     setIsRecording(false)
-    setRmsVolume(0)
+    if (isSpeakingRef.current) {
+      isSpeakingRef.current = false
+      setIsSpeaking(false)
+    }
+    if (options?.onVolumeChange) {
+      options.onVolumeChange(0)
+    }
     cleanupAudio()
   }
 
@@ -178,6 +196,6 @@ export function useAudioCall() {
 
   return {
     isRecording,
-    rmsVolume
+    isSpeaking
   }
 }

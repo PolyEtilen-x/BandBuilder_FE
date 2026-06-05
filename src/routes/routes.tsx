@@ -4,6 +4,7 @@ const Home = lazy(() => import("@/pages/user/home/home"))
 const PracticePage = lazy(() => import("@/pages/user/practice-ielts/PracticePage"))
 const PracticeTestPage = lazy(() => import("@/pages/user/practice-ielts/PracticeTestPage"))
 const CallWithAiPage = lazy(() => import("@/pages/user/call/CallWithAiPage"))
+const SpeakingHistoryPage = lazy(() => import("@/pages/user/speaking-history/SpeakingHistoryPage"))
 const LoginSuccess = lazy(() => import("@/pages/loginsuccess"))
 const VocabPage = lazy(() => import("@/pages/user/materials/VocabPage"))
 const GrammarPage = lazy(() => import("@/pages/user/materials/GrammarPage"))
@@ -97,6 +98,10 @@ export const routes = [
   {
     path: "/practice-general/call-with-ai",
     element: <ProtectedRoute><CallWithAiPage /></ProtectedRoute>,
+  },
+  {
+    path: "/practice-general/speaking-history",
+    element: <ProtectedRoute><SpeakingHistoryPage /></ProtectedRoute>,
   },
   {
     path: "/admin/*",

@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react"
+import { useNavigate } from "react-router-dom"
 import { Phone, PhoneOff, Mic, MicOff, Volume2, VolumeX, Award, ShieldAlert, CheckCircle, RefreshCw, MessageSquare, Server, Cpu } from "lucide-react"
 import MainLayout from "@/components/layout/MainLayout/MainLayout"
 import { useUIStore } from "@/services/ui/ui.store"
@@ -39,6 +40,7 @@ const SIMULATED_CONVO: DialogueTurn[] = [
 ]
 
 export default function CallWithAiPage() {
+  const navigate = useNavigate()
   const { language } = useUIStore()
 
   // 1. Live Socket speaking store hook
@@ -91,7 +93,20 @@ export default function CallWithAiPage() {
   }, [initSocket, resetStore])
 
   // 2. Real-time microphone and VAD recorder hook
-  const { isRecording, rmsVolume } = useAudioCall()
+  const waveRef = useRef<HTMLDivElement | null>(null)
+  const { isRecording, isSpeaking } = useAudioCall({
+    onVolumeChange: (volume) => {
+      if (waveRef.current) {
+        const bars = waveRef.current.querySelectorAll(".wave-bar")
+        const baseScale = isRecording ? Math.min(1 + volume * 9, 3.5) : 1
+        const scales = [0.7, 1.5, 2.3, 1.3, 0.8]
+        bars.forEach((bar, idx) => {
+          const scaleY = baseScale * (scales[idx] || 1)
+          ;(bar as HTMLElement).style.transform = `scaleY(${scaleY})`
+        })
+      }
+    }
+  })
 
   // 3. Fallback Offline Simulation states
   const [selectedVoice, setSelectedVoice] = useState<ExaminerVoice>(EXAMINER_VOICES[0])
@@ -212,8 +227,7 @@ export default function CallWithAiPage() {
     return `${m}:${s}`
   }
 
-  // Live RMS equalizer scaling (adds reactive animation when user speaks)
-  const baseScale = isConnected && isRecording ? Math.min(1 + rmsVolume * 9, 3.5) : 1
+  // Removed continuous state-driven baseScale to avoid React re-renders. Styling updated directly in DOM ref.
 
   return (
     <MainLayout>
@@ -308,7 +322,7 @@ export default function CallWithAiPage() {
                   ))}
                 </div>
 
-                <div className="call-start-wrapper">
+                <div className="call-start-wrapper" style={{ gap: 16 }}>
                   <button
                     onClick={handleStartCall}
                     style={{
@@ -323,6 +337,20 @@ export default function CallWithAiPage() {
                       ? (language === "vi" ? "Gọi Giám Khảo (Live WebSocket)" : "Call AI (Live Gateway)")
                       : (language === "vi" ? "Gọi Thử Giả Lập (Simulate)" : "Start Simulated Practice")
                     }
+                  </button>
+
+                  <button
+                    onClick={() => navigate("/practice-general/speaking-history")}
+                    style={{
+                      background: "#ffffff",
+                      color: "#1e293b",
+                      border: "1px solid #cbd5e1",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.05)"
+                    }}
+                    className="btn-start-call hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Award size={18} style={{ color: "#3b82f6" }} />
+                    {language === "vi" ? "Lịch Sử Luyện Nói" : "Speaking History"}
                   </button>
                 </div>
               </div>
@@ -347,7 +375,7 @@ export default function CallWithAiPage() {
                 </p>
 
                 <div className="controls-panel dial-controls">
-                  <button onClick={handleHangUp} className="btn-circle btn-hangup">
+                  <button onClick={handleHangUp} className="btn-circle btn-hangup" disabled={isEvaluating}>
                     <PhoneOff size={24} />
                   </button>
                 </div>
@@ -358,18 +386,18 @@ export default function CallWithAiPage() {
             {(activeState === "active" || (activeState === "thinking" && !isEvaluating)) && (
               <div className="call-card active-call-theme">
                 <div className="call-active-header">
-                  <span className="call-active-status" style={{ color: isRecording ? (rmsVolume > 0.03 ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}>
-                    <span className={`call-active-indicator ${isRecording ? (rmsVolume > 0.03 ? "recording" : "listening") : activeState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? (rmsVolume > 0.03 ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}></span>
+                  <span className="call-active-status" style={{ color: isRecording ? (isSpeaking ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}>
+                    <span className={`call-active-indicator ${isRecording ? (isSpeaking ? "recording" : "listening") : activeState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? (isSpeaking ? "#10b981" : "#3b82f6") : activeState === "thinking" ? "#f59e0b" : "#64748b" }}></span>
                     {isConnected
-                      ? (isRecording 
-                          ? (rmsVolume > 0.03 
-                              ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") 
-                              : (language === "vi" ? "ĐANG NGHE (Hãy nói)..." : "LISTENING (Speak now)...")
-                            )
-                          : activeState === "thinking"
-                            ? (language === "vi" ? "AI ĐANG XỬ LÝ..." : "AI IS PROCESSING...")
-                            : (language === "vi" ? "AI ĐANG NÓI..." : "AI IS SPEAKING...")
+                      ? (isRecording
+                        ? (isSpeaking
+                          ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...")
+                          : (language === "vi" ? "ĐANG NGHE (Hãy nói)..." : "LISTENING (Speak now)...")
                         )
+                        : activeState === "thinking"
+                          ? (language === "vi" ? "AI ĐANG XỬ LÝ..." : "AI IS PROCESSING...")
+                          : (language === "vi" ? "AI ĐANG NÓI..." : "AI IS SPEAKING...")
+                      )
                       : (language === "vi" ? "MÔ PHỎNG HOẠT ĐỘNG" : "SIMULATED CALL ACTIVE")
                     }
                   </span>
@@ -389,12 +417,12 @@ export default function CallWithAiPage() {
                 <span className="caller-accent">{activeVoice.accent}</span>
 
                 {/* Audio equalizers reacting to live voice volume */}
-                <div className="voice-wave">
-                  <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 0.7})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
-                  <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 1.5})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
-                  <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 2.3})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
-                  <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 1.3})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
-                  <div className="wave-bar" style={{ transform: `scaleY(${baseScale * 0.8})`, transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+                <div className="voice-wave" ref={waveRef}>
+                  <div className="wave-bar" style={{ transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+                  <div className="wave-bar" style={{ transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+                  <div className="wave-bar" style={{ transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+                  <div className="wave-bar" style={{ transition: isConnected ? "transform 0.08s ease" : "" }}></div>
+                  <div className="wave-bar" style={{ transition: isConnected ? "transform 0.08s ease" : "" }}></div>
                 </div>
 
                 {/* Scrolling transcript dialogues */}
@@ -429,11 +457,19 @@ export default function CallWithAiPage() {
                     onClick={() => setMuted(!isMuted)}
                     className={`btn-circle btn-mute ${isMuted ? "active" : ""}`}
                     title={isMuted ? "Unmute Mic" : "Mute Mic"}
+                    disabled={activeState === "thinking" || isEvaluating}
+                    style={{ opacity: (activeState === "thinking" || isEvaluating) ? 0.5 : 1, cursor: (activeState === "thinking" || isEvaluating) ? "not-allowed" : "pointer" }}
                   >
                     {isMuted ? <MicOff size={20} /> : <Mic size={20} />}
                   </button>
 
-                  <button onClick={handleEndCall} className="btn-circle btn-hangup" title="End Call">
+                  <button
+                    onClick={handleEndCall}
+                    className="btn-circle btn-hangup"
+                    title="End Call"
+                    disabled={activeState === "thinking" || isEvaluating}
+                    style={{ opacity: (activeState === "thinking" || isEvaluating) ? 0.5 : 1, cursor: (activeState === "thinking" || isEvaluating) ? "not-allowed" : "pointer" }}
+                  >
                     <PhoneOff size={22} />
                   </button>
 
@@ -442,6 +478,8 @@ export default function CallWithAiPage() {
                       onClick={stopLiveRecording}
                       className="btn-circle btn-submit-speech"
                       title={language === "vi" ? "Gửi câu trả lời ngay" : "Submit answer now"}
+                      disabled={activeState === "thinking" || isEvaluating}
+                      style={{ opacity: (activeState === "thinking" || isEvaluating) ? 0.5 : 1, cursor: (activeState === "thinking" || isEvaluating) ? "not-allowed" : "pointer" }}
                     >
                       <CheckCircle size={22} />
                     </button>
@@ -451,6 +489,8 @@ export default function CallWithAiPage() {
                     onClick={() => setSpeakerOn(!isSpeakerOn)}
                     className={`btn-circle btn-mute ${!isSpeakerOn ? "active" : ""}`}
                     title={isSpeakerOn ? "Turn off Speaker" : "Turn on Speaker"}
+                    disabled={activeState === "thinking" || isEvaluating}
+                    style={{ opacity: (activeState === "thinking" || isEvaluating) ? 0.5 : 1, cursor: (activeState === "thinking" || isEvaluating) ? "not-allowed" : "pointer" }}
                   >
                     {isSpeakerOn ? <Volume2 size={20} /> : <VolumeX size={20} />}
                   </button>
@@ -651,7 +691,6 @@ export default function CallWithAiPage() {
                 </div>
               </div>
             )}
-
           </div>
         </div>
       </div>

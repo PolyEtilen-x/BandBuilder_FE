@@ -1,0 +1,434 @@
+/* Speaking History Page Layout Styling */
+.sh-page-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  height: calc(100vh - 80px);
+  overflow: hidden;
+}
+
+.sh-main-layout {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  height: 100%;
+}
+
+.sh-workspace {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
+  padding-right: 4px;
+}
+
+/* Card Styling */
+.sh-card {
+  width: 100%;
+  background: #ffffff;
+  border-radius: 24px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f1f5f9;
+  padding: 40px;
+  margin-bottom: 20px;
+  transition: all 0.3s ease;
+}
+
+.sh-header-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.sh-tag-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sh-badge-new {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.sh-subtitle {
+  font-size: 14px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.sh-refresh-btn {
+  background: #f1f5f9;
+  border: none;
+  color: #64748b;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sh-refresh-btn:hover {
+  background: #e2e8f0;
+  color: #1e293b;
+  transform: rotate(180deg);
+}
+
+.sh-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 8px;
+}
+
+.sh-desc {
+  color: #64748b;
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+/* Back Button in Details */
+.sh-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #f1f5f9;
+  border: none;
+  color: #1e293b;
+  padding: 8px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sh-back-btn:hover {
+  background: #e2e8f0;
+  transform: translateX(-2px);
+}
+
+.detail-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.date-tag {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* History List Layout */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.history-item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 20px 24px;
+  transition: all 0.25s ease;
+}
+
+.history-item-card:hover {
+  border-color: #3b82f6;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.06);
+}
+
+.item-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.item-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #60a5fa);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+.item-examiner-name {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+}
+
+.item-date {
+  font-size: 13px;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.item-right {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+
+.score-badge {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.score-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.score-value {
+  font-size: 22px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.btn-view-details {
+  background: #eff6ff;
+  color: #2563eb;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-view-details:hover {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+/* History Transcript Box (Dark Theme like active call) */
+.transcript-box-history {
+  width: 100%;
+  height: 240px;
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  border: 1px solid #1e293b;
+  border-radius: 20px;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.chat-bubble-history {
+  max-width: 80%;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.chat-bubble-history.ai {
+  background: rgba(59, 130, 246, 0.15);
+  color: #93c5fd;
+  align-self: flex-start;
+  border-bottom-left-radius: 2px;
+}
+
+.chat-bubble-history.user {
+  background: rgba(16, 185, 129, 0.15);
+  color: #6ee7b7;
+  align-self: flex-end;
+  border-bottom-right-radius: 2px;
+}
+
+/* Mispronounced words in history transcript */
+.mispronounced-word-history {
+  background: rgba(245, 158, 11, 0.25);
+  border-bottom: 2px dashed #f59e0b;
+  color: #fde047;
+  padding: 0 2px;
+  border-radius: 4px;
+  cursor: help;
+  transition: all 0.2s ease;
+  display: inline-block;
+  position: relative;
+}
+
+.mispronounced-word-history:hover {
+  background: rgba(245, 158, 11, 0.45);
+  color: #ffffff;
+}
+
+.mispronounced-word-history::after {
+  content: "Phát âm chưa chuẩn (Độ tin cậy < 60%)";
+  position: absolute;
+  bottom: 130%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #1e293b;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  border: 1px solid #334155;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.mispronounced-word-history::before {
+  content: "";
+  position: absolute;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
+  z-index: 100;
+  pointer-events: none;
+}
+
+.mispronounced-word-history:hover::after,
+.mispronounced-word-history:hover::before {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Empty State styling */
+.sh-empty-state {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.sh-empty-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.btn-start-call-sh {
+  margin-top: 24px;
+  background: linear-gradient(135deg, #2563eb, #1d4ed8);
+  color: #ffffff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 14px;
+  font-size: 14.5px;
+  font-weight: 700;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s ease;
+}
+
+.btn-start-call-sh:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4);
+}
+
+/* Skeletons loader animation */
+.sh-skeleton-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.sh-skeleton-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  border: 1px solid #f1f5f9;
+  border-radius: 20px;
+  padding: 20px 24px;
+  background: #fafafa;
+}
+
+.sh-skeleton-circle {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #f1f5f9;
+  animation: sh-shimmer 1.5s infinite ease-in-out;
+}
+
+.sh-skeleton-lines {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.sh-skeleton-line {
+  height: 14px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  animation: sh-shimmer 1.5s infinite ease-in-out;
+}
+
+.sh-skeleton-line.short {
+  width: 30%;
+}
+
+.sh-skeleton-line.long {
+  width: 60%;
+}
+
+.sh-error-card {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  color: #991b1b;
+  border-radius: 12px;
+  padding: 16px;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+@keyframes sh-shimmer {
+  0% {
+    background-color: #f1f5f9;
+  }
+  50% {
+    background-color: #e2e8f0;
+  }
+  100% {
+    background-color: #f1f5f9;
+  }
+}

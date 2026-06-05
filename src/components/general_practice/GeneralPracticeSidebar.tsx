@@ -1,3 +1,4 @@
+import { memo } from "react"
 import { Mic, PenLine, Phone } from "lucide-react"
 import { useNavigate, useLocation } from "react-router-dom"
 import { useUIStore } from "@/services/ui/ui.store"
@@ -12,7 +13,7 @@ const ICONS = {
 
 const CATEGORIES: PracticeKey[] = ["pronunciation", "writings", "call"]
 
-export default function GeneralPracticeSidebar() {
+function GeneralPracticeSidebar() {
   const navigate = useNavigate()
   const location = useLocation()
   const { language } = useUIStore()
@@ -85,3 +86,5 @@ export default function GeneralPracticeSidebar() {
     </div>
   )
 }
+
+export default memo(GeneralPracticeSidebar)
