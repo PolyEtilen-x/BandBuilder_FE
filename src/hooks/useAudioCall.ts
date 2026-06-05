@@ -22,7 +22,7 @@ export function useAudioCall() {
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null)
   
   // VAD Parameters
-  const SILENCE_THRESHOLD = 0.015 // RMS threshold for silence
+  const SILENCE_THRESHOLD = 0.03 // RMS threshold for silence (raised from 0.015 for noise tolerance)
   const SILENCE_DURATION_MS = 1000 // Require 1 second of silence to declare "done"
   const hasSpokenRef = useRef(false) // Track if speech was detected first to avoid early VAD triggers
 
