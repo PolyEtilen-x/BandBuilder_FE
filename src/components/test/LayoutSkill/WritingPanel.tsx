@@ -52,16 +52,35 @@ export default function WritingPanel({ content, taskNumber }: WritingPanelProps)
             <p className="writing-visual-description">{content.visual_description}</p>
           )}
           {content.visuals && content.visuals.length > 0 && (
-            <ul className="writing-visual-list">
-              {content.visuals.map((v, i) => (
-                <li key={i}>
-                  <span className="writing-visual-type-badge">
-                    {v.type.replace(/_/g, " ")}
-                  </span>
-                  {v.label}
-                </li>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16, marginTop: 12 }}>
+              {content.visuals.map((v: any, i) => (
+                <div key={i} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <span className="writing-visual-type-badge">
+                      {v.type.replace(/_/g, " ")}
+                    </span>
+                    <span style={{ fontWeight: 550, color: "#334155" }}>{v.label}</span>
+                  </div>
+                  {v.imageUrl && (
+                    <div style={{ marginTop: 4, display: "flex", justifyContent: "center" }}>
+                      <img 
+                        src={v.imageUrl} 
+                        alt={v.label} 
+                        style={{ 
+                          maxWidth: "100%", 
+                          maxHeight: 400, 
+                          borderRadius: 8, 
+                          boxShadow: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+                          border: "1px solid #e2e8f0",
+                          backgroundColor: "#fff",
+                          padding: 4
+                        }} 
+                      />
+                    </div>
+                  )}
+                </div>
               ))}
-            </ul>
+            </div>
           )}
         </div>
       )}

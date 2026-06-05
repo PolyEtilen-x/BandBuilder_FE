@@ -20,6 +20,7 @@ import {
   createPronunciationTopicAdmin,
   deletePronunciationTopicAdmin
 } from "@/api/practice/practiceGeneral.api"
+import { paymentApi } from "@/api/payment.api"
 
 import logoImg from "@/assets/logo.png"
 
@@ -87,6 +88,30 @@ export default function AdminPage() {
     }, 3000)
   }
 
+  const [packages, setPackages] = useState<CreditPackage[]>([])
+  const [loadingPackages, setLoadingPackages] = useState(false)
+
+  const loadPackagesList = async () => {
+    try {
+      setLoadingPackages(true)
+      const res = await paymentApi.adminGetPackages()
+      const mapped = res.data.map((p: any) => ({
+        id: p.id,
+        name: p.name,
+        price: p.priceVnd,
+        credits: p.credits,
+        bonus: p.bonusCredit,
+        isActive: p.isActive,
+        sortOrder: p.sortOrder
+      }))
+      setPackages(mapped)
+    } catch (e: any) {
+      showToast("Lỗi khi tải danh sách gói nạp: " + (e.response?.data?.message || e.message))
+    } finally {
+      setLoadingPackages(false)
+    }
+  }
+
   useEffect(() => {
     if (activeTab === "shadowing") {
       const loadTopics = async () => {
@@ -98,6 +123,8 @@ export default function AdminPage() {
         }
       }
       loadTopics()
+    } else if (activeTab === "packages") {
+      loadPackagesList()
     }
   }, [activeTab])
 
@@ -148,13 +175,6 @@ export default function AdminPage() {
     }
   ])
 
-  const [packages, setPackages] = useState<CreditPackage[]>([
-    { id: "p1", name: "Gói Starter", price: 50000, credits: 100, bonus: 10, isActive: true, sortOrder: 1 },
-    { id: "p2", name: "Gói Popular", price: 135000, credits: 300, bonus: 45, isActive: true, sortOrder: 2 },
-    { id: "p3", name: "Gói Pro Premium", price: 400000, credits: 1000, bonus: 200, isActive: true, sortOrder: 3 },
-    { id: "p4", name: "Gói VIP Custom", price: 900000, credits: 2500, bonus: 600, isActive: false, sortOrder: 4 },
-  ])
-
   const [topics, setTopics] = useState<ShadowingTopic[]>([])
 
 
@@ -173,12 +193,54 @@ export default function AdminPage() {
     }))
   }
 
-  const handleUpdatePackage = (id: string, updated: Partial<CreditPackage>) => {
-    setPackages(prev => prev.map(p => (p.id === id ? { ...p, ...updated } : p)))
-    if (updated.isActive !== undefined) {
-      showToast(`Đã cập nhật trạng thái hiển thị gói nạp.`)
-    } else {
-      showToast(`Đã chỉnh sửa thông số gói nạp thành công!`)
+  const handleUpdatePackage = async (id: string, updated: Partial<CreditPackage>) => {
+    try {
+      const payload: any = {}
+      if (updated.name !== undefined) payload.name = updated.name
+      if (updated.price !== undefined) payload.priceVnd = updated.price
+      if (updated.credits !== undefined) payload.credits = updated.credits
+      if (updated.bonus !== undefined) payload.bonusCredit = updated.bonus
+      if (updated.isActive !== undefined) payload.isActive = updated.isActive
+      if (updated.sortOrder !== undefined) payload.sortOrder = updated.sortOrder
+
+      await paymentApi.adminUpdatePackage(id, payload)
+      await loadPackagesList()
+
+      if (updated.isActive !== undefined) {
+        showToast(`Đã cập nhật trạng thái hiển thị gói nạp.`)
+      } else {
+        showToast(`Đã chỉnh sửa thông số gói nạp thành công!`)
+      }
+    } catch (e: any) {
+      showToast("Lỗi khi cập nhật gói nạp: " + (e.response?.data?.message || e.message))
+    }
+  }
+
+  const handleCreatePackage = async (newPack: Omit<CreditPackage, "id">) => {
+    try {
+      const payload = {
+        name: newPack.name,
+        priceVnd: newPack.price,
+        credits: newPack.credits,
+        bonusCredit: newPack.bonus,
+        isActive: newPack.isActive,
+        sortOrder: newPack.sortOrder
+      }
+      await paymentApi.adminCreatePackage(payload)
+      await loadPackagesList()
+      showToast(`Đã thêm mới gói nạp "${newPack.name}" thành công!`)
+    } catch (e: any) {
+      showToast("Lỗi khi thêm gói nạp: " + (e.response?.data?.message || e.message))
+    }
+  }
+
+  const handleDeletePackage = async (id: string) => {
+    try {
+      await paymentApi.adminDeletePackage(id)
+      await loadPackagesList()
+      showToast("Đã xóa gói nạp thành công!")
+    } catch (e: any) {
+      showToast("Lỗi khi xóa gói nạp: " + (e.response?.data?.message || e.message))
     }
   }
 
@@ -504,22 +566,28 @@ export default function AdminPage() {
         <div style={styles.mainContentArea}>
           <Routes>
             <Route path="/" element={
-              <DashboardTab 
-                transactions={transactions} 
-                onApproveTransaction={handleApproveTransaction} 
+              <DashboardTab
+                transactions={transactions}
+                onApproveTransaction={handleApproveTransaction}
               />
             } />
             <Route path="tests" element={
               <TestsTab />
             } />
             <Route path="packages" element={
-              <PackagesTab 
-                packages={packages} 
-                onUpdatePackage={handleUpdatePackage} 
-              />
+              loadingPackages ? (
+                <div style={{ padding: "40px", textAlign: "center", color: "#6b7280" }}>Đang tải danh sách gói nạp...</div>
+              ) : (
+                <PackagesTab
+                  packages={packages}
+                  onUpdatePackage={handleUpdatePackage}
+                  onCreatePackage={handleCreatePackage}
+                  onDeletePackage={handleDeletePackage}
+                />
+              )
             } />
             <Route path="shadowing" element={
-              <ShadowingTab 
+              <ShadowingTab
                 topics={topics}
                 onAddTopic={handleAddTopic}
                 onDeleteTopic={handleDeleteTopic}

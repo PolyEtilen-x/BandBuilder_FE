@@ -1,6 +1,8 @@
-import { Plus, Trash2 } from "lucide-react"
+import { useState } from "react"
+import { Plus, Trash2, Upload, X } from "lucide-react"
+import { adminPracticeApi } from "@/api/practice/adminPractice.api"
 
-interface Visual { type: string; label: string; data_points: string[] }
+interface Visual { type: string; label: string; data_points: string[]; imageUrl?: string }
 
 interface Props {
   value: any
@@ -23,7 +25,25 @@ const ESSAY_TYPES = [
 export default function WritingEditor({ value, taskNumber, onChange }: Props) {
   const update = (field: string, val: any) => onChange({ ...value, task: taskNumber, [field]: val })
 
+  const [uploadingIdx, setUploadingIdx] = useState<number | null>(null)
+
   const visuals: Visual[] = value?.visuals || []
+
+  const handleImageUpload = async (vIdx: number, file: File) => {
+    if (!file) return
+    setUploadingIdx(vIdx)
+    try {
+      const res = await adminPracticeApi.uploadImage(file)
+      const vs = [...visuals]
+      vs[vIdx] = { ...vs[vIdx], imageUrl: res.data.url }
+      update("visuals", vs)
+    } catch (err) {
+      console.error("Failed to upload image:", err)
+      alert("Upload ảnh thất bại. Vui lòng thử lại.")
+    } finally {
+      setUploadingIdx(null)
+    }
+  }
 
   const addVisual = () => update("visuals", [...visuals, { type: "bar_chart", label: "", data_points: [] }])
   const updateVisual = (i: number, updated: Visual) => {
@@ -155,6 +175,64 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
                         placeholder="Reasons for adults studying..."
                       />
                     </div>
+                  </div>
+
+                  {/* Image upload field */}
+                  <div className="form-group" style={{ marginTop: 8, marginBottom: 12 }}>
+                    <label className="form-label">Hình ảnh biểu đồ (Chart Image)</label>
+                    {v.imageUrl ? (
+                      <div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 4 }}>
+                        <img src={v.imageUrl} alt={v.label} style={{ maxWidth: 200, maxHeight: 120, objectFit: "contain", borderRadius: 4, border: "1px solid #e2e8f0" }} />
+                        <button
+                          type="button"
+                          className="btn-danger"
+                          style={{ padding: "4px 8px", display: "flex", alignItems: "center", gap: 4, height: "fit-content" }}
+                          onClick={() => {
+                            const vs = [...visuals]
+                            const updatedVisual = { ...vs[vIdx] }
+                            delete updatedVisual.imageUrl
+                            vs[vIdx] = updatedVisual
+                            update("visuals", vs)
+                          }}
+                        >
+                          <X size={12} /> Xóa ảnh
+                        </button>
+                      </div>
+                    ) : (
+                      <div style={{ marginTop: 4 }}>
+                        <label 
+                          className="add-row-btn" 
+                          style={{ 
+                            width: "fit-content", 
+                            padding: "6px 12px", 
+                            cursor: "pointer", 
+                            display: "flex", 
+                            alignItems: "center", 
+                            gap: 6,
+                            background: "#f1f5f9",
+                            border: "1px dashed #cbd5e1"
+                          }}
+                        >
+                          {uploadingIdx === vIdx ? (
+                            <span>Đang tải lên...</span>
+                          ) : (
+                            <>
+                              <Upload size={14} /> Chọn ảnh từ máy tính
+                            </>
+                          )}
+                          <input 
+                            type="file" 
+                            accept="image/*" 
+                            disabled={uploadingIdx !== null} 
+                            style={{ display: "none" }} 
+                            onChange={e => {
+                              const file = e.target.files?.[0]
+                              if (file) handleImageUpload(vIdx, file)
+                            }} 
+                          />
+                        </label>
+                      </div>
+                    )}
                   </div>
                   <div className="form-group">
                     <label className="form-label">Data Points</label>

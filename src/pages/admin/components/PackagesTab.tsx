@@ -13,6 +13,8 @@ import {
 interface Props {
   packages: CreditPackage[]
   onUpdatePackage: (id: string, updated: Partial<CreditPackage>) => void
+  onCreatePackage: (pack: Omit<CreditPackage, "id">) => void
+  onDeletePackage: (id: string) => void
 }
 
 // Inline window size observer for responsiveness
@@ -30,7 +32,12 @@ function useWindowSize() {
   return size
 }
 
-export default function PackagesTab({ packages, onUpdatePackage }: Props) {
+export default function PackagesTab({
+  packages,
+  onUpdatePackage,
+  onCreatePackage,
+  onDeletePackage
+}: Props) {
   const [editingPack, setEditingPack] = useState<CreditPackage | null>(null)
   const { width } = useWindowSize()
 
@@ -50,21 +57,43 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
     return new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(val)
   }
 
-  // Handle Edit Submit
+  // Handle Edit/Create Submit
   const handleEditSubmit = (e: React.FormEvent) => {
     e.preventDefault()
     if (!editingPack) return
 
-    onUpdatePackage(editingPack.id, {
-      name: editName,
-      price: editPrice,
-      credits: editCredits,
-      bonus: editBonus,
-      isActive: editActive,
-      sortOrder: editSort
-    })
+    if (editingPack.id === "new") {
+      onCreatePackage({
+        name: editName,
+        price: editPrice,
+        credits: editCredits,
+        bonus: editBonus,
+        isActive: editActive,
+        sortOrder: editSort
+      })
+    } else {
+      onUpdatePackage(editingPack.id, {
+        name: editName,
+        price: editPrice,
+        credits: editCredits,
+        bonus: editBonus,
+        isActive: editActive,
+        sortOrder: editSort
+      })
+    }
 
     setEditingPack(null)
+  }
+
+  // Trigger Create mode
+  const startCreate = () => {
+    setEditingPack({ id: "new", name: "", price: 0, credits: 0, bonus: 0, isActive: true, sortOrder: 0 })
+    setEditName("")
+    setEditPrice(0)
+    setEditCredits(0)
+    setEditBonus(0)
+    setEditActive(true)
+    setEditSort(0)
   }
 
   // Trigger Edit mode
@@ -320,9 +349,29 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "32px" }}>
       {/* HEADER SECTION */}
-      <div style={styles.headerRow}>
-        <h2 style={styles.title}>Cấu hình Gói Nạp Credit</h2>
-        <p style={styles.subtitle}>Điều chỉnh giá tiền (VND), lượng Credits cơ bản và Credits khuyến mãi của các gói nạp trực tuyến.</p>
+      <div style={{ ...styles.headerRow, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h2 style={styles.title}>Cấu hình Gói Nạp Credit</h2>
+          <p style={styles.subtitle}>Điều chỉnh giá tiền (VND), lượng Credits cơ bản và Credits khuyến mãi của các gói nạp trực tuyến.</p>
+        </div>
+        <button
+          onClick={startCreate}
+          style={{
+            padding: "8px 16px",
+            borderRadius: "8px",
+            background: "#2563eb",
+            color: "#ffffff",
+            fontSize: "13px",
+            fontWeight: 700,
+            border: "none",
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: "8px"
+          }}
+        >
+          + Thêm gói mới
+        </button>
       </div>
 
       {/* PRICING GRID LIST */}
@@ -389,13 +438,37 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                       )}
                     </button>
 
-                    <button
-                      onClick={() => startEdit(pack)}
-                      style={styles.editBtn}
-                    >
-                      <Edit3 size={13} />
-                      Sửa gói
-                    </button>
+                    <div style={{ display: "flex", gap: "8px" }}>
+                      <button
+                        onClick={() => startEdit(pack)}
+                        style={styles.editBtn}
+                      >
+                        <Edit3 size={13} />
+                        Sửa
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (window.confirm(`Bạn có chắc muốn xóa gói "${pack.name}"?`)) {
+                            onDeletePackage(pack.id)
+                          }
+                        }}
+                        style={{
+                          padding: "6px 10px",
+                          borderRadius: "8px",
+                          background: "#fee2e2",
+                          color: "#ef4444",
+                          fontSize: "12px",
+                          fontWeight: 750,
+                          border: "1px solid #fca5a5",
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: "4px"
+                        }}
+                      >
+                        Xóa
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -408,7 +481,9 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
         <div style={styles.modalOverlay}>
           <div style={styles.modalCard}>
             <div style={styles.modalHeader}>
-              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#111827", margin: 0 }}>Chỉnh Sửa Gói Nạp</h3>
+              <h3 style={{ fontSize: "15px", fontWeight: 700, color: "#111827", margin: 0 }}>
+                {editingPack.id === "new" ? "Thêm Gói Nạp Mới" : "Chỉnh Sửa Gói Nạp"}
+              </h3>
               <button onClick={() => setEditingPack(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#94a3b8" }}>
                 <X size={18} />
               </button>
@@ -508,7 +583,7 @@ export default function PackagesTab({ packages, onUpdatePackage }: Props) {
                   type="submit"
                   style={{ padding: "8px 16px", borderRadius: "8px", border: "none", background: "#2563eb", fontSize: "13px", fontWeight: 600, cursor: "pointer", color: "#ffffff" }}
                 >
-                  Lưu thay đổi
+                  {editingPack.id === "new" ? "Tạo gói nạp" : "Lưu thay đổi"}
                 </button>
               </div>
             </form>

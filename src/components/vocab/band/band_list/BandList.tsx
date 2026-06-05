@@ -46,7 +46,7 @@ export default function BandList({ bandIndex, onSelectTopic }: Props) {
       <h1 className="topic-title">Band {currentBand}.0+</h1>
       <div className="topic-grid">
         {topics.map((topic, index) => {
-          const total = topic.vocab_list.length
+          const total = topic.wordCount ?? topic.vocab_list.length
           const saved = topic.numberSaved
           const progress = total
             ? Math.round((saved / total) * 100)

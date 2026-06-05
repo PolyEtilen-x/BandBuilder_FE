@@ -75,4 +75,19 @@ export const adminPracticeApi = {
     apiClient.delete<any>(
       `/admin/practice/tests/${practiceTestId}/skills/${skillTestId}`
     ),
+
+  // Upload an image to Cloudinary
+  uploadImage: (file: File) => {
+    const formData = new FormData()
+    formData.append("file", file)
+    return apiClient.post<{ url: string; public_id: string; type: string }>(
+      "/admin/upload/image",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    )
+  },
 }

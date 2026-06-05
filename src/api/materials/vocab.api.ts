@@ -26,7 +26,8 @@ export const vocabApi = {
         id: t.id, // Keep the backend ID
         topic: t.name,
         numberSaved: savedIds.length,
-        vocab_list: [] // The list page only needs the topic name and counts
+        vocab_list: [], // The list page only needs the topic name and counts
+        wordCount: t.wordCount
       }
     })
   },

@@ -46,7 +46,7 @@ export default function TopicList({ topicIndex, onSelectTopic, showTitle }: Prop
 
       <div className="topic-grid">
         {topics.map((topic, index) => {
-          const total = topic.vocab_list.length
+          const total = topic.wordCount ?? topic.vocab_list.length
           const saved = topic.numberSaved
           const progress = total
             ? Math.round((saved / total) * 100)

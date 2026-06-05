@@ -13,4 +13,5 @@ export type VocabTopic = {
   topic: string
   numberSaved: number
   vocab_list: VocabItem[]
+  wordCount?: number
 }

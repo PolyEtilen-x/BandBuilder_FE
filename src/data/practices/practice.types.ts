@@ -40,6 +40,7 @@ export interface WritingVisual {
   type: string;
   label: string;
   data_points?: any[];
+  imageUrl?: string;
 }
 
 export interface WritingTask {
