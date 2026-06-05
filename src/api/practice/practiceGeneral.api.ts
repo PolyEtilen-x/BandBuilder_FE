@@ -63,6 +63,7 @@ export interface EssayAnalysis {
 
 export interface WritingSampleTopicListItemDto {
   id: string
+  title: string
   taskType: WritingTaskType
   category: string
   prompt: string
@@ -81,6 +82,7 @@ export interface WritingEssayDto {
 
 export interface WritingSampleTopicDetailDto {
   id: string
+  title: string
   taskType: WritingTaskType
   category: string
   prompt: string
@@ -178,6 +180,7 @@ export async function deletePronunciationTopicAdmin(
 
 export interface CreateWritingSampleTopicDto {
   taskType: "TASK_1" | "TASK_2"
+  title: string
   category: string
   prompt: string
   imageUrl?: string

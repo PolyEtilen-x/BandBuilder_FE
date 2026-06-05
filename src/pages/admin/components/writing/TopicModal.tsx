@@ -10,6 +10,7 @@ interface TopicModalProps {
   onClose: () => void
   onSave: (data: {
     taskType: WritingTaskType
+    title: string
     category: string
     prompt: string
     imageUrl?: string
@@ -23,6 +24,7 @@ export default function TopicModal({
   onSave
 }: TopicModalProps) {
   const [topicType, setTopicType] = useState<WritingTaskType>("TASK_1")
+  const [topicTitle, setTopicTitle] = useState("")
   const [topicCategory, setTopicCategory] = useState("")
   const [topicPrompt, setTopicPrompt] = useState("")
   const [topicImageUrl, setTopicImageUrl] = useState("")
@@ -32,12 +34,14 @@ export default function TopicModal({
   useEffect(() => {
     if (editingTopic) {
       setTopicType(editingTopic.taskType)
+      setTopicTitle(editingTopic.title || "")
       setTopicCategory(editingTopic.category)
       setTopicPrompt(editingTopic.prompt)
       setTopicImageUrl(editingTopic.imageUrl || "")
       setTopicChartDescription(editingTopic.chartDescription || "")
     } else {
       setTopicType("TASK_1")
+      setTopicTitle("")
       setTopicCategory("")
       setTopicPrompt("")
       setTopicImageUrl("")
@@ -47,12 +51,13 @@ export default function TopicModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!topicCategory.trim() || !topicPrompt.trim()) return
+    if (!topicTitle.trim() || !topicCategory.trim() || !topicPrompt.trim()) return
 
     setSaving(true)
     try {
       await onSave({
         taskType: topicType,
+        title: topicTitle.trim(),
         category: topicCategory.trim(),
         prompt: topicPrompt.trim(),
         imageUrl: topicImageUrl.trim() ? topicImageUrl.trim() : undefined,
@@ -92,6 +97,18 @@ export default function TopicModal({
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div className="writing-admin-form-group">
+              <label className="writing-admin-label">Tiêu đề (Title)</label>
+              <input
+                type="text"
+                required
+                placeholder="Ví dụ: Male and Female Jobs in New Zealand"
+                value={topicTitle}
+                onChange={(e) => setTopicTitle(e.target.value)}
+                className="writing-admin-text-input"
+              />
             </div>
 
             <div className="writing-admin-form-group">

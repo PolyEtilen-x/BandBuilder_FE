@@ -6,7 +6,6 @@ import {
   BookOpen,
   FileText,
   Clock,
-  Crown,
 } from "lucide-react"
 import {
   getWritingSampleTopics,
@@ -81,9 +80,7 @@ function TopicCard({
         <span className="sw-topic-card__category">{topic.category}</span>
       </div>
       <p className="sw-topic-card__prompt-text">
-        {topic.prompt && topic.prompt.length > 165
-          ? topic.prompt.substring(0, 165) + "..."
-          : topic.prompt || "No prompt available"}
+        {topic.title || "No title available"}
       </p>
 
       <div className="sw-topic-card__footer">
@@ -281,56 +278,6 @@ function EssayCard({ essay }: { essay: WritingEssayDto }): ReactElement {
   )
 }
 
-function WritingSidebar({ taskType }: { taskType: WritingTaskType }): ReactElement {
-  const tips = taskType === "TASK_1" ? [
-    { title: "Suggested Time", detail: "Spend no more than 20 minutes." },
-    { title: "Target Length", detail: "Write at least 150 words." },
-    { title: "Key Focus", detail: "Describe main features and trends clearly. Group data logically and write a robust overview." },
-    { title: "Vocabulary", detail: "Use comparative language ('substantially higher') and change verbs ('fluctuated', 'surged')." }
-  ] : [
-    { title: "Suggested Time", detail: "Spend around 40 minutes." },
-    { title: "Target Length", detail: "Write at least 250 words." },
-    { title: "Structure", detail: "Use standard 4 paragraphs: Introduction, 2 Body paragraphs with topic sentences, and a Conclusion." },
-    { title: "Key Focus", detail: "Clearly state your position, answer all prompt directives, and support points with clear examples." },
-    { title: "Vocabulary", detail: "Use academic cohesion linkers ('consequently', 'nevertheless') and precise lexical units." }
-  ]
-
-  return (
-    <div className="sw-sidebar">
-      <div className="sw-sidebar-card">
-        <h4 className="sw-sidebar-title">
-          <Clock size={15} style={{ marginRight: 6 }} />
-          Exam Cheat Sheet
-        </h4>
-        <div className="sw-sidebar-tips">
-          {tips.map((tip, idx) => (
-            <div key={idx} className="sw-sidebar-tip-item">
-              <span className="sw-sidebar-tip-title">{tip.title}</span>
-              <p className="sw-sidebar-tip-desc">{tip.detail}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="sw-sidebar-card sw-sidebar-card--premium">
-        <div className="sw-premium-glow" />
-        <Crown className="sw-premium-crown" size={32} />
-        <h4 className="sw-premium-title">Upgrade to Premium</h4>
-        <p className="sw-premium-text">
-          Want instant AI scoring and detailed criteria feedback on <strong>your own writing attempts</strong>?
-        </p>
-        <ul className="sw-premium-list">
-          <li>✨ Unlimited essays scored</li>
-          <li>📊 Visual category analytics</li>
-          <li>📝 1-on-1 vocabulary help</li>
-        </ul>
-        <a href="/upgrade" className="sw-premium-btn">
-          Unlock AI Feedback
-        </a>
-      </div>
-    </div>
-  )
-}
 
 function TopicDetail({
   detail,
@@ -458,10 +405,6 @@ function TopicDetail({
             visibleEssays.map((e) => <EssayCard key={e.id} essay={e} />)
           )}
         </div>
-      </div>
-
-      <div className="sw-detail-sidebar">
-        <WritingSidebar taskType={detail.taskType} />
       </div>
     </div>
   )

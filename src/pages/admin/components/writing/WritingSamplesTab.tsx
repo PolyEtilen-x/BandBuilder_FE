@@ -77,6 +77,7 @@ export default function WritingSamplesTab() {
   // Handle Save/Create Topic
   const handleSaveTopic = async (data: {
     taskType: WritingTaskType
+    title: string
     category: string
     prompt: string
     imageUrl?: string

@@ -34,7 +34,7 @@ export default function TopicCard({
             <span className="writing-admin-badge-category">{topic.category}</span>
           </div>
         </div>
-        <p className="writing-admin-card-prompt">{topic.prompt}</p>
+        <p className="writing-admin-card-prompt">{topic.title || topic.prompt}</p>
       </div>
 
       <div className="writing-admin-card-footer">
