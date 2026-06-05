@@ -22,8 +22,7 @@ const menu = [
     label: "Materials",
     dropdown: [
       { label: "Vocabulary", path: "/materials/vocabulary" },
-      { label: "Grammar", path: "/materials/grammar" },
-      { label: "IELTS Tips", path: "/materials/tips" }
+      { label: "Grammar", path: "/materials/grammar" }
     ]
   },
 

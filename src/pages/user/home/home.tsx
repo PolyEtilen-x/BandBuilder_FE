@@ -9,7 +9,7 @@ import "./style.css";
 
 /* ── Types ─────────────────────────────────────────── */
 interface Stat { value: string; label: string; }
-interface Tool { icon: React.ReactNode; title: string; desc: string; tag: string; color: string; }
+interface Tool { icon: React.ReactNode; title: string; desc: string; tag: string; color: string; path: string; }
 interface Feature { icon: React.ReactNode; color: string; title: string; desc: string; }
 interface Step { n: string; title: string; desc: string; }
 interface Testimonial { initials: string; name: string; country: string; score: string; text: string; }
@@ -26,12 +26,12 @@ const getLocalizedData = (lang: "vi" | "en") => {
   ];
 
   const tools = [
-    { icon: <PenTool size={20} />, title: lang === "vi" ? "Huấn Luyện Viết AI" : "AI Writing Coach", tag: lang === "vi" ? "Writing" : "Writing", color: "#f97316", desc: lang === "vi" ? "Nộp bài viết Task 1 & Task 2. AI của chúng tôi sẽ chấm điểm theo cả 4 tiêu chí IELTS và đưa ra gợi ý sửa đổi chi tiết trong vài giây." : "Submit Task 1 & Task 2 essays. Our AI scores them across all 4 IELTS criteria and delivers line-by-line improvement suggestions in seconds." },
-    { icon: <Mic size={20} />, title: lang === "vi" ? "Trình Giả Lập Nói" : "Speaking Simulator", tag: lang === "vi" ? "Speaking" : "Speaking", color: "#8b5cf6", desc: lang === "vi" ? "Luyện nói các Phần 1, 2 & 3 với giám khảo AI. Nhận nhận xét chi tiết về phát âm, độ trôi chảy, từ vựng và sự mạch lạc." : "Practice Part 1, 2 & 3 with an AI examiner. Receive detailed feedback on pronunciation, fluency, lexical range and coherence." },
-    { icon: <BookOpen size={20} />, title: lang === "vi" ? "Thư Viện Đọc Lâm Sàng" : "Reading Lab", tag: lang === "vi" ? "Reading" : "Reading", color: "#10b981", desc: lang === "vi" ? "Hơn 200 bài đọc học thuật phân loại theo dạng câu hỏi. Mỗi câu trả lời đều đi kèm giải thích và chỉ dẫn nguồn văn bản chi tiết." : "200+ academic passages categorised by question type. Every answer includes a full explanation and passage reference." },
-    { icon: <Headphones size={20} />, title: lang === "vi" ? "Luyện Nghe Thực Tế" : "Listening Practice", tag: lang === "vi" ? "Listening" : "Listening", color: "#3b82f6", desc: lang === "vi" ? "Đề thi Nghe IELTS chuẩn hóa trên cả bốn phần. Cung cấp bản dịch đầy đủ, đánh dấu từ khóa theo dòng thời gian sau mỗi bài thi." : "Authentic IELTS-style audio across all four sections. Full transcript, time-stamped highlights and gap-fill analysis after each test." },
-    { icon: <Layers size={20} />, title: lang === "vi" ? "Thẻ Từ Vựng Thông Minh" : "Smart Flashcards", tag: lang === "vi" ? "Vocabulary" : "Vocabulary", color: "#ec4899", desc: lang === "vi" ? "Học từ vựng IELTS phân loại theo chủ đề bằng phương pháp lặp lại ngắt quãng. Hệ thống tự căn chỉnh tần suất ôn tập dựa trên trí nhớ của bạn." : "Topic-grouped IELTS vocabulary with spaced-repetition scheduling. The system auto-adjusts review intervals based on your memory curve." },
-    { icon: <Sparkles size={20} />, title: lang === "vi" ? "Sửa Lỗi Ngữ Pháp" : "Grammar Checker", tag: lang === "vi" ? "Grammar" : "Grammar", color: "#f59e0b", desc: lang === "vi" ? "Dán bất kỳ đoạn văn nào để kiểm tra ngữ pháp ngay lập tức. AI sẽ phát hiện các lỗi sai thường gặp, giải thích quy tắc và viết lại câu hoàn chỉnh cho bạn." : "Paste any paragraph for instant grammar analysis. The AI identifies error patterns, explains the rule and rewrites the sentence for you." },
+    { icon: <PenTool size={20} />, title: lang === "vi" ? "Huấn Luyện Viết AI" : "AI Writing Coach", tag: lang === "vi" ? "Writing" : "Writing", color: "#f97316", path: "/practice-ielts/writing", desc: lang === "vi" ? "Nộp bài viết Task 1 & Task 2. AI của chúng tôi sẽ chấm điểm theo cả 4 tiêu chí IELTS và đưa ra gợi ý sửa đổi chi tiết trong vài giây." : "Submit Task 1 & Task 2 essays. Our AI scores them across all 4 IELTS criteria and delivers line-by-line improvement suggestions in seconds." },
+    { icon: <Mic size={20} />, title: lang === "vi" ? "Trình Giả Lập Nói" : "Speaking Simulator", tag: lang === "vi" ? "Speaking" : "Speaking", color: "#8b5cf6", path: "/practice-general/call-with-ai", desc: lang === "vi" ? "Luyện nói các Phần 1, 2 & 3 với giám khảo AI. Nhận nhận xét chi tiết về phát âm, độ trôi chảy, từ vựng và sự mạch lạc." : "Practice Part 1, 2 & 3 with an AI examiner. Receive detailed feedback on pronunciation, fluency, lexical range and coherence." },
+    { icon: <BookOpen size={20} />, title: lang === "vi" ? "Thư Viện Đọc Lâm Sàng" : "Reading Lab", tag: lang === "vi" ? "Reading" : "Reading", color: "#10b981", path: "/practice-ielts/reading", desc: lang === "vi" ? "Hơn 200 bài đọc học thuật phân loại theo dạng câu hỏi. Mỗi câu trả lời đều đi kèm giải thích và chỉ dẫn nguồn văn bản chi tiết." : "200+ academic passages categorised by question type. Every answer includes a full explanation and passage reference." },
+    { icon: <Headphones size={20} />, title: lang === "vi" ? "Luyện Nghe Thực Tế" : "Listening Practice", tag: lang === "vi" ? "Listening" : "Listening", color: "#3b82f6", path: "/practice-ielts/listening", desc: lang === "vi" ? "Đề thi Nghe IELTS chuẩn hóa trên cả bốn phần. Cung cấp bản dịch đầy đủ, đánh dấu từ khóa theo dòng thời gian sau mỗi bài thi." : "Authentic IELTS-style audio across all four sections. Full transcript, time-stamped highlights and gap-fill analysis after each test." },
+    { icon: <Layers size={20} />, title: lang === "vi" ? "Thẻ Từ Vựng Thông Minh" : "Smart Flashcards", tag: lang === "vi" ? "Vocabulary" : "Vocabulary", color: "#ec4899", path: "/materials/vocabulary", desc: lang === "vi" ? "Học từ vựng IELTS phân loại theo chủ đề bằng phương pháp lặp lại ngắt quãng. Hệ thống tự căn chỉnh tần suất ôn tập dựa trên trí nhớ của bạn." : "Topic-grouped IELTS vocabulary with spaced-repetition scheduling. The system auto-adjusts review intervals based on your memory curve." },
+    { icon: <Sparkles size={20} />, title: lang === "vi" ? "Sửa Lỗi Ngữ Pháp" : "Grammar Checker", tag: lang === "vi" ? "Grammar" : "Grammar", color: "#f59e0b", path: "/materials/grammar", desc: lang === "vi" ? "Dán bất kỳ đoạn văn nào để kiểm tra ngữ pháp ngay lập tức. AI sẽ phát hiện các lỗi sai thường gặp, giải thích quy tắc và viết lại câu hoàn chỉnh cho bạn." : "Paste any paragraph for instant grammar analysis. The AI identifies error patterns, explains the rule and rewrites the sentence for you." },
   ];
 
   const features = [
@@ -108,8 +108,9 @@ function Tag({ children }: { children: React.ReactNode }) {
 }
 
 function ToolCard({ t }: { t: Tool }) {
+  const navigate = useNavigate();
   return (
-    <div className="tool-card">
+    <div className="tool-card cursor-pointer" onClick={() => navigate(t.path)}>
       <div className="tool-icon-wrap" style={{ background: t.color + "1a", color: t.color }}>{t.icon}</div>
       <div className="tool-body">
         <div className="tool-row">
@@ -190,7 +191,13 @@ function Hero() {
             <button className="btn-primary btn-lg" onClick={() => navigate("/roadmap")}>
               {t("home_hero_cta_start")}
             </button>
-            <button className="btn-ghost btn-lg">
+            <button 
+              className="btn-ghost btn-lg"
+              onClick={() => {
+                const el = document.getElementById("how");
+                if (el) el.scrollIntoView({ behavior: "smooth" });
+              }}
+            >
               {t("home_hero_cta_demo")}
             </button>
           </div>

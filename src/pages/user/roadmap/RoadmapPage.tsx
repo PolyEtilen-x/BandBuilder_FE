@@ -421,7 +421,7 @@ export default function RoadmapPage() {
                                 } else if (res.type === 'reading') {
                                   navigate(`/materials/vocabulary`)
                                 } else {
-                                  navigate(`/practice`)
+                                  navigate(`/practice-ielts`)
                                 }
                               }}
                               className="resource-item group"
@@ -446,7 +446,7 @@ export default function RoadmapPage() {
 
                     {/* CALL TO ACTION BUTTON */}
                     <button 
-                      onClick={() => navigate(`/practice`)}
+                      onClick={() => navigate(`/practice-ielts`)}
                       className="launch-button cursor-pointer"
                     >
                       {selectedNode.isCompleted ? t("roadmap_review_tasks") : t("roadmap_launch_practice")}
