@@ -15,10 +15,10 @@ const VISUAL_TYPES = [
 ]
 
 const ESSAY_TYPES = [
-  { value: "opinion_essay",        label: "Opinion / Agree-Disagree" },
-  { value: "discuss_both_views",   label: "Discuss Both Views" },
-  { value: "two_part_question",    label: "Two-Part Question" },
-  { value: "problem_solution",     label: "Problem & Solution" },
+  { value: "opinion_essay", label: "Opinion / Agree-Disagree" },
+  { value: "discuss_both_views", label: "Discuss Both Views" },
+  { value: "two_part_question", label: "Two-Part Question" },
+  { value: "problem_solution", label: "Problem & Solution" },
   { value: "advantages_disadvantages", label: "Advantages & Disadvantages" },
 ]
 
@@ -57,8 +57,8 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div className="info-alert">
         {taskNumber === 1
-          ? "✍️ Writing Task 1 — Mô tả biểu đồ / hình ảnh (Academic). Yêu cầu tối thiểu 150 từ, 20 phút."
-          : "✍️ Writing Task 2 — Bài luận ý kiến (Academic/General). Yêu cầu tối thiểu 250 từ, 40 phút."}
+          ? "Writing Task 1 — Mô tả biểu đồ / hình ảnh (Academic). Yêu cầu tối thiểu 150 từ, 20 phút."
+          : "Writing Task 2 — Bài luận ý kiến (Academic/General). Yêu cầu tối thiểu 250 từ, 40 phút."}
       </div>
 
       {/* Module */}
@@ -180,14 +180,14 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
                       </div>
                     ) : (
                       <div style={{ marginTop: 4 }}>
-                        <label 
-                          className="add-row-btn" 
-                          style={{ 
-                            width: "fit-content", 
-                            padding: "6px 12px", 
-                            cursor: "pointer", 
-                            display: "flex", 
-                            alignItems: "center", 
+                        <label
+                          className="add-row-btn"
+                          style={{
+                            width: "fit-content",
+                            padding: "6px 12px",
+                            cursor: "pointer",
+                            display: "flex",
+                            alignItems: "center",
                             gap: 6,
                             background: "#f1f5f9",
                             border: "1px dashed #cbd5e1"
@@ -200,15 +200,15 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
                               <Upload size={14} /> Chọn ảnh từ máy tính
                             </>
                           )}
-                          <input 
-                            type="file" 
-                            accept="image/*" 
-                            disabled={uploadingIdx !== null} 
-                            style={{ display: "none" }} 
+                          <input
+                            type="file"
+                            accept="image/*"
+                            disabled={uploadingIdx !== null}
+                            style={{ display: "none" }}
                             onChange={e => {
                               const file = e.target.files?.[0]
                               if (file) handleImageUpload(vIdx, file)
-                            }} 
+                            }}
                           />
                         </label>
                       </div>

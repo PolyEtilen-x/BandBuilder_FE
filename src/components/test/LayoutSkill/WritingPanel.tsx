@@ -15,7 +15,7 @@ export default function WritingPanel({ content, taskNumber }: WritingPanelProps)
     <div className="writing-panel-wrapper">
       {/* Task badge */}
       <div className="writing-task-badge">
-        ✍️ Writing Task {task}
+        Writing Task {task}
       </div>
 
       {/* Time & word count info chips */}
@@ -34,7 +34,6 @@ export default function WritingPanel({ content, taskNumber }: WritingPanelProps)
 
       {/* Instruction */}
       <div className="writing-instruction-card">
-        <span className="writing-instruction-icon">💡</span>
         <p>{content.instruction}</p>
       </div>
 
@@ -88,7 +87,6 @@ export default function WritingPanel({ content, taskNumber }: WritingPanelProps)
       {/* Task 2: Note */}
       {task === 2 && content.note && (
         <div className="writing-instruction-card">
-          <span className="writing-instruction-icon">📝</span>
           <p>{content.note}</p>
         </div>
       )}

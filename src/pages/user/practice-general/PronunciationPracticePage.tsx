@@ -11,6 +11,7 @@ import type {
   PronunciationSentenceDto,
   PronunciationTopicDetailDto,
 } from "@/api/practice/practiceGeneral.api"
+import { Mic, BookOpen, Clock } from "lucide-react"
 import "./Pronunciation.css"
 
 // ─── Helpers ────────────────────────────────────────────────────────────────
@@ -316,14 +317,16 @@ function TopicDetail({
             <button
               className={`pp-tab-btn ${activeTab === "shadowing" ? "active" : ""}`}
               onClick={() => setActiveTab("shadowing")}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              🎙️ Shadowing
+              <Mic size={15} /> Shadowing
             </button>
             <button
               className={`pp-tab-btn ${activeTab === "vocab" ? "active" : ""}`}
               onClick={() => setActiveTab("vocab")}
+              style={{ display: "inline-flex", alignItems: "center", gap: 6 }}
             >
-              📚 Vocabulary ({detail.vocabs.length})
+              <BookOpen size={15} /> Vocabulary ({detail.vocabs.length})
             </button>
           </div>
 
@@ -343,8 +346,9 @@ function TopicDetail({
                       className={`pp-sentence-row ${isActive ? "active" : ""}`}
                     >
                       <div className="pp-sentence-meta">
-                        <span className="pp-sentence-time">
-                          ⏱ {formatTime(sentence.startTime)} – {formatTime(sentence.endTime)}
+                        <span className="pp-sentence-time" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                          <Clock size={12} style={{ flexShrink: 0 }} />
+                          {formatTime(sentence.startTime)} – {formatTime(sentence.endTime)}
                         </span>
                         <button
                           onClick={(e) => handleTranslate(e, sentence.id, sentence.text)}
@@ -434,7 +438,9 @@ export default function PronunciationPracticePage(): ReactElement {
               {/* Page header — only on list view */}
               {!selectedId && (
                 <div className="pp-page-header">
-                  <div className="pp-page-header-icon">🎙️</div>
+                  <div className="pp-page-header-icon" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <Mic size={28} />
+                  </div>
                   <div className="pp-page-header-text">
                     <h1>Pronunciation Practice</h1>
                     <p>Choose a topic to practise with YouTube shadowing, IPA guide and key vocabulary.</p>
@@ -472,12 +478,15 @@ export default function PronunciationPracticePage(): ReactElement {
                           className="pp-topic-card"
                         >
                           <div className="pp-topic-card-header">
-                            <div className="pp-topic-card-icon-wrap">🎙️</div>
+                            <div className="pp-topic-card-icon-wrap" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                              <Mic size={20} />
+                            </div>
                             <span className="pp-topic-card-title">{topic.title}</span>
                           </div>
                           <div className="pp-topic-card-meta">
-                            <span className="pp-topic-card-badge">
-                              📚 {topic.vocabCount} vocabularies
+                            <span className="pp-topic-card-badge" style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                              <BookOpen size={13} style={{ flexShrink: 0 }} />
+                              {topic.vocabCount} vocabularies
                             </span>
                           </div>
                         </button>

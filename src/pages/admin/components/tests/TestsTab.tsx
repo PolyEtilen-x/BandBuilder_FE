@@ -6,16 +6,16 @@ import "./TestsTab.css"
 
 const SKILL_COLORS: Record<string, string> = {
   listening: "listening",
-  reading:   "reading",
-  writing:   "writing",
-  speaking:  "speaking",
+  reading: "reading",
+  writing: "writing",
+  speaking: "speaking",
 }
 
 const SKILL_ICONS: Record<string, string> = {
   listening: "🎧",
-  reading:   "📖",
-  writing:   "✍️",
-  speaking:  "🎤",
+  reading: "📖",
+  writing: "",
+  speaking: "🎤",
 }
 
 // ── Create Test Modal ─────────────────────────────────────────────────────────
@@ -288,11 +288,11 @@ export default function TestsTab() {
   })
 
   const SKILL_FILTERS = [
-    { value: "all",       label: "Tất cả" },
-    { value: "listening", label: "🎧 Listening" },
-    { value: "reading",   label: "📖 Reading" },
-    { value: "writing",   label: "✍️ Writing" },
-    { value: "speaking",  label: "🎤 Speaking" },
+    { value: "all", label: "Tất cả" },
+    { value: "listening", label: "Listening" },
+    { value: "reading", label: "Reading" },
+    { value: "writing", label: "Writing" },
+    { value: "speaking", label: "Speaking" },
   ]
 
   return (

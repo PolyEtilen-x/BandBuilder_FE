@@ -311,9 +311,9 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     // RESULT PAGE (VI)
     result_back: "Quay lại",
     result_header_title: "Kết Quả Luyện Tập",
-    result_score_excellent: "Xuất Sắc! 🔥",
-    result_score_good: "Làm Tốt Lắm! 👍",
-    result_score_keep_trying: "Cố Gắng Lên! 💪",
+    result_score_excellent: "Xuất Sắc!",
+    result_score_good: "Làm Tốt Lắm!",
+    result_score_keep_trying: "Cố Gắng Lên!",
     result_score_subtitle: "Bạn đã hoàn thành bài thi thử với độ chính xác đạt",
     result_correct: "Đúng",
     result_wrong: "Sai",
@@ -325,7 +325,7 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     result_analysis_text: "Hãy xem kỹ lời giải thích chi tiết để hiểu rõ các lỗi sai và bứt phá điểm số ở những lần luyện tập tiếp theo!",
     result_btn_review: "XEM CHI TIẾT ĐÁP ÁN",
     result_btn_more: "LUYỆN TẬP ĐỀ KHÁC",
-    result_tip_title: "Lời khuyên dành cho bạn 💡",
+    result_tip_title: "Lời khuyên dành cho bạn",
     result_tip_text: "Xem lại các câu trả lời sai quan trọng hơn nhiều so với việc làm đề mới. Hãy dành ít nhất 10 phút để đọc kỹ phần giải thích chi tiết."
   },
   en: {
@@ -474,9 +474,9 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     // RESULT PAGE (EN)
     result_back: "Back",
     result_header_title: "Practice Results",
-    result_score_excellent: "Excellent! 🔥",
-    result_score_good: "Good Job! 👍",
-    result_score_keep_trying: "Keep Trying! 💪",
+    result_score_excellent: "Excellent!",
+    result_score_good: "Good Job!",
+    result_score_keep_trying: "Keep Trying!",
     result_score_subtitle: "You completed the practice with",
     result_correct: "Correct",
     result_wrong: "Wrong",
@@ -488,7 +488,7 @@ export const translations: Record<"vi" | "en", Record<TranslationKey, string>> =
     result_analysis_text: "Review the explanations to understand your mistakes and improve in your next practice session!",
     result_btn_review: "REVIEW EXPLANATION",
     result_btn_more: "PRACTICE MORE",
-    result_tip_title: "Tip for you 💡",
+    result_tip_title: "Tip for you",
     result_tip_text: "Reviewing wrong answers is more important than doing new tasks. Spend at least 10 minutes reading the explanations."
   }
 }

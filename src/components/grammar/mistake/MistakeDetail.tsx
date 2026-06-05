@@ -1,4 +1,5 @@
 import { MistakeCategory } from "@/data/grammar/mistake.model"
+import { Info } from "lucide-react"
 
 type Props = {
   data: MistakeCategory | null
@@ -37,8 +38,9 @@ export default function MistakeDetail({ data, onBack }: Props) {
             </div>
 
             {/* NOTE */}
-            <div className="block note">
-              💡 {m.note}
+            <div className="block note" style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+              <Info size={16} style={{ flexShrink: 0, marginTop: 2, color: "#3a6cf4" }} />
+              <span>{m.note}</span>
             </div>
 
           </div>

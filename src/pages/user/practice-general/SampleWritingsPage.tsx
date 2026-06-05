@@ -385,8 +385,12 @@ function TopicDetail({
         <div className="sw-prompt-card">
           <div className="sw-prompt-card__header">
             <span className="sw-prompt-card__label">Đề thi IELTS Writing</span>
-            <span className="sw-prompt-card__meta-chip">
-              {detail.taskType === "TASK_1" ? "⏱ 20 Min · ✍️ Min 150 words" : "⏱ 40 Min · ✍️ Min 250 words"}
+            <span className="sw-prompt-card__meta-chip" style={{ display: "inline-flex", alignItems: "center", gap: 8 }}>
+              <Clock size={14} style={{ flexShrink: 0 }} />
+              <span>{detail.taskType === "TASK_1" ? "20 Min" : "40 Min"}</span>
+              <span>·</span>
+              <FileText size={14} style={{ flexShrink: 0 }} />
+              <span>{detail.taskType === "TASK_1" ? "Min 150 words" : "Min 250 words"}</span>
             </span>
           </div>
           <p className="sw-prompt-card__text">{detail.prompt}</p>
@@ -581,7 +585,7 @@ export default function SampleWritingsPage(): ReactElement {
             {view.type === "list" && (
               <div className="sw-header">
                 <div className="sw-header__title-row">
-                  <span className="sw-header__icon">✍️</span>
+                  <FileText className="sw-header__icon" size={28} style={{ color: "var(--color-brand)" }} />
                   <h1 className="sw-header__title">Sample Writings</h1>
                 </div>
                 <p className="sw-header__subtitle">

@@ -415,7 +415,7 @@ export default function ResultPage() {
                               </div>
                               {ans.timeSpentSec != null && (
                                 <div className="time-spent-badge">
-                                  ⏱️ {ans.timeSpentSec}s
+                                  {ans.timeSpentSec}s
                                 </div>
                               )}
                             </div>
@@ -500,7 +500,7 @@ export default function ResultPage() {
 
               {/* Sidebar Tip Card */}
               <div className="sidebar-tip-card">
-                <h3 className="tip-header-title">💡 {t("result_tip_title")}</h3>
+                <h3 className="tip-header-title">{t("result_tip_title")}</h3>
                 <p className="tip-paragraph-content">
                   {t("result_tip_text")}
                 </p>

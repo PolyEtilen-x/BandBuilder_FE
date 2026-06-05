@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react"
 import { grammarApi } from "@/api/materials/grammar.api"
+import { Info } from "lucide-react"
 import "./style.css"
 
 type Props = {
@@ -77,8 +78,9 @@ export default function GrammarSentence({ subItem }: Props) {
                 <div className="card-expand">
 
                   {/* IELTS */}
-                  <div className="ielts-box">
-                    💡 {s.ielts_application}
+                  <div className="ielts-box" style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                    <Info size={16} style={{ flexShrink: 0, marginTop: 2 }} />
+                    <span>{s.ielts_application}</span>
                   </div>
 
                   {/* EXAMPLES */}

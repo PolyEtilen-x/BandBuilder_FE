@@ -152,7 +152,7 @@ export default function QuestionNavigator({ questionBlocks = [], examId: propExa
           <div style={{ flex: 1, fontSize: "13px", color: ready ? "#16a34a" : "#64748b", fontWeight: 500 }}>
             {ready
               ? `✅ Task ${task} ready — ${wordCount} words written`
-              : `✍️ Task ${task} — ${wordCount} / ${minWords} min words`}
+              : `Task ${task} — ${wordCount} / ${minWords} min words`}
           </div>
         )
       })()}

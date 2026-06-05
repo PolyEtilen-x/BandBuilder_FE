@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { grammarApi } from "@/api/materials/grammar.api"
+import { Info } from "lucide-react"
 import "./style.css"
 
 export default function GrammarBasics() {
@@ -46,8 +47,9 @@ export default function GrammarBasics() {
                                             {item.ruleSummary}
                                         </p>
 
-                                        <div className="grammar-strategy">
-                                            💡 {item.ieltsStrategy}
+                                        <div className="grammar-strategy" style={{ display: "flex", alignItems: "flex-start", gap: 8 }}>
+                                            <Info size={16} style={{ flexShrink: 0, marginTop: 2 }} />
+                                            <span>{item.ieltsStrategy}</span>
                                         </div>
                                     </div>
 
