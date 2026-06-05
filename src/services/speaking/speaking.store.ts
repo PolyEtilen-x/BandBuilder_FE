@@ -50,7 +50,7 @@ export type SpeakingState = {
   incrementTimer: () => void
 }
 
-const WS_URL = import.meta.env.VITE_WS_URL || "http://localhost:3000"
+const VOICE_WS_URL = import.meta.env.VITE_VOICE_WS_URL || "http://localhost:8000"
 
 export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   socket: null,
@@ -69,7 +69,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
     // Prevent duplicate connections
     if (get().socket) return
 
-    const socket = io(WS_URL, {
+    const socket = io(VOICE_WS_URL, {
       transports: ["websocket"],
       autoConnect: true,
       reconnection: true,
