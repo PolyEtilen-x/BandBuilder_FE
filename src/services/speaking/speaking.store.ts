@@ -6,6 +6,7 @@ export type DialogueTurn = {
   sender: "ai" | "user"
   text: string
   isPartial?: boolean
+  lowConfidenceWords?: string[]
 }
 
 export type SpeakingState = {
@@ -19,6 +20,7 @@ export type SpeakingState = {
   timer: number
   isMuted: boolean
   isSpeakerOn: boolean
+  isEvaluating: boolean
 
   // Dialogue Transcripts
   dialogue: DialogueTurn[]
@@ -61,6 +63,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
   timer: 0,
   isMuted: false,
   isSpeakerOn: true,
+  isEvaluating: false,
   dialogue: [],
   overallBand: 0,
   metrics: { fluency: 0, lexical: 0, grammar: 0, pronunciation: 0 },
@@ -88,7 +91,12 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
 
     // Listen for session state synchronization
     socket.on("session_state", (data: { state: "idle" | "calling" | "active" | "thinking" | "feedback" }) => {
-      set({ callState: data.state })
+      // If we are evaluating, don't let backend's session_state reset callState prematurely
+      if (get().isEvaluating && data.state !== "feedback") {
+        set({ callState: "thinking" })
+      } else {
+        set({ callState: data.state })
+      }
     })
 
     // Listen for real-time partial Whisper transcripts
@@ -105,8 +113,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       set({ dialogue })
     })
 
-    // Listen for finalized user transcript
-    socket.on("final_transcript", (data: { text: string }) => {
+    // Listen for finalized user transcript with low-confidence words list
+    socket.on("final_transcript", (data: { text: string; lowConfidenceWords?: Array<{ word: string; probability: number }> }) => {
       const dialogue = [...get().dialogue]
 
       // Remove any partial user transcripts at the end
@@ -114,7 +122,17 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
         dialogue.pop()
       }
 
-      dialogue.push({ sender: "user", text: data.text, isPartial: false })
+      // Extract raw words in lowercase
+      const lowConfList = data.lowConfidenceWords
+        ? data.lowConfidenceWords.map(w => w.word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, ""))
+        : []
+
+      dialogue.push({
+        sender: "user",
+        text: data.text,
+        isPartial: false,
+        lowConfidenceWords: lowConfList
+      })
       set({ dialogue, callState: "thinking" })
     })
 
@@ -141,7 +159,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
         overallBand: data.overallBand,
         metrics: data.metrics,
         corrections: data.corrections,
-        callState: "feedback"
+        callState: "feedback",
+        isEvaluating: false
       })
 
       // Auto-save speaking session to database via NestJS API
@@ -188,7 +207,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       selectedVoiceId: voiceId,
       callState: "calling",
       dialogue: [],
-      timer: 0
+      timer: 0,
+      isEvaluating: false
     })
 
     if (socket) {
@@ -213,7 +233,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
 
   hangUp: () => {
     const { socket } = get()
-    set({ callState: "idle", timer: 0 })
+    set({ callState: "thinking", isEvaluating: true, timer: 0 })
     if (socket) {
       socket.emit("end_session")
     }
@@ -231,7 +251,8 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
       timer: 0,
       dialogue: [],
       overallBand: 0,
-      corrections: []
+      corrections: [],
+      isEvaluating: false
     })
   },
 

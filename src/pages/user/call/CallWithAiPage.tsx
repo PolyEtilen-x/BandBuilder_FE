@@ -25,6 +25,7 @@ type DialogueTurn = {
   sender: "ai" | "user"
   text: string
   isPartial?: boolean
+  lowConfidenceWords?: string[]
 }
 
 const SIMULATED_CONVO: DialogueTurn[] = [
@@ -52,6 +53,7 @@ export default function CallWithAiPage() {
     overallBand: liveBand,
     metrics: liveMetrics,
     corrections: liveCorrections,
+    isEvaluating,
     initSocket,
     startCall: startLiveCall,
     stopRecording: stopLiveRecording,
@@ -61,6 +63,24 @@ export default function CallWithAiPage() {
     incrementTimer,
     resetStore
   } = useSpeakingStore()
+
+  // Helper to render user's text with highlight on mispronounced words
+  const renderHighlightedText = (text: string, lowConfWords?: string[]) => {
+    if (!lowConfWords || !lowConfWords.length) return text
+    const words = text.split(" ")
+    return words.map((word, idx) => {
+      const cleanWord = word.toLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()?"']/g, "")
+      const isMispronounced = lowConfWords.includes(cleanWord)
+      if (isMispronounced) {
+        return (
+          <span key={idx} className="mispronounced-word" title="Phát âm chưa chuẩn">
+            {word}{" "}
+          </span>
+        )
+      }
+      return <span key={idx}>{word} </span>
+    })
+  }
 
   // Initialize socket on mount
   useEffect(() => {
@@ -172,7 +192,7 @@ export default function CallWithAiPage() {
   // End Call / Hang Up
   const handleEndCall = () => {
     if (isConnected) {
-      stopLiveRecording()
+      hangUpLive()
     } else {
       setSimState("feedback")
     }
@@ -335,13 +355,18 @@ export default function CallWithAiPage() {
             )}
 
             {/* ACTIVE Voice Call screen */}
-            {activeState === "active" && (
+            {(activeState === "active" || (activeState === "thinking" && !isEvaluating)) && (
               <div className="call-card active-call-theme">
                 <div className="call-active-header">
-                  <span className="call-active-status" style={{ color: isRecording ? "#10b981" : "#64748b" }}>
-                    <span className={`call-active-indicator ${isRecording ? "recording" : ""}`} style={{ background: isRecording ? "#10b981" : "#64748b" }}></span>
+                  <span className="call-active-status" style={{ color: isRecording ? "#10b981" : activeState === "thinking" ? "#3b82f6" : "#64748b" }}>
+                    <span className={`call-active-indicator ${isRecording ? "recording" : activeState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? "#10b981" : activeState === "thinking" ? "#3b82f6" : "#64748b" }}></span>
                     {isConnected
-                      ? (isRecording ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") : (language === "vi" ? "AI ĐANG NÓI/CHỜ..." : "WAITING..."))
+                      ? (isRecording 
+                          ? (language === "vi" ? "BẠN ĐANG NÓI..." : "SPEAK NOW...") 
+                          : activeState === "thinking"
+                            ? (language === "vi" ? "AI ĐANG SUY NGHĨ..." : "AI IS THINKING...")
+                            : (language === "vi" ? "AI ĐANG NÓI/CHỜ..." : "WAITING...")
+                        )
                       : (language === "vi" ? "MÔ PHỎNG HOẠT ĐỘNG" : "SIMULATED CALL ACTIVE")
                     }
                   </span>
@@ -376,9 +401,22 @@ export default function CallWithAiPage() {
                       <strong className="bubble-author">
                         {turn.sender === "ai" ? activeVoice.name : (language === "vi" ? "BẠN" : "YOU")}
                       </strong>
-                      {turn.text}
+                      {turn.sender === "user"
+                        ? renderHighlightedText(turn.text, turn.lowConfidenceWords)
+                        : turn.text
+                      }
                     </div>
                   ))}
+                  {activeState === "thinking" && !isEvaluating && (
+                    <div className="chat-bubble ai thinking">
+                      <strong className="bubble-author">{activeVoice.name}</strong>
+                      <div className="typing-dots">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                      </div>
+                    </div>
+                  )}
                   <div ref={chatEndRef} />
                 </div>
 
@@ -408,7 +446,7 @@ export default function CallWithAiPage() {
             )}
 
             {/* THINKING STATE (WAITING FOR AI EVALUATION) */}
-            {activeState === "thinking" && (
+            {activeState === "thinking" && isEvaluating && (
               <div className="call-card active-call-theme">
                 <div className="pulse-circle pulse-circle-thinking">
                   <div className="avatar-ring avatar-ring-thinking">
