@@ -2,7 +2,7 @@ import { useState } from "react"
 import { Plus, Trash2, Upload, X } from "lucide-react"
 import { adminPracticeApi } from "@/api/practice/adminPractice.api"
 
-interface Visual { type: string; label: string; data_points: string[]; imageUrl?: string }
+interface Visual { type: string; label: string; imageUrl?: string }
 
 interface Props {
   value: any
@@ -45,32 +45,12 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
     }
   }
 
-  const addVisual = () => update("visuals", [...visuals, { type: "bar_chart", label: "", data_points: [] }])
+  const addVisual = () => update("visuals", [...visuals, { type: "bar_chart", label: "" }])
   const updateVisual = (i: number, updated: Visual) => {
     const vs = [...visuals]; vs[i] = updated; update("visuals", vs)
   }
   const removeVisual = (i: number) => {
     const vs = [...visuals]; vs.splice(i, 1); update("visuals", vs)
-  }
-
-  const addDataPoint = (vIdx: number) => {
-    const vs = [...visuals]
-    vs[vIdx] = { ...vs[vIdx], data_points: [...(vs[vIdx].data_points || []), ""] }
-    update("visuals", vs)
-  }
-  const updateDataPoint = (vIdx: number, pIdx: number, val: string) => {
-    const vs = [...visuals]
-    const dp = [...(vs[vIdx].data_points || [])]
-    dp[pIdx] = val
-    vs[vIdx] = { ...vs[vIdx], data_points: dp }
-    update("visuals", vs)
-  }
-  const removeDataPoint = (vIdx: number, pIdx: number) => {
-    const vs = [...visuals]
-    const dp = [...(vs[vIdx].data_points || [])]
-    dp.splice(pIdx, 1)
-    vs[vIdx] = { ...vs[vIdx], data_points: dp }
-    update("visuals", vs)
   }
 
   return (
@@ -233,24 +213,6 @@ export default function WritingEditor({ value, taskNumber, onChange }: Props) {
                         </label>
                       </div>
                     )}
-                  </div>
-                  <div className="form-group">
-                    <label className="form-label">Data Points</label>
-                    <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                      {(v.data_points || []).map((dp: string, pIdx: number) => (
-                        <div key={pIdx} className="option-item">
-                          <input type="text" value={dp}
-                            onChange={e => updateDataPoint(vIdx, pIdx, e.target.value)}
-                            placeholder="Data point..."
-                          />
-                          <button className="remove-opt-btn" onClick={() => removeDataPoint(vIdx, pIdx)}><Trash2 size={12} /></button>
-                        </div>
-                      ))}
-                      <button className="add-row-btn" style={{ width: "auto", padding: "4px 10px", justifyContent: "flex-start" }}
-                        onClick={() => addDataPoint(vIdx)}>
-                        <Plus size={12} /> Thêm data point
-                      </button>
-                    </div>
                   </div>
                 </div>
               </div>
