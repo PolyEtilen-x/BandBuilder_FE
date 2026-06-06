@@ -20,6 +20,7 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
   // Reading
   if (content?.passages) {
     return content.passages.map((p: any): TestUnit => ({
+      ...p,
       id: p.passage_number,
       title: `${p.title || 'Reading'} — Passage ${p.passage_number}`,
       description: p.topic,                    // topic is more meaningful than repeating title
@@ -32,6 +33,7 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
   // Listening
   if (content?.sections) {
     return content.sections.map((s: any): TestUnit => ({
+      ...s,
       id: s.section,
       title: `${formatContext(s.context || 'Listening')} — Section ${s.section}`,
       description: s.description,
@@ -45,6 +47,7 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
   // Writing
   if (content?.task) {
     return [{
+      ...content,
       id: content.task,
       title: `Writing Task ${content.task}`,
       description: content.prompt || '',
@@ -54,9 +57,74 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
     }];
   }
 
-  // Speaking
+  // Speaking (Array of parts)
+  if (content?.parts && Array.isArray(content.parts)) {
+    const units: TestUnit[] = [];
+    let unitId = 1;
+
+    content.parts.forEach((p: any) => {
+      // Part 1: Topics array
+      if (p.topics && Array.isArray(p.topics)) {
+        p.topics.forEach((t: any) => {
+          units.push({
+            ...p,
+            ...t,
+            id: unitId++,
+            title: `Speaking Part ${p.part}: ${t.topic}`,
+            description: `Part ${p.part} — ${t.topic}`,
+            questionBlocks: [],
+            type: 'speaking',
+            timeSuggestedMinutes: p.time_minutes || 5,
+            topic: t.topic,
+            candidate_prompts: t.questions?.map((q: any) => q.question) || [],
+            questions: t.questions || [],
+            questionId: t.questions?.[0]?.id || `p${p.part}_topic`,
+          } as any);
+        });
+      }
+      // Part 2: Cue Card object
+      else if (p.cue_card) {
+        units.push({
+          ...p,
+          id: unitId++,
+          title: `Speaking Part ${p.part}: Long Turn`,
+          description: `Part ${p.part} — Cue Card`,
+          questionBlocks: [],
+          type: 'speaking',
+          timeSuggestedMinutes: p.time_minutes || 4,
+          topic: p.label || "Long Turn",
+          scenario: p.cue_card.instruction,
+          candidate_prompts: p.cue_card.bullet_points || [],
+          cue_card: p.cue_card,
+          questions: p.followup_questions || [],
+          questionId: p.cue_card.id || `p${p.part}_cuecard`,
+        } as any);
+      }
+      // Part 3: Questions array directly
+      else if (p.questions && Array.isArray(p.questions)) {
+        units.push({
+          ...p,
+          id: unitId++,
+          title: `Speaking Part ${p.part}: ${p.topic || "Discussion"}`,
+          description: `Part ${p.part} — Two-Way Discussion`,
+          questionBlocks: [],
+          type: 'speaking',
+          timeSuggestedMinutes: p.time_minutes || 5,
+          topic: p.topic || "Discussion",
+          candidate_prompts: p.questions.map((q: any) => q.question) || [],
+          questions: p.questions,
+          questionId: p.questions?.[0]?.id || `p${p.part}_discussion`,
+        } as any);
+      }
+    });
+
+    return units;
+  }
+
+  // Speaking (Single fallback)
   if (content?.part) {
     return [{
+      ...content,
       id: content.part,
       title: `Speaking Part ${content.part}`,
       description: content.topic || content.scenario || '',
