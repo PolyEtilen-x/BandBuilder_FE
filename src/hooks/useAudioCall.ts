@@ -4,11 +4,11 @@ import { useEffect, useRef, useState } from "react"
 import { useSpeakingStore } from "@/services/speaking/speaking.store"
 
 export function useAudioCall(options?: { onVolumeChange?: (volume: number) => void }) {
-  const { 
-    callState, 
-    sendAudioChunk, 
-    stopRecording, 
-    isMuted 
+  const {
+    callState,
+    sendAudioChunk,
+    stopRecording,
+    isMuted
   } = useSpeakingStore()
 
   const [isRecording, setIsRecording] = useState(false)
@@ -21,10 +21,10 @@ export function useAudioCall(options?: { onVolumeChange?: (volume: number) => vo
   const processorRef = useRef<ScriptProcessorNode | null>(null)
   const analyserRef = useRef<AnalyserNode | null>(null)
   const silenceTimerRef = useRef<NodeJS.Timeout | null>(null)
-  
+
   // VAD Parameters
   const SILENCE_THRESHOLD = 0.02 // RMS threshold for silence (balanced for sensitivity and noise tolerance)
-  const SILENCE_DURATION_MS = 700 // Require 700ms of silence to declare "done" (lowered from 1000ms for faster detection)
+  const SILENCE_DURATION_MS = 1000
   const hasSpokenRef = useRef(false) // Track if speech was detected first to avoid early VAD triggers
 
   // Clean up references on unmount
@@ -55,7 +55,7 @@ export function useAudioCall(options?: { onVolumeChange?: (volume: number) => vo
   async function startRecordingLoop() {
     try {
       cleanupAudio() // Ensure previous resources are fully freed
-      
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: {
           echoCancellation: true,
@@ -104,7 +104,7 @@ export function useAudioCall(options?: { onVolumeChange?: (volume: number) => vo
           sum += channelData[i] * channelData[i]
         }
         const rms = Math.sqrt(sum / channelData.length)
-        
+
         // Trigger callback for real-time waveform visualization without state re-render
         if (options?.onVolumeChange) {
           options.onVolumeChange(rms)

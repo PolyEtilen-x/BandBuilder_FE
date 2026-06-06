@@ -44,7 +44,7 @@ export type SpeakingState = {
 
   // Actions
   initSocket: () => void
-  startCall: (voiceId: string) => void
+  startCall: (voiceId: string, context?: { topic?: string; scenario?: string; prompts?: string[] }) => void
   sendAudioChunk: (chunk: Blob | ArrayBuffer) => void
   stopRecording: () => void
   hangUp: () => void
@@ -235,7 +235,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
     set({ socket })
   },
 
-  startCall: (voiceId: string) => {
+  startCall: (voiceId: string, context?: { topic?: string; scenario?: string; prompts?: string[] }) => {
     const { socket } = get()
     set({
       selectedVoiceId: voiceId,
@@ -247,7 +247,7 @@ export const useSpeakingStore = create<SpeakingState>((set, get) => ({
     })
 
     if (socket) {
-      socket.emit("start_session", { voiceId })
+      socket.emit("start_session", { voiceId, ...context })
     }
   },
 

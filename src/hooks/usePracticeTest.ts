@@ -14,6 +14,7 @@ export const usePracticeTest = () => {
   const unitNumber = rawUnit === "full" ? null : Number(rawUnit || 1);
 
   const isWriting = skill?.toLowerCase() === "writing";
+  const isSpeaking = skill?.toLowerCase() === "speaking";
 
   const { data: test, isLoading, error } = useQuery({
     queryKey: ["practice-test", id, skill, unitNumber],
@@ -48,11 +49,12 @@ export const usePracticeTest = () => {
 
       return {
         ...res.data,
+        skillContentId: skillItem.skillContentId,
         audioUrl: skillItem.audioUrl,
         source: skillItem.source,
         content: skillItem.content,
         taskNumber: isWriting ? (skillItem.content?.task as 1 | 2 | undefined) : undefined,
-      } as PracticeTestDTO & { taskNumber?: 1 | 2 };
+      } as PracticeTestDTO & { taskNumber?: 1 | 2; skillContentId?: string };
     },
     enabled: !!id && !!skill,
     staleTime: 1000 * 60 * 5, // 5 minutes
@@ -61,8 +63,8 @@ export const usePracticeTest = () => {
   const currentUnit = useMemo(() => {
     if (!test) return null;
 
-    // Writing: the content itself IS the unit (flat object with prompt, instruction, etc.)
-    if (isWriting && test.content) {
+    // Writing or Speaking: the content itself IS the unit (flat object with prompt, instruction, etc.)
+    if ((isWriting || isSpeaking) && test.content) {
       return test.content as any;
     }
 
@@ -84,7 +86,7 @@ export const usePracticeTest = () => {
     }
 
     return null;
-  }, [test, unitNumber, isWriting]);
+  }, [test, unitNumber, isWriting, isSpeaking]);
 
   return {
     test,
@@ -95,6 +97,8 @@ export const usePracticeTest = () => {
     id,
     unitNumber,
     isWriting,
+    isSpeaking,
+    skillContentId: test?.skillContentId,
   };
 };
 

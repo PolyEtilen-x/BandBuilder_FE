@@ -1,0 +1,655 @@
+/* Speaking Test Split Panel Layout */
+.speaking-exam-layout {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.speaking-split-panel {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - 60px);
+  overflow: hidden;
+}
+
+.speaking-left-prompt {
+  flex: 1.2;
+  border-right: 1px solid #e2e8f0;
+  background: #ffffff;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.speaking-right-call {
+  flex: 0.8;
+  background: #f8fafc;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-left: 1px solid #e2e8f0;
+}
+
+/* Tab Headers */
+.exam-tabs {
+  display: flex;
+  border-bottom: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 0 16px;
+  gap: 12px;
+}
+
+.exam-tabs button {
+  padding: 14px 16px;
+  border: none;
+  background: none;
+  font-weight: 700;
+  font-size: 14px;
+  color: #64748b;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.exam-tabs button.active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+.speaking-left-content {
+  scrollbar-width: thin;
+}
+
+.speaking-left-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.speaking-left-content::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 10px;
+}
+
+/* Prompt Card and support details */
+.speaking-prompt-card,
+.speaking-support-card {
+  padding: 10px 16px 30px 16px;
+}
+
+.section-meta-tag {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  color: #2563eb;
+  background: #eff6ff;
+  padding: 4px 8px;
+  border-radius: 6px;
+  display: inline-block;
+}
+
+.speaking-topic-title {
+  margin-top: 8px;
+  color: #0f172a;
+}
+
+/* Call Card UI (simulated call container) */
+.speaking-exam-card-wrapper {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+}
+
+.call-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 40px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* Dark theme active call */
+.call-card.active-call-theme {
+  background: radial-gradient(circle at top, #0f172a, #020617);
+  color: #f8fafc;
+  padding: 30px;
+}
+
+.dial-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 16px 0 8px 0;
+  text-align: center;
+}
+
+.dial-status {
+  color: #94a3b8;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-align: center;
+  animation: pulseGradual 2s infinite;
+}
+
+@keyframes pulseGradual {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.dial-controls {
+  display: flex;
+  justify-content: center;
+  margin-top: 40px;
+}
+
+/* Active status header */
+.call-active-header {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 12px;
+}
+
+.call-active-status {
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.call-active-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+.call-active-indicator.recording {
+  animation: recordingPulse 1.2s infinite;
+}
+
+.call-active-indicator.listening {
+  background: #3b82f6;
+}
+
+.call-active-indicator.thinking {
+  background: #f59e0b;
+  animation: thinkingPulse 1s infinite alternate;
+}
+
+@keyframes recordingPulse {
+  0% { transform: scale(0.9); opacity: 0.6; background-color: #ef4444; }
+  50% { transform: scale(1.2); opacity: 1; background-color: #ef4444; }
+  100% { transform: scale(0.9); opacity: 0.6; background-color: #ef4444; }
+}
+
+@keyframes thinkingPulse {
+  0% { opacity: 0.5; }
+  100% { opacity: 1; }
+}
+
+.call-active-timer {
+  font-size: 14px;
+  font-weight: 700;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 4px 10px;
+  border-radius: 8px;
+}
+
+/* Voice Equalizer waves */
+.voice-wave {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 60px;
+  margin: 20px 0;
+}
+
+.wave-bar {
+  width: 4px;
+  height: 15px;
+  background: linear-gradient(to top, #3b82f6, #10b981);
+  border-radius: 4px;
+  transform-origin: center;
+}
+
+/* Pulse avatar circle */
+.pulse-circle {
+  position: relative;
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px auto;
+}
+
+.pulse-circle-mini {
+  width: 90px;
+  height: 90px;
+  margin-bottom: 12px;
+}
+
+.pulse-ring-1 {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.15);
+  animation: pulseRingExpand 2.5s infinite linear;
+}
+
+@keyframes pulseRingExpand {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+.avatar-ring {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #3b82f6, #10b981);
+  padding: 4px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+}
+
+.avatar-ring-mini {
+  width: 70px;
+  height: 70px;
+  padding: 3px;
+}
+
+.avatar-inner {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: #1e293b;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  color: #ffffff;
+  font-weight: 700;
+  border: 2px solid #0f172a;
+}
+
+.avatar-inner-mini {
+  font-size: 20px;
+}
+
+.caller-name {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0;
+}
+
+.caller-accent {
+  font-size: 12px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* Chat timelines */
+.transcript-box {
+  flex: 1;
+  width: 100%;
+  overflow-y: auto;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  scrollbar-width: thin;
+}
+
+.transcript-box::-webkit-scrollbar {
+  width: 4px;
+}
+
+.transcript-box::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+}
+
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 16px;
+  max-width: 85%;
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.chat-bubble.ai {
+  background: rgba(255, 255, 255, 0.08);
+  color: #f8fafc;
+  align-self: flex-start;
+  border-bottom-left-radius: 4px;
+}
+
+.chat-bubble.user {
+  background: #2563eb;
+  color: #ffffff;
+  align-self: flex-end;
+  border-bottom-right-radius: 4px;
+}
+
+.bubble-author {
+  font-size: 10px;
+  display: block;
+  margin-bottom: 4px;
+  opacity: 0.7;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Typing Dots Animation */
+.typing-dots {
+  display: flex;
+  gap: 4px;
+  padding: 4px 0;
+}
+
+.typing-dots span {
+  width: 6px;
+  height: 6px;
+  background-color: #cbd5e1;
+  border-radius: 50%;
+  display: inline-block;
+  animation: bounceDot 1.4s infinite ease-in-out both;
+}
+
+.typing-dots span:nth-child(1) { animation-delay: -0.32s; }
+.typing-dots span:nth-child(2) { animation-delay: -0.16s; }
+
+@keyframes bounceDot {
+  0%, 80%, 100% { transform: scale(0); }
+  40% { transform: scale(1); }
+}
+
+/* Call Control Buttons */
+.controls-panel {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.btn-circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
+  transition: all 0.2s;
+  color: #ffffff;
+}
+
+.btn-circle:hover:not(:disabled) {
+  transform: translateY(-2px);
+}
+
+.btn-circle:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-mute {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.btn-mute:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.btn-mute.active {
+  background: #f43f5e;
+  border-color: #f43f5e;
+}
+
+.btn-hangup {
+  background: #ef4444;
+}
+
+.btn-hangup:hover:not(:disabled) {
+  background: #dc2626;
+  box-shadow: 0 6px 15px rgba(239, 68, 68, 0.4);
+}
+
+.btn-submit-speech {
+  background: #10b981;
+}
+
+.btn-submit-speech:hover:not(:disabled) {
+  background: #059669;
+  box-shadow: 0 6px 15px rgba(16, 185, 129, 0.4);
+}
+
+/* Start call action */
+.btn-start-call {
+  color: #ffffff;
+  padding: 14px 28px;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+  transition: all 0.2s;
+}
+
+/* Evaluating Screen styling */
+.pulse-circle-thinking {
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.avatar-ring-thinking {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+}
+
+.avatar-inner-thinking {
+  background: #0f172a;
+}
+
+.spinner-thinking {
+  color: #3b82f6;
+}
+
+.thinking-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 16px 0 8px 0;
+  text-align: center;
+}
+
+.thinking-desc {
+  font-size: 13.5px;
+  color: #94a3b8;
+  max-width: 80%;
+  text-align: center;
+  line-height: 1.5;
+}
+
+/* Report Screen styling */
+.call-card-report {
+  background: #ffffff;
+  color: #0f172a;
+  padding: 30px 20px;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.report-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 24px;
+}
+
+.report-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  display: inline-block;
+  margin-bottom: 6px;
+}
+
+.report-title {
+  margin: 0;
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.report-band-group {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.report-band-label-box {
+  text-align: right;
+}
+
+.report-band-label {
+  font-size: 10px;
+  color: #64748b;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  display: block;
+}
+
+.report-band-status {
+  font-size: 12px;
+  color: #10b981;
+  font-weight: 700;
+}
+
+.metric-badge {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+}
+
+.sub-metric-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+
+.sub-metric-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  text-align: center;
+}
+
+.metric-label {
+  color: #64748b;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.sub-metric-score {
+  font-weight: 800;
+  color: #1e293b;
+}
+
+.corrections-container {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+}
+
+.corrections-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.correction-item {
+  background: #ffffff;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+  padding: 10px;
+}
+
+.report-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Pronunciation word feedback tooltip */
+.mispronounced-word {
+  color: #ef4444;
+  text-decoration: underline wavy #ef4444;
+  cursor: help;
+  position: relative;
+  display: inline-block;
+  font-weight: 600;
+}
+
+.mispronounced-word:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 125%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #1e293b;
+  color: #ffffff;
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 11px;
+  white-space: nowrap;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+}
+
+.mispronounced-word:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 115%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 5px;
+  border-style: solid;
+  border-color: #1e293b transparent transparent transparent;
+  z-index: 1000;
+}

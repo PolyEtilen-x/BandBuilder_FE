@@ -4,6 +4,7 @@ import PracticeExam from "@/components/test/PracticeModal/PracticeExam"
 import PracticeSkeleton from "@/components/test/PracticeSkeleton/PracticeSkeleton"
 import { usePracticeTest } from "@/hooks/usePracticeTest"
 import { usePracticeStore } from "@/services/practice/practice.store"
+import SpeakingTestPanel from "@/components/test/LayoutSkill/SpeakingTestPanel"
 
 export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode?: "practice" | "review" }) {
     const {
@@ -13,6 +14,7 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
         error,
         mode,
         isWriting,
+        isSpeaking,
         unitNumber,
     } = usePracticeTest()
 
@@ -28,13 +30,25 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
         </div>
     )
 
-    // For Writing, currentUnit is the content object itself (always present if test loaded)
-    // For Reading/Listening, we need a specific unit
+    // For Writing or Speaking, content itself is the unit/data (always present if test loaded)
     if (!test) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
             <p style={{ color: "#6b7280" }}>No data found for this test.</p>
         </div>
     )
+
+    const isReview = pageMode === "review"
+
+    if (isSpeaking) {
+        return (
+            <SpeakingTestPanel
+                test={test}
+                content={currentUnit}
+                mode={mode}
+                isReview={isReview}
+            />
+        )
+    }
 
     if (!isWriting && !currentUnit) return (
         <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: "100vh" }}>
@@ -42,7 +56,6 @@ export default function PracticeTestPage({ mode: pageMode = "practice" }: { mode
         </div>
     )
 
-    const isReview = pageMode === "review"
     const taskNumber = (test as any).taskNumber as 1 | 2 | undefined
     const writingUnit = isWriting ? currentUnit : null
 
