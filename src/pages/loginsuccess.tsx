@@ -11,33 +11,48 @@ export default function LoginSuccess() {
   const isLoading = useAuthStore(s => s.isLoading)
 
   useEffect(() => {
-    // Dùng window.location.search thay vì useSearchParams hook
-    // để tránh vòng lặp render vô hạn
     const params = new URLSearchParams(window.location.search)
     const token = params.get("token")
     const refreshToken = params.get("refreshToken")
 
     if (token && refreshToken) {
+      // Mobile web flow: lưu token vào localStorage
       localStorage.setItem("accessToken", token)
       localStorage.setItem("refreshToken", refreshToken)
       setCookie("bandbuilder-logged-in", "true", 7)
+
+      const redirectPath = getCookie("redirectAfterLogin") || "/"
+      deleteCookie("redirectAfterLogin")
+
+      // Full page reload — App.tsx sẽ initAuth() với token đã có trong localStorage
+      window.location.replace(redirectPath)
+      return
     }
 
+    // Desktop/fallback flow
     initAuth()
-  }, [initAuth]) // Không thêm gì vào dependency array — chạy 1 lần khi mount
+
+    // Safety net: nếu sau 5 giây vẫn còn ở trang này → redirect về /
+    const timeout = setTimeout(() => {
+      console.warn("[LoginSuccess] Timeout — redirecting to /")
+      navigate("/", { replace: true })
+    }, 5000)
+
+    return () => clearTimeout(timeout)
+  }, [initAuth, navigate])
 
   useEffect(() => {
     if (isLoading) return
 
     if (isAuthenticated) {
       const redirectPath = getCookie("redirectAfterLogin") || "/"
-      console.log("Login success, redirecting to:", redirectPath)
-
       deleteCookie("redirectAfterLogin")
       navigate(redirectPath, { replace: true })
+    } else {
+      // initAuth xong mà vẫn chưa đăng nhập → không để kẹt, redirect về /
+      navigate("/", { replace: true })
     }
-    // Không có else navigate — tránh redirect sớm khi Desktop đang loading
   }, [isAuthenticated, isLoading, navigate])
 
   return <p>Logging in...</p>
-}
+}
