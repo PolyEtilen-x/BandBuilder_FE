@@ -10,15 +10,17 @@ export default function LoginSuccess() {
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
   const isLoading = useAuthStore(s => s.isLoading)
 
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const token = params.get("token")
-    const refreshToken = params.get("refreshToken")
+  // Đọc 1 lần, dùng chung cho cả 2 effects
+  const params = new URLSearchParams(window.location.search)
+  const token = params.get("token")
+  const refreshToken = params.get("refreshToken")
+  const isMobileTokenFlow = !!(token && refreshToken)
 
-    if (token && refreshToken) {
+  useEffect(() => {
+    if (isMobileTokenFlow) {
       // Mobile web flow: lưu token vào localStorage
-      localStorage.setItem("accessToken", token)
-      localStorage.setItem("refreshToken", refreshToken)
+      localStorage.setItem("accessToken", token!)
+      localStorage.setItem("refreshToken", refreshToken!)
       setCookie("bandbuilder-logged-in", "true", 7)
 
       const redirectPath = getCookie("redirectAfterLogin") || "/"
@@ -29,19 +31,22 @@ export default function LoginSuccess() {
       return
     }
 
-    // Desktop/fallback flow
+    // Desktop flow
     initAuth()
 
-    // Safety net: nếu sau 5 giây vẫn còn ở trang này → redirect về /
+    // Safety net: 5 giây vẫn kẹt → redirect về /
     const timeout = setTimeout(() => {
       console.warn("[LoginSuccess] Timeout — redirecting to /")
       navigate("/", { replace: true })
     }, 5000)
 
     return () => clearTimeout(timeout)
-  }, [initAuth, navigate])
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    // Nếu mobile token flow → window.location.replace() đang xử lý, KHÔNG can thiệp
+    if (isMobileTokenFlow) return
+
     if (isLoading) return
 
     if (isAuthenticated) {
@@ -49,10 +54,10 @@ export default function LoginSuccess() {
       deleteCookie("redirectAfterLogin")
       navigate(redirectPath, { replace: true })
     } else {
-      // initAuth xong mà vẫn chưa đăng nhập → không để kẹt, redirect về /
+      // initAuth xong, vẫn chưa đăng nhập → redirect về / thay vì kẹt
       navigate("/", { replace: true })
     }
-  }, [isAuthenticated, isLoading, navigate])
+  }, [isAuthenticated, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps
 
   return <p>Logging in...</p>
 }
