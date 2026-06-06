@@ -1,7 +1,7 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "@/services/auth/auth.store"
-import { getCookie, deleteCookie, setCookie } from "@/utils/cookie"
+import { getCookie, deleteCookie } from "@/utils/cookie"
 
 export default function LoginSuccess() {
   const navigate = useNavigate()
@@ -11,16 +11,6 @@ export default function LoginSuccess() {
   const isLoading = useAuthStore(s => s.isLoading)
 
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search)
-    const token = params.get("token")
-    const refreshToken = params.get("refreshToken")
-
-    if (token && refreshToken) {
-      localStorage.setItem("accessToken", token)
-      localStorage.setItem("refreshToken", refreshToken)
-      setCookie("bandbuilder-logged-in", "true", 7)
-    }
-
     initAuth()
   }, [initAuth])
 
@@ -33,9 +23,6 @@ export default function LoginSuccess() {
 
       deleteCookie("redirectAfterLogin")
       navigate(redirectPath, { replace: true })
-    } else {
-      console.log("Login failed, redirecting to /")
-      navigate("/", { replace: true })
     }
   }, [isAuthenticated, isLoading, navigate])
 

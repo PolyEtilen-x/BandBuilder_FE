@@ -5,8 +5,7 @@ export function setCookie(name: string, value: string, days?: number): void {
     date.setTime(date.getTime() + days * 24 * 60 * 60 * 1000);
     expires = "; expires=" + date.toUTCString();
   }
-  const isSecure = window.location.protocol === "https:";
-  document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+  document.cookie = `${name}=${encodeURIComponent(value)}${expires}; path=/; SameSite=Lax; Secure`;
 }
 
 export function getCookie(name: string): string | null {
@@ -21,6 +20,5 @@ export function getCookie(name: string): string | null {
 }
 
 export function deleteCookie(name: string): void {
-  const isSecure = window.location.protocol === "https:";
-  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax${isSecure ? "; Secure" : ""}`;
+  document.cookie = `${name}=; Path=/; Expires=Thu, 01 Jan 1970 00:00:01 GMT; SameSite=Lax; Secure`;
 }

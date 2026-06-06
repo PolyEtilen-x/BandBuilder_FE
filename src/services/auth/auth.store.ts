@@ -72,8 +72,6 @@ export const useAuthStore = create<AuthState>((set) => ({
             console.log("logout error:", e)
         } finally {
             deleteCookie("bandbuilder-logged-in")
-            localStorage.removeItem("accessToken")
-            localStorage.removeItem("refreshToken")
             set({ user: null, isAuthenticated: false })
             window.location.href = "/"
         }
