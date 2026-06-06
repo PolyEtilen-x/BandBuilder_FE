@@ -80,7 +80,7 @@ export default function PracticeSidebar() {
   }
 
   return (
-    <div className="practice-sidebar" style={{ width: 260, flexShrink: 0 }}>
+    <div className="app-sidebar-wrapper practice-sidebar">
       {SKILLS.map((s) => {
         const cfg = SKILL_CONFIG[s]
         const isActive = s === activeSkill

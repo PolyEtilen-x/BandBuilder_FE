@@ -48,7 +48,8 @@
 }
 
 .flashcard {
-  width: 420px;
+  width: 100%;
+  max-width: 420px;
   height: 260px;
 
   border-radius: 20px;
@@ -134,7 +135,8 @@
 }
 
 .card-inner {
-  width: 420px;
+  width: 100%;
+  max-width: 420px;
   height: 260px;
   position: relative;
   transform-style: preserve-3d;
@@ -214,7 +216,7 @@
 
 .band-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   gap: 12px;
 }
 

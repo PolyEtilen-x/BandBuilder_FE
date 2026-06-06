@@ -779,8 +779,31 @@
   margin: 0;
 }
 
+.pp-layout-container {
+  display: flex;
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+
+.pp-layout-content {
+  flex: 1;
+  min-width: 0;
+}
+
 /* ── Responsive ───────────────────────────────────────────── */
 @media (max-width: 768px) {
+  .pp-layout-container {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
+
+  .pp-layout-content {
+    width: 100%;
+  }
+
   .pp-page-wrapper {
     padding: 20px 12px 60px;
   }

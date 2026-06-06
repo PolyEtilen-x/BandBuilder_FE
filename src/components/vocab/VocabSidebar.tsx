@@ -100,7 +100,7 @@ const subRowStyle: React.CSSProperties = {
   }
 
   return (
-    <div style={{ width: 260 }}>
+    <div className="app-sidebar-wrapper">
       {CATEGORIES.map((c) => {
         const cfg = VOCAB_CONFIG[c]
         const isActive = c === category

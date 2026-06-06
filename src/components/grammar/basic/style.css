@@ -91,4 +91,14 @@
 
 .arrow {
     color: #aaa;
+}
+
+@media (max-width: 768px) {
+  .grammar-card {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .grammar-right {
+    width: 100%;
+  }
 }

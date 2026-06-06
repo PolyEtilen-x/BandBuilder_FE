@@ -40,7 +40,7 @@ function GeneralPracticeSidebar() {
   }
 
   return (
-    <div style={{ width: 260, flexShrink: 0 }}>
+    <div className="app-sidebar-wrapper">
       {CATEGORIES.map((c) => {
         const cfg = CONFIG[c]
         const isActive = c === activeCategory

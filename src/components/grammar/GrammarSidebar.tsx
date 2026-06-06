@@ -75,7 +75,7 @@ export default function GrammarSidebar({ state, onChange, contentRef }: Props) {
     const { category, subItem } = state
 
     return (
-        <div style={{ width: 260 }}>
+        <div className="app-sidebar-wrapper">
         {CATEGORIES.map((c) => {
             const cfg = CONFIG[c]
             const isActive = c === category

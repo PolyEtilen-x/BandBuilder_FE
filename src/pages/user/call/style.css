@@ -839,3 +839,72 @@
   background: #059669;
   transform: scale(1.05);
 }
+
+/* --- Mobile Responsive Rules --- */
+@media (max-width: 768px) {
+  .call-card, .call-card-report {
+    padding: 20px;
+    border-radius: 16px;
+  }
+  .call-title {
+    font-size: 20px;
+  }
+  .call-desc {
+    font-size: 13.5px;
+    margin-bottom: 20px;
+  }
+  .call-start-wrapper {
+    flex-direction: column;
+    width: 100%;
+    gap: 12px;
+    margin-top: 24px;
+  }
+  .btn-start-call {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 24px;
+    font-size: 14.5px;
+  }
+  .controls-panel {
+    justify-content: center;
+    gap: 16px;
+    margin-top: 24px;
+  }
+  .report-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+  .report-band-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .report-title {
+    font-size: 20px;
+  }
+  .sub-metric-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+  .sub-metric-card {
+    padding: 12px;
+  }
+  .sub-metric-score {
+    font-size: 18px;
+  }
+  .corrections-container {
+    padding: 16px;
+    margin-top: 24px;
+  }
+  .transcript-box {
+    max-height: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-metric-grid {
+    grid-template-columns: 1fr !important;
+  }
+}

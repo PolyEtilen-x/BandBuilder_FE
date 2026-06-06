@@ -46,18 +46,7 @@ export default function GrammarPage() {
 
     return (
         <MainLayout>
-            <div
-                style={{
-                display: "flex",   
-                gap: 30,
-                maxWidth: 1200,
-                margin: "0 auto",
-                padding: "30px 20px",
-                alignItems: "flex-start",
-                height: "calc(100vh - 80px)",
-                overflow: "hidden", 
-                }}
-            >
+            <div className="app-page-layout-wrapper">
                 {/* SIDEBAR */}
                 <GrammarSidebar
                     state={state}
@@ -68,14 +57,7 @@ export default function GrammarPage() {
                 {/* CONTENT */}
                 <div 
                     ref={contentRef}
-                    style={{
-                        flex: 1,
-                        minWidth: 0,
-                        display: "flex",
-                        flexDirection: "column",
-                        overflowY: "auto",
-                        height: "100%", 
-                    }}
+                    className="app-page-content-wrapper"
                 >
                     {renderContent()}
                 </div>

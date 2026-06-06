@@ -427,12 +427,12 @@ export default function PronunciationPracticePage(): ReactElement {
   return (
     <MainLayout>
       <div className="pp-page-wrapper">
-        <div style={{ display: "flex", gap: 30, maxWidth: 1200, margin: "0 auto", alignItems: "flex-start" }}>
+        <div className="pp-layout-container">
           {/* Sidebar */}
           <GeneralPracticeSidebar />
 
           {/* Main content */}
-          <div style={{ flex: 1, minWidth: 0 }}>
+          <div className="pp-layout-content">
             <div className="pp-page-container" style={{ maxWidth: "100%", padding: 0 }}>
 
               {/* Page header — only on list view */}

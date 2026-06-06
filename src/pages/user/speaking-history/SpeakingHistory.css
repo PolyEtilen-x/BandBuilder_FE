@@ -432,3 +432,98 @@
     background-color: #f1f5f9;
   }
 }
+
+/* --- Mobile Responsive Rules --- */
+@media (max-width: 768px) {
+  .sh-page-wrapper {
+    height: auto;
+    overflow: visible;
+    padding: 20px 12px;
+  }
+
+  .sh-main-layout {
+    flex-direction: column;
+    height: auto;
+    gap: 20px;
+  }
+
+  .sh-workspace {
+    width: 100%;
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .sh-card {
+    padding: 20px;
+    border-radius: 16px;
+  }
+
+  .history-item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .item-left {
+    width: 100%;
+  }
+
+  .item-right {
+    width: 100%;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .btn-view-details {
+    padding: 8px 16px;
+    font-size: 13px;
+  }
+
+  .report-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .report-band-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .report-title {
+    font-size: 20px;
+  }
+
+  .sub-metric-grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 10px;
+  }
+
+  .sub-metric-card {
+    padding: 12px;
+  }
+
+  .sub-metric-score {
+    font-size: 18px;
+  }
+
+  .corrections-container {
+    padding: 16px;
+    margin-top: 24px;
+  }
+
+  .transcript-box-history {
+    height: 280px;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .sub-metric-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
