@@ -305,7 +305,23 @@ export default function SpeakingTestPanel({
                     {hintData.grammar_features && (
                       <div>
                         <span style={{ fontSize: "12px", fontWeight: 800, color: "#15803d", display: "block", marginBottom: 4 }}>CẤU TRÚC NGỮ PHÁP</span>
-                        <p style={{ fontSize: "13px", color: "#166534", margin: 0 }}>{hintData.grammar_features}</p>
+                        {typeof hintData.grammar_features === "string" ? (
+                          <p style={{ fontSize: "13px", color: "#166534", margin: 0 }}>{hintData.grammar_features}</p>
+                        ) : (
+                          <div style={{ display: "flex", flexDirection: "column", gap: "6px", fontSize: "12.5px" }}>
+                            {Object.entries(hintData.grammar_features).map(([band, rules]: [string, any]) => (
+                              <div key={band} style={{ borderLeft: "2px solid #bbf7d0", paddingLeft: "8px", marginTop: "4px" }}>
+                                <strong style={{ color: "#15803d" }}>Band {band}:</strong>
+                                <ul style={{ margin: "2px 0 0 0", paddingLeft: "16px", color: "#166534" }}>
+                                  {Array.isArray(rules) 
+                                    ? rules.map((r: string, idx: number) => <li key={idx}>{r}</li>)
+                                    : <li>{String(rules)}</li>
+                                  }
+                                </ul>
+                              </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     )}
                   </div>
