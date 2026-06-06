@@ -1,16 +1,16 @@
 import { useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import { useAuthStore } from "@/services/auth/auth.store"
-import { getCookie, deleteCookie, setCookie } from "@/utils/cookie"
+import { getCookie, deleteCookie } from "@/utils/cookie"
 
 export default function LoginSuccess() {
   const navigate = useNavigate()
 
   const initAuth = useAuthStore(s => s.initAuth)
+  const loginWithToken = useAuthStore(s => s.loginWithToken)
   const isAuthenticated = useAuthStore(s => s.isAuthenticated)
   const isLoading = useAuthStore(s => s.isLoading)
 
-  // Đọc 1 lần, dùng chung cho cả 2 effects
   const params = new URLSearchParams(window.location.search)
   const token = params.get("token")
   const refreshToken = params.get("refreshToken")
@@ -18,20 +18,22 @@ export default function LoginSuccess() {
 
   useEffect(() => {
     if (isMobileTokenFlow) {
-      // Mobile web flow: lưu token vào localStorage
-      localStorage.setItem("accessToken", token!)
-      localStorage.setItem("refreshToken", refreshToken!)
-      setCookie("bandbuilder-logged-in", "true", 7)
+      // Mobile web: gọi /auth/me với Bearer token explicit, không phụ thuộc interceptor
+      loginWithToken(token!, refreshToken!).then((success) => {
+        const redirectPath = getCookie("redirectAfterLogin") || "/"
+        deleteCookie("redirectAfterLogin")
 
-      const redirectPath = getCookie("redirectAfterLogin") || "/"
-      deleteCookie("redirectAfterLogin")
-
-      // Full page reload — App.tsx sẽ initAuth() với token đã có trong localStorage
-      window.location.replace(redirectPath)
+        if (success) {
+          navigate(redirectPath, { replace: true })
+        } else {
+          // Token không hợp lệ → về trang chủ
+          navigate("/", { replace: true })
+        }
+      })
       return
     }
 
-    // Desktop flow
+    // Desktop flow: dùng cookie như bình thường
     initAuth()
 
     // Safety net: 5 giây vẫn kẹt → redirect về /
@@ -44,7 +46,7 @@ export default function LoginSuccess() {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    // Nếu mobile token flow → window.location.replace() đang xử lý, KHÔNG can thiệp
+    // Mobile token flow đã xử lý ở trên, không can thiệp
     if (isMobileTokenFlow) return
 
     if (isLoading) return
@@ -54,7 +56,6 @@ export default function LoginSuccess() {
       deleteCookie("redirectAfterLogin")
       navigate(redirectPath, { replace: true })
     } else {
-      // initAuth xong, vẫn chưa đăng nhập → redirect về / thay vì kẹt
       navigate("/", { replace: true })
     }
   }, [isAuthenticated, isLoading]) // eslint-disable-line react-hooks/exhaustive-deps

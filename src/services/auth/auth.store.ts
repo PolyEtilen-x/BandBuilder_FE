@@ -18,6 +18,7 @@ type AuthState = {
 
     initAuth: () => Promise<void>
     setUser: (user: User | null) => void
+    loginWithToken: (accessToken: string, refreshToken: string) => Promise<boolean>
     logout: () => Promise<void>
 }
 
@@ -63,6 +64,27 @@ export const useAuthStore = create<AuthState>((set) => ({
             user,
             isAuthenticated: !!user
         })
+    },
+
+    // Mobile web: xác thực bằng token từ URL, gọi /auth/me với Bearer explicit
+    loginWithToken: async (accessToken: string, refreshToken: string) => {
+        localStorage.setItem("accessToken", accessToken)
+        localStorage.setItem("refreshToken", refreshToken)
+        setCookie("bandbuilder-logged-in", "true", 7)
+        set({ isLoading: true })
+
+        try {
+            const res = await apiClient.get("/auth/me", {
+                headers: { Authorization: `Bearer ${accessToken}` }
+            })
+            const user = res.data
+            set({ user, isAuthenticated: !!user, isLoading: false })
+            return !!user
+        } catch {
+            set({ user: null, isAuthenticated: false, isLoading: false })
+            deleteCookie("bandbuilder-logged-in")
+            return false
+        }
     },
 
     logout: async () => {
