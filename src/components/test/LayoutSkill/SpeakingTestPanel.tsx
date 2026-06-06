@@ -64,7 +64,7 @@ export default function SpeakingTestPanel({
         const scales = [0.7, 1.5, 2.3, 1.3, 0.8]
         bars.forEach((bar, idx) => {
           const scaleY = baseScale * (scales[idx] || 1)
-          ;(bar as HTMLElement).style.transform = `scaleY(${scaleY})`
+            ; (bar as HTMLElement).style.transform = `scaleY(${scaleY})`
         })
       }
     }
@@ -121,11 +121,11 @@ export default function SpeakingTestPanel({
     setSampleBand(band)
     setSupportError(null)
     const questionId = content?.questionId || "speaking_prompt"
-    
+
     // Warn user about credit deduction in Vietnamese
     const confirmView = window.confirm(
-      language === "vi" 
-        ? `Xem bài mẫu Band ${band} sẽ tốn 1 credit (nếu là lần đầu tiên). Bạn có chắc chắn muốn xem?` 
+      language === "vi"
+        ? `Xem bài mẫu Band ${band} sẽ tốn 1 credit (nếu là lần đầu tiên). Bạn có chắc chắn muốn xem?`
         : `Viewing Band ${band} sample answer costs 1 credit (on first view). Do you want to proceed?`
     )
     if (!confirmView) {
@@ -215,22 +215,22 @@ export default function SpeakingTestPanel({
 
       {/* MAIN CONTENT SPLIT */}
       <div className="practice-main speaking-split-panel">
-        
+
         {/* LEFT SIDEBAR: Prompt Details or Practice Aids */}
         <div className="practice-left speaking-left-prompt">
-          
+
           {/* TAB HEADERS */}
           <div className="exam-tabs" style={{ marginBottom: 20 }}>
-            <button 
-              className={leftTab === "prompt" ? "active" : ""} 
+            <button
+              className={leftTab === "prompt" ? "active" : ""}
               onClick={() => setLeftTab("prompt")}
             >
               <BookOpen size={16} />
               {language === "vi" ? "Đề bài Speaking" : "Speaking Prompt"}
             </button>
             {mode === "practice" && (
-              <button 
-                className={leftTab === "support" ? "active" : ""} 
+              <button
+                className={leftTab === "support" ? "active" : ""}
                 onClick={() => setLeftTab("support")}
               >
                 <Sparkles size={16} style={{ color: "#eab308" }} />
@@ -373,7 +373,7 @@ export default function SpeakingTestPanel({
 
         {/* RIGHT SIDEBAR: AI Examiner Call Screen */}
         <div className="practice-right speaking-right-call">
-          
+
           {/* IDLE / START SCREEN */}
           {callState === "idle" && (
             <div className="call-card speaking-exam-card-wrapper" style={{ border: "none", boxShadow: "none", background: "transparent", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", height: "100%", padding: 20 }}>
@@ -387,12 +387,12 @@ export default function SpeakingTestPanel({
                 {language === "vi" ? "Giám Khảo AI Sophia" : "AI Examiner Sophia"}
               </h3>
               <p style={{ fontSize: "14px", color: "#64748b", textAlign: "center", maxWidth: "80%", marginBottom: 30, lineHeight: 1.5 }}>
-                {language === "vi" 
-                  ? "Bấm nút bắt đầu để kết nối cuộc gọi. Giám khảo AI sẽ hỏi các câu hỏi xoay quanh chủ đề của bài thi IELTS." 
+                {language === "vi"
+                  ? "Bấm nút bắt đầu để kết nối cuộc gọi. Giám khảo AI sẽ hỏi các câu hỏi xoay quanh chủ đề của bài thi IELTS."
                   : "Click start to connect your call. The AI Examiner will ask questions based on this IELTS Speaking prompt."}
               </p>
-              
-              <button 
+
+              <button
                 onClick={handleStartCall}
                 className="btn-start-call hover:scale-[1.02] active:scale-[0.98]"
                 style={{ background: "linear-gradient(135deg, #2563eb, #1d4ed8)" }}
@@ -428,7 +428,7 @@ export default function SpeakingTestPanel({
           {/* ACTIVE SPEAKING SCREEN */}
           {(callState === "active" || (callState === "thinking" && !isEvaluating)) && (
             <div className="call-card active-call-theme" style={{ height: "100%", justifyContent: "space-between", padding: "30px 20px" }}>
-              
+
               <div className="call-active-header">
                 <span className="call-active-status" style={{ color: isRecording ? (isSpeaking ? "#10b981" : "#3b82f6") : callState === "thinking" ? "#f59e0b" : "#64748b" }}>
                   <span className={`call-active-indicator ${isRecording ? (isSpeaking ? "recording" : "listening") : callState === "thinking" ? "thinking" : ""}`} style={{ background: isRecording ? (isSpeaking ? "#10b981" : "#3b82f6") : callState === "thinking" ? "#f59e0b" : "#64748b" }}></span>

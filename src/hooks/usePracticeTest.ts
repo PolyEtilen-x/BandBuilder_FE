@@ -2,8 +2,8 @@ import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation, useSearchParams } from "react-router-dom";
 import { practiceApi } from "@/api/practice/practice.api";
 import { useMemo } from "react";
-import { PracticeTestDTO } from "@/data/practices/practice.types";
 import { normalizeTestUnits } from "@/utils/normalizeTestUnits.utils";
+import { PracticeTestDTO } from "@/data/practices/practice.types";
 
 export const usePracticeTest = () => {
   const { id, skill } = useParams<{ id: string; skill: string }>();
@@ -64,17 +64,46 @@ export const usePracticeTest = () => {
   const currentUnit = useMemo(() => {
     if (!test) return null;
 
-    const units = normalizeTestUnits(test);
-    if (units.length > 0) {
-      return units.find((u) => u.id === unitNumber) || units[0] || null;
+    // Writing: the content itself IS the unit (flat object with prompt, instruction, etc.)
+    if (isWriting && test.content) {
+      return test.content as any;
+    }
+
+    // Speaking: extract the unit for the current part if parts array exists, otherwise return content as-is
+    if (isSpeaking && test.content) {
+      const content = test.content as any;
+      if (content.parts && Array.isArray(content.parts)) {
+        const units = normalizeTestUnits(test);
+        if (units.length > 0) {
+          return units.find((u) => u.id === unitNumber) || units[0] || null;
+        }
+      }
+      return test.content as any;
+    }
+
+    const isReading = !!test.content?.passages;
+    const isListening = !!test.content?.sections;
+
+    if (isReading && test.content.passages) {
+      return (
+        test.content.passages.find((p: any) => p.passage_number === unitNumber) ||
+        test.content.passages[0]
+      );
+    }
+
+    if (isListening && test.content.sections) {
+      return (
+        test.content.sections.find((s: any) => s.section === unitNumber) ||
+        test.content.sections[0]
+      );
     }
 
     return null;
-  }, [test, unitNumber]);
+  }, [test, unitNumber, isWriting, isSpeaking]);
 
   return {
     test,
-    currentUnit: currentUnit as any,
+    currentUnit,
     isLoading,
     error,
     mode,
