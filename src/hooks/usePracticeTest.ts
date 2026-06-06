@@ -3,6 +3,7 @@ import { useParams, useLocation, useSearchParams } from "react-router-dom";
 import { practiceApi } from "@/api/practice/practice.api";
 import { useMemo } from "react";
 import { PracticeTestDTO } from "@/data/practices/practice.types";
+import { normalizeTestUnits } from "@/utils/normalizeTestUnits.utils";
 
 export const usePracticeTest = () => {
   const { id, skill } = useParams<{ id: string; skill: string }>();
@@ -63,34 +64,17 @@ export const usePracticeTest = () => {
   const currentUnit = useMemo(() => {
     if (!test) return null;
 
-    // Writing or Speaking: the content itself IS the unit (flat object with prompt, instruction, etc.)
-    if ((isWriting || isSpeaking) && test.content) {
-      return test.content as any;
-    }
-
-    const isReading = !!test.content?.passages;
-    const isListening = !!test.content?.sections;
-
-    if (isReading && test.content.passages) {
-      return (
-        test.content.passages.find((p: any) => p.passage_number === unitNumber) ||
-        test.content.passages[0]
-      );
-    }
-
-    if (isListening && test.content.sections) {
-      return (
-        test.content.sections.find((s: any) => s.section === unitNumber) ||
-        test.content.sections[0]
-      );
+    const units = normalizeTestUnits(test);
+    if (units.length > 0) {
+      return units.find((u) => u.id === unitNumber) || units[0] || null;
     }
 
     return null;
-  }, [test, unitNumber, isWriting, isSpeaking]);
+  }, [test, unitNumber]);
 
   return {
     test,
-    currentUnit,
+    currentUnit: currentUnit as any,
     isLoading,
     error,
     mode,

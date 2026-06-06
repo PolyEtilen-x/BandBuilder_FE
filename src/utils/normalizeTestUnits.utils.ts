@@ -60,33 +60,31 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
   // Speaking (Array of parts)
   if (content?.parts && Array.isArray(content.parts)) {
     const units: TestUnit[] = [];
-    let unitId = 1;
 
     content.parts.forEach((p: any) => {
       // Part 1: Topics array
       if (p.topics && Array.isArray(p.topics)) {
-        p.topics.forEach((t: any) => {
-          units.push({
-            ...p,
-            ...t,
-            id: unitId++,
-            title: `Speaking Part ${p.part}: ${t.topic}`,
-            description: `Part ${p.part} — ${t.topic}`,
-            questionBlocks: [],
-            type: 'speaking',
-            timeSuggestedMinutes: p.time_minutes || 5,
-            topic: t.topic,
-            candidate_prompts: t.questions?.map((q: any) => q.question) || [],
-            questions: t.questions || [],
-            questionId: t.questions?.[0]?.id || `p${p.part}_topic`,
-          } as any);
-        });
+        const allQuestions = p.topics.flatMap((t: any) => t.questions || []);
+        const topicsList = p.topics.map((t: any) => t.topic).join(' / ');
+        units.push({
+          ...p,
+          id: p.part,
+          title: `Speaking Part ${p.part}: ${topicsList}`,
+          description: `Part ${p.part} — ${topicsList}`,
+          questionBlocks: [],
+          type: 'speaking',
+          timeSuggestedMinutes: p.time_minutes || 5,
+          topic: topicsList,
+          candidate_prompts: allQuestions.map((q: any) => q.question) || [],
+          questions: allQuestions,
+          questionId: allQuestions[0]?.id || `p${p.part}_topic`,
+        } as any);
       }
       // Part 2: Cue Card object
       else if (p.cue_card) {
         units.push({
           ...p,
-          id: unitId++,
+          id: p.part,
           title: `Speaking Part ${p.part}: Long Turn`,
           description: `Part ${p.part} — Cue Card`,
           questionBlocks: [],
@@ -104,7 +102,7 @@ export function normalizeTestUnits(test: SkillContentPreview | PracticeTestDTO):
       else if (p.questions && Array.isArray(p.questions)) {
         units.push({
           ...p,
-          id: unitId++,
+          id: p.part,
           title: `Speaking Part ${p.part}: ${p.topic || "Discussion"}`,
           description: `Part ${p.part} — Two-Way Discussion`,
           questionBlocks: [],
