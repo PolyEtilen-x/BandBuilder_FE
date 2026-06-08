@@ -205,6 +205,78 @@ export default function SpeakingTestPanel({
     })
   }
 
+  // Normalize any hint item to a displayable string
+  const normalizeHint = (h: any): string => {
+    if (typeof h === "string") return h
+    if (typeof h === "object" && h !== null) {
+      return h.text || h.hint || h.phrase || h.word || h.example || JSON.stringify(h)
+    }
+    return String(h)
+  }
+
+  // Normalize hints to always be string[]
+  const normalizeHints = (hints: any): string[] => {
+    if (!hints) return []
+    if (!Array.isArray(hints)) return [normalizeHint(hints)]
+    return hints.map(normalizeHint)
+  }
+
+  // Band color mapping
+  const bandColors: Record<string, { bg: string; border: string; text: string; badge: string }> = {
+    "5": { bg: "#fefce8", border: "#fde047", text: "#713f12", badge: "#ca8a04" },
+    "6": { bg: "#fff7ed", border: "#fdba74", text: "#7c2d12", badge: "#ea580c" },
+    "7": { bg: "#eff6ff", border: "#93c5fd", text: "#1e3a8a", badge: "#2563eb" },
+    "8": { bg: "#f0fdf4", border: "#86efac", text: "#14532d", badge: "#16a34a" },
+    "9": { bg: "#faf5ff", border: "#c4b5fd", text: "#4c1d95", badge: "#7c3aed" },
+  }
+
+  // Render grammar_features as band-grouped sections
+  const renderGrammarFeatures = (gf: any) => {
+    if (!gf) return null
+
+    // Band-keyed object: { "5": [...], "6": [...], ... }
+    if (typeof gf === "object" && !Array.isArray(gf)) {
+      const bands = Object.keys(gf).sort()
+      if (bands.length === 0) return null
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          {bands.map((band) => {
+            const features: string[] = Array.isArray(gf[band]) ? gf[band] : [String(gf[band])]
+            const colors = bandColors[band] || bandColors["7"]
+            return (
+              <div key={band} style={{ background: colors.bg, border: `1px solid ${colors.border}`, borderRadius: 10, padding: "8px 12px" }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 4 }}>
+                  <span style={{ background: colors.badge, color: "#fff", fontSize: "10px", fontWeight: 800, padding: "2px 7px", borderRadius: 6 }}>BAND {band}</span>
+                </div>
+                <ul style={{ paddingLeft: 14, margin: 0, display: "flex", flexDirection: "column", gap: 2 }}>
+                  {features.map((f, i) => (
+                    <li key={i} style={{ fontSize: "12px", color: colors.text, lineHeight: "1.5" }}>{f}</li>
+                  ))}
+                </ul>
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
+    // Plain string
+    if (typeof gf === "string") {
+      return <p style={{ fontSize: "13px", color: "#166534", margin: 0 }}>{gf}</p>
+    }
+
+    // Array of strings
+    if (Array.isArray(gf)) {
+      return (
+        <ul style={{ paddingLeft: 16, margin: 0, fontSize: "13px", color: "#166534" }}>
+          {gf.map((f: any, i: number) => <li key={i}>{normalizeHint(f)}</li>)}
+        </ul>
+      )
+    }
+
+    return null
+  }
+
   return (
     <div className="practice-container speaking-exam-layout">
       {/* HEADER */}
@@ -293,18 +365,20 @@ export default function SpeakingTestPanel({
                   </div>
                 ) : hintData ? (
                   <div className="hints-display" style={{ background: "#f0fdf4", border: "1px solid #bbf7d0", padding: 16, borderRadius: 16, marginBottom: 24 }}>
-                    {hintData.hints && hintData.hints.length > 0 && (
-                      <div style={{ marginBottom: 12 }}>
-                        <span style={{ fontSize: "12px", fontWeight: 800, color: "#15803d", display: "block", marginBottom: 4 }}>TỪ VỰNG GỢI Ý</span>
-                        <ul style={{ paddingLeft: 16, margin: 0, fontSize: "13px", color: "#166534" }}>
-                          {hintData.hints.map((h: string, idx: number) => <li key={idx}>{h}</li>)}
+                    {normalizeHints(hintData.hints).length > 0 && (
+                      <div style={{ marginBottom: 14 }}>
+                        <span style={{ fontSize: "12px", fontWeight: 800, color: "#15803d", display: "block", marginBottom: 6 }}>💬 GỢI Ý NỘI DUNG</span>
+                        <ul style={{ paddingLeft: 16, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+                          {normalizeHints(hintData.hints).map((h: string, idx: number) => (
+                            <li key={idx} style={{ fontSize: "13px", color: "#166534", lineHeight: "1.5" }}>{h}</li>
+                          ))}
                         </ul>
                       </div>
                     )}
-                    {hintData.grammar_features && (
+                    {renderGrammarFeatures(hintData.grammar_features) && (
                       <div>
-                        <span style={{ fontSize: "12px", fontWeight: 800, color: "#15803d", display: "block", marginBottom: 4 }}>CẤU TRÚC NGỮ PHÁP</span>
-                        <p style={{ fontSize: "13px", color: "#166534", margin: 0 }}>{hintData.grammar_features}</p>
+                        <span style={{ fontSize: "12px", fontWeight: 800, color: "#15803d", display: "block", marginBottom: 6 }}>📐 CẤU TRÚC NGỮ PHÁP THEO BAND</span>
+                        {renderGrammarFeatures(hintData.grammar_features)}
                       </div>
                     )}
                   </div>
