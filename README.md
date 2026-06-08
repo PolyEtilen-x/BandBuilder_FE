@@ -1,173 +1,189 @@
-## 🏗️ Technical Architecture
+# BandBuilder
 
-BandBuilder is designed using a modern client-server architecture with separated frontend, mobile, backend, and AI services to ensure scalability, maintainability, and performance.
-
-### System Components
-
-| Layer                   | Technology              |
-| ----------------------- | ----------------------- |
-| Web Frontend            | React, TypeScript, Vite |
-| Mobile App              | React Native, Expo      |
-| Backend API             | NestJS, TypeScript      |
-| Database                | PostgreSQL              |
-| Cache & Session         | Redis                   |
-| Authentication          | JWT, Google OAuth 2.0   |
-| Real-time Communication | Socket.IO               |
-| AI Services             | Gemini API, OpenAI API  |
-| Deployment              | AWS EC2, Docker, Nginx  |
-| DNS & Security          | Cloudflare              |
-| CI/CD                   | GitHub Actions          |
+BandBuilder is an AI-powered IELTS learning platform designed to help learners improve their English proficiency through intelligent practice, personalized feedback, and comprehensive progress tracking.
 
 ---
 
-### Frontend Architecture
+## Overview
 
-The frontend follows a feature-based architecture and modern React development practices:
+BandBuilder combines traditional IELTS preparation materials with AI technologies to create a modern and interactive learning experience.
 
-* Component-Based Design
-* React Router for navigation
-* Zustand for lightweight state management
-* Redux Toolkit for complex application state
-* TanStack Query for server-state management
-* Axios for API communication
-* Socket.IO Client for real-time features
+The platform supports:
 
----
-
-### Backend Architecture
-
-The backend is built using NestJS and follows a modular architecture:
-
-```text
-Auth Module
-├── JWT Authentication
-├── Google OAuth
-└── Role-Based Authorization
-
-User Module
-├── Profile Management
-├── Learning Progress
-└── User Analytics
-
-Practice Module
-├── IELTS Tests
-├── Grammar Practice
-└── Vocabulary Practice
-
-AI Module
-├── Speaking Evaluation
-├── AI Conversation
-└── Feedback Generation
-```
-
----
-
-### Database Design
-
-PostgreSQL serves as the primary database for:
-
+* IELTS Reading Practice
+* IELTS Listening Practice
+* IELTS Writing Training
+* AI Speaking Evaluation
+* Vocabulary Learning
+* Grammar Practice
+* Progress Analytics
 * User Management
-* Learning Progress Tracking
-* Test Results
-* Vocabulary Collections
-* Practice History
-* Analytics Data
-
-Redis is used for:
-
-* Token Management
-* Session Storage
-* Temporary Caching
-* Performance Optimization
+* Administrative Dashboard
 
 ---
 
-### Authentication Flow
+## Features
 
-```text
-User
- │
- ├── Email/Password Login
- │
- └── Google OAuth Login
-        │
-        ▼
-     NestJS API
-        │
-        ▼
-   JWT Generation
-        │
-        ▼
- Access Token + Refresh Token
-        │
-        ▼
- Protected Resources
-```
+### IELTS Practice
 
----
+* Full IELTS mock tests
+* Reading, Listening, Writing, and Speaking modules
+* Exam-like environment
+* Performance tracking
 
-### Infrastructure Architecture
+### AI Speaking
 
-```text
-bandbuilder.site
-       │
-       ▼
-Cloudflare
-       │
- ┌─────┼─────┐
- │           │
- ▼           ▼
-Frontend    API
-React       NestJS
-             │
-      ┌──────┴──────┐
-      │             │
-      ▼             ▼
- PostgreSQL      Redis
-      │
-      ▼
- AI Services
-(Gemini / OpenAI)
-```
+* Interactive speaking sessions
+* Pronunciation and fluency analysis
+* Automated feedback
+* Band score estimation
+
+### Vocabulary & Grammar
+
+* Integrated dictionary
+* Vocabulary learning system
+* Grammar lessons and exercises
+* Personalized word collections
+
+### Analytics
+
+* Learning statistics
+* Progress monitoring
+* Performance reports
+* Score prediction
+
+### Administration
+
+* User management
+* Content management
+* Test management
+* Platform analytics
 
 ---
 
-### Software Engineering Practices
+## Tech Stack
 
-* TypeScript Strict Mode
-* Modular Architecture
-* Feature-Based Structure
-* Role-Based Access Control (RBAC)
-* RESTful API Design
-* Secure Authentication with JWT
-* Real-time Communication via WebSockets
-* Dockerized Deployment
-* Cloudflare CDN & Security Layer
-* Automated CI/CD Pipeline
+### Frontend
 
----
+* React 19
+* TypeScript
+* Vite
+* TailwindCSS
+* React Router
+* Zustand
+* Redux Toolkit
+* TanStack Query
+* Axios
+* Socket.IO Client
+* Framer Motion
 
-### Performance Optimizations
+### Mobile
 
-* React Code Splitting
-* Lazy Loading
-* Query Caching with TanStack Query
-* Redis Caching Layer
-* Optimized Database Queries
-* Static Asset Optimization
-* Cloudflare Edge Caching
-* Nginx Reverse Proxy
+* React Native
+* Expo
 
----
+### Backend
 
-### Security Features
-
+* NestJS
+* TypeScript
+* PostgreSQL
+* Redis
+* Prisma ORM
 * JWT Authentication
-* Refresh Token Rotation
-* Google OAuth 2.0
-* HTTPOnly Cookies
-* CORS Protection
-* Rate Limiting
-* Password Hashing
-* Role-Based Access Control
-* Cloudflare DDoS Protection
+* Passport.js
+* Socket.IO
+
+### AI Services
+
+* Google Gemini
+* OpenAI
+
+### Infrastructure
+
+* AWS EC2
+* Docker
+* Nginx
+* Cloudflare
+* GitHub Actions
+
+---
+
+## Project Structure
+
+```text
+src/
+├── api/
+├── assets/
+├── components/
+├── hooks/
+├── pages/
+├── routes/
+├── services/
+├── store/
+├── styles/
+├── types/
+└── utils/
+```
+
+---
+
+## Getting Started
+
+### Install Dependencies
+
+```bash
+npm install
+```
+
+### Configure Environment Variables
+
+Create an environment file and configure the required application settings.
+
+### Run Development Server
+
+```bash
+npm run dev
+```
+
+### Build Production Version
+
+```bash
+npm run build
+```
+
+---
+
+## Deployment
+
+| Service         | URL                    |
+| --------------- | ---------------------- |
+| Web Application | bandbuilder.site       |
+| Admin Dashboard | admin.bandbuilder.site |
+| Backend API     | api.bandbuilder.site   |
+
+---
+
+## Roadmap
+
+* [x] IELTS Practice System
+* [x] Authentication System
+* [x] AI Speaking Module
+* [x] Administrative Dashboard
+* [ ] Mobile Application Release
+* [ ] AI Writing Evaluation
+* [ ] Personalized Learning Path
+* [ ] Advanced Learning Analytics
+
+---
+
+## Contributing
+
+Contributions, issues, and feature requests are welcome.
+
+Please create an issue or submit a pull request if you would like to contribute.
+
+---
+
+## License
+
+This project is developed for educational and research purposes.
