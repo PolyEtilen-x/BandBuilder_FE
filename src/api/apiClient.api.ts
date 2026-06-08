@@ -4,7 +4,10 @@ import { getCookie } from "@/utils/cookie"
 export const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_BASE_URL,
   timeout: 60000,
-  withCredentials: true
+  withCredentials: true,
+  headers: {
+    "X-Requested-With": "XMLHttpRequest", // CSRF signal: browsers block this header in cross-site form submissions
+  },
 })
 
 let refreshPromise: Promise<unknown> | null = null
