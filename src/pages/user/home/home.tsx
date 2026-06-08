@@ -267,7 +267,7 @@ function StatsStrip({ stats }: { stats: Stat[] }) {
 
 function ToolsSection({ tools }: { tools: Tool[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section bg-alt" id="tools">
       <div className="container" ref={ref}>
@@ -286,7 +286,7 @@ function ToolsSection({ tools }: { tools: Tool[] }) {
 
 function FeaturesSection({ features }: { features: Feature[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section" id="features">
       <div className="container" ref={ref}>
@@ -319,7 +319,7 @@ function FeaturesSection({ features }: { features: Feature[] }) {
 
 function HowItWorks({ steps }: { steps: Step[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section bg-alt" id="how">
       <div className="container" ref={ref}>
@@ -344,7 +344,7 @@ function HowItWorks({ steps }: { steps: Step[] }) {
 
 function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section" id="testimonials">
       <div className="container" ref={ref}>
@@ -374,7 +374,7 @@ function TestimonialsSection({ testimonials }: { testimonials: Testimonial[] }) 
 
 function PricingSection({ plans }: { plans: Plan[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section bg-alt" id="pricing">
       <div className="container" ref={ref}>
@@ -393,7 +393,7 @@ function PricingSection({ plans }: { plans: Plan[] }) {
 
 function FaqSection({ faqs }: { faqs: FaqItem[] }) {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   return (
     <section className="section" id="faq">
       <div className="container faq-container" ref={ref}>
@@ -411,7 +411,7 @@ function FaqSection({ faqs }: { faqs: FaqItem[] }) {
 
 function CtaBanner() {
   const { ref, cls } = useFadeIn();
-  const { t } = useUIStore();
+  const { t, language } = useUIStore();
   const navigate = useNavigate();
   return (
     <section className="cta-banner" ref={ref}>

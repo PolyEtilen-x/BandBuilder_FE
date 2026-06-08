@@ -54,7 +54,7 @@ export default function PracticePage() {
 
     const practiceTestId = selectedTest.practiceTestId
     if (!practiceTestId || practiceTestId === "undefined") {
-      alert(language === "vi" ? "Lỗi: ID đề thi không hợp lệ. Vui lòng thử đề thi khác." : "Error: Test ID is invalid. Please try another test.")
+      alert(t("practice_err_invalid_id"))
       return
     }
 
@@ -101,7 +101,7 @@ export default function PracticePage() {
       )
     } catch (err) {
       console.error("Start exam failed:", err)
-      alert(language === "vi" ? "Lỗi khi bắt đầu bài thi. Vui lòng thử lại." : "Failed to start the exam. Please try again.")
+      alert(t("practice_err_start"))
     }
   }
 
@@ -121,7 +121,7 @@ export default function PracticePage() {
 
   const pageTitle =
     sidebar.mode === "full"
-      ? (language === "vi" ? "Đề Luyện Thi Đầy Đủ" : "Full Practice Test")
+      ? t("practice_full_test")
       : getSubSectionLabel(sidebar.skill, sidebar.subSection, t)
 
   return (

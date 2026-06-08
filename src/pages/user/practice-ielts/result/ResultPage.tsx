@@ -146,41 +146,23 @@ export default function ResultPage() {
     if (!stats) return []
     const acc = stats.total > 0 ? (stats.correct / stats.total) * 100 : 0
     if (acc >= 80) {
-      return language === "vi"
-        ? [
-          "Xuất sắc! Bạn đã làm chủ hoàn toàn kỹ năng này với độ chính xác cực cao.",
-          "Hãy duy trì phong độ bằng cách thử thách các đề thi đầy đủ (Full Practice Tests) dưới áp lực phòng thi thật.",
-          "Xem lại các lỗi sai nhỏ (nếu có) để triệt tiêu hoàn toàn những sơ suất không đáng có."
-        ]
-        : [
-          "Outstanding! You have fully mastered this skill with exceptional accuracy.",
-          "Keep up the momentum by challenging yourself with Full Practice Tests under real exam conditions.",
-          "Review minor slip-ups (if any) to eliminate any remaining careless mistakes."
-        ]
+      return [
+        t("result_rec_excel_1"),
+        t("result_rec_excel_2"),
+        t("result_rec_excel_3")
+      ]
     } else if (acc >= 50) {
-      return language === "vi"
-        ? [
-          "Kỹ năng nền tảng khá tốt, tuy nhiên bạn vẫn có thể mắc phải các 'bẫy thông tin' (distractors) hoặc hiểu sai ý từ khóa.",
-          "Nên tập trung luyện tập lại các dạng câu hỏi có phần trăm chính xác thấp nhất ở bảng dưới.",
-          "Sử dụng tính năng 'Giải thích bằng AI' bên dưới để sửa đổi tư duy chọn đáp án."
-        ]
-        : [
-          "Your foundation is decent, but you are still prone to information distractors or misinterpreting keywords.",
-          "Focus on practicing the specific question types that yielded the lowest accuracy in the metrics below.",
-          "Use the 'Explain with AI' feature to correct and refine your answer selection mindset."
-        ]
+      return [
+        t("result_rec_good_1"),
+        t("result_rec_good_2"),
+        t("result_rec_good_3")
+      ]
     } else {
-      return language === "vi"
-        ? [
-          "Kỹ năng hiện tại cần được củng cố kỹ lưỡng hơn về cả từ vựng và phương pháp định vị thông tin.",
-          "Hãy học thuộc các bộ từ khóa và đồng nghĩa (synonyms) trước khi tiếp tục làm đề tính giờ.",
-          "Kích hoạt 'Giải thích bằng AI' cho các câu sai để nắm rõ lộ trình tư duy giải câu hỏi."
-        ]
-        : [
-          "Your current skill level requires rigorous reinforcement of both vocabulary and keyword-matching strategies.",
-          "Learn essential synonyms and paraphrasing groups before taking more timed quizzes.",
-          "Activate 'Explain with AI' on incorrect answers to fully comprehend the logic pathway."
-        ]
+      return [
+        t("result_rec_need_1"),
+        t("result_rec_need_2"),
+        t("result_rec_need_3")
+      ]
     }
   }, [stats, language])
 
@@ -188,7 +170,7 @@ export default function ResultPage() {
     <MainLayout>
       <div className="loading-state-wrapper">
         <div className="loader-ring"></div>
-        <p className="loading-text">{language === "vi" ? "Đang phân tích kết quả..." : "Analyzing results..."}</p>
+        <p className="loading-text">{t("result_loading_analyzing")}</p>
       </div>
     </MainLayout>
   )
@@ -197,10 +179,10 @@ export default function ResultPage() {
     <MainLayout>
       <div className="error-state-card">
         <XCircle size={48} className="error-icon" />
-        <h3>{language === "vi" ? "Thiếu Dữ Liệu" : "Missing Data"}</h3>
-        <p>{language === "vi" ? "Không tìm thấy dữ liệu câu hỏi để tính điểm." : "No question data found to calculate score."}</p>
+        <h3>{t("result_err_data_title")}</h3>
+        <p>{t("result_err_data_desc")}</p>
         <button onClick={() => navigate("/practice-ielts")} className="primary-btn" style={{ width: "auto" }}>
-          {language === "vi" ? "Quay lại Luyện Tập" : "Back to Practice"}
+          {t("result_err_back")}
         </button>
       </div>
     </MainLayout>
@@ -215,7 +197,7 @@ export default function ResultPage() {
           {isWriting ? (
             <div className="writing-result-header">
               <h1 className="writing-result-header-title">
-                {language === "vi" ? "Kết Quả IELTS Writing" : "IELTS Writing Results"}
+                {t("result_writing_title")}
               </h1>
               <div className="profile-header-actions">
                 {attemptId && (
@@ -226,8 +208,8 @@ export default function ResultPage() {
                     <Sparkles size={18} />
                     <span>
                       {attemptDetail?.hasExplanation
-                        ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
-                        : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                        ? t("result_ai_free")
+                        : t("result_ai_premium")
                       }
                     </span>
                   </button>
@@ -240,7 +222,7 @@ export default function ResultPage() {
                   className="btn-action-secondary cursor-pointer"
                 >
                   <ArrowLeft size={18} />
-                  {language === "vi" ? "Luyện tập tiếp" : "Continue Practice"}
+                  {t("result_continue")}
                 </button>
               </div>
             </div>
@@ -267,8 +249,8 @@ export default function ResultPage() {
                   </div>
                   <p className="user-email-text">
                     {stats.isBand
-                      ? `${language === "vi" ? "Bạn đã đạt mức điểm Band Score cực kỳ ấn tượng:" : "You achieved an impressive Band Score of:"} ${stats.score}`
-                      : `${t("result_score_subtitle")} ${stats.score}% ${language === "vi" ? "độ chính xác hoàn hảo." : "perfect accuracy."}`
+                      ? `${t("result_score_impressive")} ${stats.score}`
+                      : `${t("result_score_subtitle")} ${stats.score}% ${t("result_score_perfect")}`
                     }
                   </p>
                   {attemptId && (
@@ -288,8 +270,8 @@ export default function ResultPage() {
                     <Sparkles size={18} />
                     <span>
                       {attemptDetail?.hasExplanation
-                        ? (language === "vi" ? "Xem giải thích AI (Miễn phí)" : "View AI Explanation (Free)")
-                        : (language === "vi" ? "Giải thích bằng AI (1 Credit)" : "Explain with AI (1 Credit)")
+                        ? t("result_ai_free")
+                        : t("result_ai_premium")
                       }
                     </span>
                   </button>
@@ -302,7 +284,7 @@ export default function ResultPage() {
                   className="btn-action-secondary cursor-pointer"
                 >
                   <ArrowLeft size={18} />
-                  {language === "vi" ? "Luyện tập tiếp" : "Continue Practice"}
+                  {t("result_continue")}
                 </button>
               </div>
             </section>
@@ -367,7 +349,7 @@ export default function ResultPage() {
                             <div className="metric-item-meta">
                               <span className="metric-type-title">{item.type.replace(/_/g, " ")}</span>
                               <span className="metric-question-count">
-                                {item.total} {language === "vi" ? "câu hỏi" : "questions"}
+                                {item.total} {t("result_questions_count")}
                               </span>
                             </div>
 
@@ -389,12 +371,10 @@ export default function ResultPage() {
                   {/* 2. AI RECOMMENDATIONS */}
                   <div className="recent-activity-card">
                     <div className="card-header-row">
-                      <h2>{language === "vi" ? "Lộ Trình Cải Thiện Cá Nhân Hóa" : "Personalized Improvement Plan"}</h2>
+                      <h2>{t("result_rec_title")}</h2>
                     </div>
                     <p className="rec-intro">
-                      {language === "vi"
-                        ? "Dựa trên phân tích kết quả bài thi của bạn, Giám khảo AI khuyên bạn nên thực hiện các bước sau:"
-                        : "Based on your test session analytics, the AI Examiner recommends following these customized steps:"}
+                      {t("result_rec_intro")}
                     </p>
                     <div className="recommendation-list">
                       {recommendations.map((rec, i) => (
@@ -410,11 +390,9 @@ export default function ResultPage() {
                   <div className="recent-activity-card">
                     <div className="card-header-row">
                       <div>
-                        <h2>{language === "vi" ? "Xem Đáp Án Chi Tiết" : "Detailed Answer Review"}</h2>
+                        <h2>{t("result_review_detail_title")}</h2>
                         <p style={{ margin: "4px 0 0 0", fontSize: 13, color: "#64748b" }}>
-                          {language === "vi"
-                            ? "Nhấp vào nút giải thích AI ở trên đầu trang để nhận phân tích chi tiết của toàn bộ đáp án."
-                            : "Click the AI explanation button at the top header to parse detailed errors."}
+                          {t("result_review_detail_sub")}
                         </p>
                       </div>
                     </div>
@@ -430,13 +408,13 @@ export default function ResultPage() {
 
                               <div className="q-meta-content">
                                 <div className="q-title-label">
-                                  {language === "vi" ? `Câu hỏi ${idx + 1}` : `Question ${idx + 1}`}
+                                  {t("result_review_q_label")}{idx + 1}
                                   <span className="q-id-sub">({ans.questionId.replace(/_/g, " ")})</span>
                                 </div>
                                 <div className="q-user-ans">
-                                  {language === "vi" ? "Đáp án của bạn: " : "Your Answer: "}
+                                  {t("result_review_your_ans")}
                                   <span className={`ans-val ${ans.isCorrect === true ? 'correct' : ans.isCorrect === false ? 'wrong' : 'skipped'}`}>
-                                    {ans.userAnswer || (language === "vi" ? "Chưa trả lời" : "Not answered")}
+                                    {ans.userAnswer || t("result_review_unanswered")}
                                   </span>
                                 </div>
                               </div>
@@ -444,7 +422,7 @@ export default function ResultPage() {
 
                             <div className="q-row-right">
                               <div className="q-correct-ans">
-                                <span className="correct-ans-label">{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</span>
+                                <span className="correct-ans-label">{t("result_review_correct_label")}</span>
                                 <span className="correct-ans-value">{ans.correctAnswer || "N/A"}</span>
                               </div>
                               {ans.timeSpentSec != null && (
@@ -457,7 +435,7 @@ export default function ResultPage() {
                         ))
                       ) : (
                         <p className="no-answers-placeholder">
-                          {language === "vi" ? "Đáp án chi tiết sẽ được tự động hiển thị khi hoàn tất nộp bài." : "Detailed answers will automatically render once submitted successfully."}
+                          {t("result_review_no_answers")}
                         </p>
                       )}
                     </div>
@@ -506,30 +484,28 @@ export default function ResultPage() {
                 {/* Pro Upsell Card */}
                 <div className="pro-upsell-card">
                   <div className="upsell-icon"><Sparkles size={32} /></div>
-                  <h4>{language === "vi" ? "Bứt Phá Điểm Số Cùng Pro" : "Accelerate Scores with Pro"}</h4>
+                  <h4>{t("result_upsell_title")}</h4>
                   <p>
-                    {language === "vi"
-                      ? "Mở khóa giải thích AI không giới hạn, phân tích phát âm chuyên sâu từng âm tiết và lộ trình sửa lỗi ngữ pháp tự động."
-                      : "Unlock unlimited expert AI answer breakdowns, detailed pronunciation AI voice analysis, and automated grammar correction pathways."}
+                    {t("result_upsell_desc")}
                   </p>
 
                   <div style={{ marginBottom: 20 }}>
                     <div className="benefit-item">
                       <CheckCircle2 size={14} />
-                      <span>{language === "vi" ? "Vô hạn phân tích AI" : "Unlimited AI analytics"}</span>
+                      <span>{t("result_upsell_benefit1")}</span>
                     </div>
                     <div className="benefit-item">
                       <CheckCircle2 size={14} />
-                      <span>{language === "vi" ? "Chữa nói chi tiết 1-1" : "1-on-1 speaking feedback"}</span>
+                      <span>{t("result_upsell_benefit2")}</span>
                     </div>
                     <div className="benefit-item">
                       <CheckCircle2 size={14} />
-                      <span>{language === "vi" ? "Tối ưu hóa từ vựng nâng band" : "Band-boosting vocabulary tools"}</span>
+                      <span>{t("result_upsell_benefit3")}</span>
                     </div>
                   </div>
 
                   <button className="cursor-pointer" onClick={() => navigate("/upgrade")}>
-                    {language === "vi" ? "Nâng Cấp Ngay" : "Upgrade Premium"}
+                    {t("result_upsell_btn")}
                   </button>
                 </div>
 

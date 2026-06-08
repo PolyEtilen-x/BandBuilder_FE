@@ -1,5 +1,6 @@
 import { loginWithGoogle } from "@/services/auth/SignUpWithGoogle"
 import { LogIn, X } from "lucide-react"
+import logoGG from "@/assets/google_icon.png"
 
 type Props = {
   open: boolean
@@ -104,7 +105,7 @@ export default function AuthRequiredModal({ open, onClose }: Props) {
           onMouseLeave={(e) => (e.currentTarget.style.background = "#174593")}
         >
           <img
-            src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/navigation/google.svg"
+            src={logoGG}
             alt="Google"
             style={{ width: 18, height: 18 }}
           />

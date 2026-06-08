@@ -85,19 +85,12 @@ export default function ResultExplainPage() {
 
   const recommendations = useMemo(() => {
     if (stats.incorrect === 0) {
-      return language === "vi"
-        ? ["Hoàn hảo! Bạn đã đạt điểm tuyệt đối. Hãy tiếp tục giải đề khác để duy trì phong độ và phản xạ."]
-        : ["Perfect! You achieved a perfect score. Continue practicing other modules to maintain your speed."]
+      return [t("explain_rec_perfect")]
     }
-    return language === "vi"
-      ? [
-          "Tập trung học phương pháp định vị từ khóa đồng nghĩa (Synonyms/Paraphrasing) được mô tả trong các mẹo tránh bẫy của AI.",
-          "Phân tích kỹ lưỡng các đáp án gây nhiễu (distractors) để học cách loại trừ triệt để."
-        ]
-      : [
-          "Focus on mastering synonym keyword-matching described in the AI pro tips of incorrect answers.",
-          "Thoroughly analyze structural distractors to learn precise process-of-elimination techniques."
-        ]
+    return [
+      t("explain_rec_improve_1"),
+      t("explain_rec_improve_2")
+    ]
   }, [stats, language])
 
   return (
@@ -114,12 +107,10 @@ export default function ResultExplainPage() {
                 <Brain className="spinner-icon-premium" size={36} />
               </div>
               <h2>
-                {language === "vi" ? "Đang phân tích sâu bằng Trí Tuệ Nhân Tạo..." : "Analyzing with deep AI..."}
+                {t("explain_loading_title")}
               </h2>
               <p>
-                {language === "vi"
-                  ? "Giám khảo AI của BandBuilder đang tổng hợp đề bài, lập đối chiếu ngữ pháp và biên soạn lời giải thích chi tiết cho riêng bạn."
-                  : "BandBuilder's AI Examiner is matching grammar pathways, cross-referencing keys, and drafting customized explanations."}
+                {t("explain_loading_desc")}
               </p>
             </div>
           )}
@@ -129,17 +120,13 @@ export default function ResultExplainPage() {
             <div className="error-state-premium">
               <AlertCircle className="error-icon-premium" size={48} />
               <h3>
-                {language === "vi" ? "Không thể tải giải thích" : "Failed to load explanation"}
+                {t("explain_error_title")}
               </h3>
               <p>
-                {(error as any)?.response?.data?.message || (
-                  language === "vi"
-                    ? "Hệ thống gặp sự cố khi gọi AI phân tích. Vui lòng thử lại sau hoặc kiểm tra số dư credit."
-                    : "An error occurred while generating AI feedback. Please check your credit balance or try again."
-                )}
+                {(error as any)?.response?.data?.message || t("explain_error_desc")}
               </p>
               <button onClick={() => navigate(-1)} className="btn-action-primary cursor-pointer">
-                {language === "vi" ? "Quay lại" : "Go Back"}
+                {t("explain_error_back")}
               </button>
             </div>
           )}
@@ -158,16 +145,14 @@ export default function ResultExplainPage() {
                   <div className="user-meta-info">
                     <div className="user-name-row">
                       <h1>
-                        {language === "vi" ? "Giải Thích Chi Tiết & Giải Thích AI" : "AI Answer Explanations"}
+                        {t("explain_hero_title")}
                       </h1>
                       <span className="membership-tag pro">
                         {explanationData.skill}
                       </span>
                     </div>
                     <p className="user-email-text">
-                      {language === "vi"
-                        ? "Phát hiện lỗ hổng ngữ pháp, từ vựng và học hỏi kinh nghiệm làm bài trực tiếp từ Giám khảo AI."
-                        : "Discover grammar and vocab gaps and master timing strategies directly from the AI Examiner."}
+                      {t("explain_hero_desc")}
                     </p>
                     <div className="user-credits-info">
                       <span>Attempt ID: {explanationData.attemptId.slice(0, 8)}</span>
@@ -177,7 +162,7 @@ export default function ResultExplainPage() {
 
                 <div className="profile-header-actions">
                   <button onClick={() => navigate(-1)} className="btn-action-primary cursor-pointer">
-                    <span>{language === "vi" ? "Quay lại kết quả" : "Back to Results"}</span>
+                    <span>{t("explain_hero_back")}</span>
                     <ChevronRight size={16} />
                   </button>
                 </div>
@@ -192,28 +177,26 @@ export default function ResultExplainPage() {
                   {/* FILTER PANEL */}
                   <div className="filter-panel-premium">
                     <div className="filter-results-count-explain">
-                      {language === "vi"
-                        ? `Đang hiển thị ${filteredExplanations.length} câu hỏi`
-                        : `Showing ${filteredExplanations.length} questions`}
+                      {t("explain_filter_showing")} {filteredExplanations.length} {t("result_questions_count")}
                     </div>
                     <div className="filter-tabs-explain">
                       <button
                         onClick={() => setFilter("all")}
                         className={`filter-tab-explain ${filter === "all" ? 'active-all' : ""}`}
                       >
-                        {language === "vi" ? "Tất cả" : "All"}
+                        {t("explain_filter_all")}
                       </button>
                       <button
                         onClick={() => setFilter("incorrect")}
                         className={`filter-tab-explain ${filter === "incorrect" ? 'active-incorrect' : ""}`}
                       >
-                        {language === "vi" ? "Câu Sai" : "Incorrect"}
+                        {t("explain_filter_incorrect")}
                       </button>
                       <button
                         onClick={() => setFilter("correct")}
                         className={`filter-tab-explain ${filter === "correct" ? 'active-correct' : ""}`}
                       >
-                        {language === "vi" ? "Câu Đúng" : "Correct"}
+                        {t("explain_filter_correct")}
                       </button>
                     </div>
                   </div>
@@ -223,7 +206,7 @@ export default function ResultExplainPage() {
                     <div className="card-header-row">
                       <h2 style={{ display: "flex", alignItems: "center", gap: 8 }}>
                         <Sparkles size={18} style={{ color: "#f59e0b" }} />
-                        {language === "vi" ? "Lời Khuyên Đột Phá Lỗi Sai" : "AI Strategy Advice"}
+                        {t("explain_advice_title")}
                       </h2>
                     </div>
                     <div className="rec-explain-list">
@@ -242,7 +225,7 @@ export default function ResultExplainPage() {
                       <div className="empty-list-card-premium">
                         <Brain size={40} className="empty-list-icon-premium" />
                         <p>
-                          {language === "vi" ? "Không có câu hỏi nào khớp với bộ lọc hiện tại." : "No questions match your current filter."}
+                          {t("explain_empty_filter")}
                         </p>
                       </div>
                     ) : (
@@ -260,20 +243,20 @@ export default function ResultExplainPage() {
                                   {item.questionId.replace(/\D/g, "") || idx + 1}
                                 </div>
                                 <div className="question-title-explain">
-                                  {language === "vi" ? `Câu hỏi: ${item.questionId}` : `Question: ${item.questionId}`}
+                                  {t("explain_q_title")} {item.questionId}
                                 </div>
                               </div>
 
                               <div className="answers-comparison-box-explain">
                                 <div className="answer-meta-column">
-                                  <span className="ans-meta-label">{language === "vi" ? "Bạn chọn:" : "Your Answer:"}</span>
+                                  <span className="ans-meta-label">{t("explain_ans_yours")}</span>
                                   <span className={`answer-badge-explain ${isCorrect ? 'correct' : 'wrong'}`}>
-                                    {item.userAnswer || (language === "vi" ? "Bỏ qua" : "Skipped")}
+                                    {item.userAnswer || t("explain_ans_skipped")}
                                   </span>
                                 </div>
 
                                 <div className="answer-meta-column">
-                                  <span className="ans-meta-label">{language === "vi" ? "Đáp án đúng:" : "Correct Answer:"}</span>
+                                  <span className="ans-meta-label">{t("explain_ans_correct")}</span>
                                   <span className="answer-badge-explain correct">
                                     {item.correctAnswer}
                                   </span>
@@ -285,7 +268,7 @@ export default function ResultExplainPage() {
                             <div className="ai-analysis-block-explain">
                               <div className="ai-analysis-label-explain">
                                 <Sparkles size={14} />
-                                <span>{language === "vi" ? "Giải Thích Lỗi Sai Từ Giám Khảo AI" : "AI Examiner Analysis"}</span>
+                                <span>{t("explain_ai_analysis")}</span>
                               </div>
                               <p className="ai-analysis-text-explain">
                                 {item.explanation}
@@ -295,7 +278,7 @@ export default function ResultExplainPage() {
                               <div className="pro-tip-block-explain">
                                 <div className="pro-tip-label-explain">
                                   <Lightbulb size={14} />
-                                  <span>{language === "vi" ? "Mẹo tránh bẫy & Chiến lược làm bài" : "Trap Avoidance & Tactics"}</span>
+                                  <span>{t("explain_ai_tips")}</span>
                                 </div>
                                 <p className="pro-tip-text-explain">
                                   {item.tip}
@@ -314,26 +297,26 @@ export default function ResultExplainPage() {
                   
                   {/* Credit Info Card */}
                   <div className="account-summary-card">
-                    <h3>{language === "vi" ? "Trạng thái giao dịch" : "Transaction"}</h3>
+                    <h3>{t("explain_tx_title")}</h3>
                     <div className="summary-row">
-                      <span>{language === "vi" ? "Trạng thái" : "Status"}</span>
+                      <span>{t("explain_tx_status")}</span>
                       <strong>
                         {explanationData.charged
-                          ? (language === "vi" ? "Khấu trừ 1 Credit" : "1 Credit Charged")
-                          : (language === "vi" ? "Truy cập miễn phí" : "Free (Cached)")}
+                          ? t("explain_tx_charged")
+                          : t("explain_tx_free")}
                       </strong>
                     </div>
                   </div>
 
                   {/* Result Summary Sidebar Card */}
                   <div className="account-summary-card">
-                    <h3>{language === "vi" ? "Thống kê kết quả" : "Result Summary"}</h3>
+                    <h3>{t("explain_summary_title")}</h3>
                     <div className="summary-row">
-                      <span>{language === "vi" ? "Lỗi sai cần sửa" : "Mistakes Found"}</span>
+                      <span>{t("explain_summary_mistakes")}</span>
                       <strong className="incorrect">{stats.incorrect}</strong>
                     </div>
                     <div className="summary-row">
-                      <span>{language === "vi" ? "Câu chính xác" : "Correct Answers"}</span>
+                      <span>{t("explain_summary_correct")}</span>
                       <strong className="correct">{stats.correct}</strong>
                     </div>
                   </div>
@@ -341,21 +324,19 @@ export default function ResultExplainPage() {
                   {/* Pro Upgrade Card */}
                   <div className="pro-upsell-card">
                     <div className="upsell-icon"><Sparkles size={32} /></div>
-                    <h4>{language === "vi" ? "Bứt Phá Band Điểm" : "Break Your IELTS Limits"}</h4>
+                    <h4>{t("explain_upsell_title")}</h4>
                     <p>
-                      {language === "vi"
-                        ? "Mở khóa phân tích chi tiết của 100% câu hỏi và chế độ luyện Nói AI 1-1."
-                        : "Unlock deep-dive analysis for all queries and 1-on-1 AI Speaking practice."}
+                      {t("explain_upsell_desc")}
                     </p>
                     <button className="cursor-pointer" onClick={() => navigate("/upgrade")}>
-                      {language === "vi" ? "Nâng Cấp Ngay" : "Upgrade Premium"}
+                      {t("explain_upsell_btn")}
                     </button>
                   </div>
 
                   {/* Action Footer (Back Button Card) */}
                   <div className="account-summary-card">
                     <button onClick={() => navigate(-1)} className="btn-action-secondary cursor-pointer" style={{ width: "100%" }}>
-                      <span>{language === "vi" ? "Quay lại kết quả" : "Back to Results"}</span>
+                      <span>{t("explain_footer_back")}</span>
                     </button>
                   </div>
 

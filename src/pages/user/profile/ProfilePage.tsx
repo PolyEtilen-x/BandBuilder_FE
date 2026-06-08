@@ -31,7 +31,7 @@ export default function ProfilePage() {
       <div className="profile-error">
         <p>{t("profile_error")}</p>
         <button onClick={() => window.location.reload()}>
-          {language === "vi" ? "Thử lại" : "Retry"}
+          {t("profile_error_retry")}
         </button>
       </div>
     </MainLayout>
@@ -42,7 +42,7 @@ export default function ProfilePage() {
   const statsCards = [
     { label: t("profile_stat_tests"), value: stats.testsCompleted, icon: <BookOpen size={20} />, color: "#3b82f6" },
     { label: t("profile_stat_avg"), value: stats.avgBandScore.toFixed(1), icon: <TrendingUp size={20} />, color: "#10b981" },
-    { label: t("profile_stat_streak"), value: language === "vi" ? `${stats.studyStreak} Ngày` : `${stats.studyStreak} Days`, icon: <Calendar size={20} />, color: "#f59e0b" },
+    { label: t("profile_stat_streak"), value: `${stats.studyStreak}${t("profile_stat_streak_val")}`, icon: <Calendar size={20} />, color: "#f59e0b" },
     { label: t("profile_stat_hours"), value: `${(stats.totalStudyTime / 60).toFixed(1)}h`, icon: <Clock size={20} />, color: "#8b5cf6" },
   ]
 
@@ -147,7 +147,7 @@ export default function ProfilePage() {
                       </div>
                       <div className="item-score-badge">
                         <div className="score-value">
-                          {typeof activity.score === 'object' ? (language === "vi" ? "Hoàn thành" : "Completed") : `Band ${activity.score}`}
+                          {typeof activity.score === 'object' ? t("profile_activity_completed") : `Band ${activity.score}`}
                         </div>
                         <div className={`score-status ${activity.status.toLowerCase()}`}>
                           {activity.status}
@@ -169,7 +169,7 @@ export default function ProfilePage() {
                 <div className="summary-row">
                   <span>{t("profile_summary_sessions")}</span>
                   <strong>
-                    {stats.testsCompleted} {language === "vi" ? "phiên" : "sessions"}
+                    {stats.testsCompleted} {t("profile_summary_sessions_count")}
                   </strong>
                 </div>
                 <div className="summary-row">

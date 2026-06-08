@@ -68,7 +68,7 @@ export default function SpeakingHistoryPage() {
               <div className="sh-card detail-view">
                 <div className="detail-header">
                   <button onClick={() => setSelectedSessionId(null)} className="sh-back-btn">
-                    <ArrowLeft size={16} /> {language === "vi" ? "Quay lại" : "Back"}
+                    <ArrowLeft size={16} /> {t("sh_back")}
                   </button>
                   <div className="header-meta">
                     <span className="date-tag">
@@ -80,26 +80,23 @@ export default function SpeakingHistoryPage() {
                 <div className="report-header">
                   <div>
                     <span className="report-badge">
-                      {language === "vi" ? "CHI TIẾT LỊCH SỬ" : "SESSION DETAILS"}
+                      {t("sh_session_details")}
                     </span>
                     <h1 className="report-title">
-                      {language === "vi" ? "Báo Cáo IELTS Speaking" : "IELTS Speaking Report Card"}
+                      {t("sh_report_title")}
                     </h1>
                     <p className="report-subtitle">
-                      {language === "vi" 
-                        ? `Giám khảo: ${EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.name || selectedSession.voiceId} (${EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.accent || ""})`
-                        : `Examiner: ${EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.name || selectedSession.voiceId} (${EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.accent || ""})`
-                      }
+                      {t("sh_examiner")}: {EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.name || selectedSession.voiceId} ({EXAMINER_VOICES[selectedSession.voiceId as keyof typeof EXAMINER_VOICES]?.accent || ""})
                     </p>
                   </div>
 
                   <div className="report-band-group">
                     <div className="report-band-label-box">
                       <span className="report-band-label">
-                        {language === "vi" ? "ĐIỂM SỐ CHUNG" : "OVERALL BAND"}
+                        {t("sh_overall_band")}
                       </span>
                       <div className="report-band-status">
-                        {selectedSession.overallBand >= 7.0 ? (language === "vi" ? "Xuất Sắc" : "Excellent") : (language === "vi" ? "Khá Tốt" : "Keep Improving")}
+                        {selectedSession.overallBand >= 7.0 ? t("sh_excellent") : t("sh_keep_improving")}
                       </div>
                     </div>
                     <div className="metric-badge">{selectedSession.overallBand}</div>
@@ -108,7 +105,7 @@ export default function SpeakingHistoryPage() {
 
                 {/* Sub metrics */}
                 <h2 className="report-section-title">
-                  {language === "vi" ? "Tiêu Chí Chấm Điểm Chi Tiết" : "Core Grading Criteria breakdown"}
+                  {t("sh_criteria_title")}
                 </h2>
                 <div className="sub-metric-grid">
                   <div className="sub-metric-card">
@@ -131,7 +128,7 @@ export default function SpeakingHistoryPage() {
 
                 {/* Transcript Dialogues */}
                 <h2 className="report-section-title" style={{ marginTop: 32 }}>
-                  {language === "vi" ? "Đoạn Hội Thoại & Phát Âm" : "Dialogue Transcript & Pronunciation"}
+                  {t("sh_transcript_title")}
                 </h2>
                 <div className="transcript-box-history">
                   {Array.isArray(selectedSession.dialogue) && (selectedSession.dialogue as any).map((turn: any, index: number) => {
@@ -139,7 +136,7 @@ export default function SpeakingHistoryPage() {
                     return (
                       <div key={index} className={`chat-bubble-history ${turn.sender}`}>
                         <strong className="bubble-author">
-                          {turn.sender === "ai" ? voice.name : (language === "vi" ? "BẠN" : "YOU")}
+                          {turn.sender === "ai" ? voice.name : t("sh_you")}
                         </strong>
                         {turn.sender === "user"
                           ? renderHighlightedTextForHistory(turn.text, turn.lowConfidenceWords || [])
@@ -154,7 +151,7 @@ export default function SpeakingHistoryPage() {
                 <div className="corrections-container" style={{ marginTop: 32 }}>
                   <h3 className="corrections-title">
                     <Award size={18} style={{ color: "#3b82f6" }} />
-                    {language === "vi" ? "Đánh Giá & Nhận Xét Lỗi Sai Từ AI" : "AI Corrections & Vocabulary Polish"}
+                    {t("sh_corrections_title")}
                   </h3>
                   <div className="corrections-list">
                     {Array.isArray(selectedSession.corrections) && (selectedSession.corrections as any).length > 0 ? (
@@ -176,21 +173,21 @@ export default function SpeakingHistoryPage() {
                               color: corr.type === "grammar" ? "#991b1b" : corr.type === "vocab" ? "#1e40af" : "#065f46"
                             }}>
                               {corr.type === "grammar"
-                                ? (language === "vi" ? "Lỗi Ngữ Pháp / Cách dùng từ" : "Grammar Correction")
+                                ? t("sh_err_grammar")
                                 : corr.type === "vocab"
-                                  ? (language === "vi" ? "Nâng Cấp Từ Vựng" : "Lexical Upgrade")
-                                  : (language === "vi" ? "Ưu Điểm Phát Âm" : "Speech Highlight")
+                                  ? t("sh_err_vocab")
+                                  : t("sh_err_pronun")
                               }
                             </span>
                           </div>
                           {corr.original && (
                             <p className="correction-original">
-                              <strong>{language === "vi" ? "Bạn nói:" : "You said:"}</strong> <em>"{corr.original}"</em>
+                              <strong>{t("sh_you_said")}</strong> <em>"{corr.original}"</em>
                             </p>
                           )}
                           {corr.correction && (
                             <p className="correction-fixed">
-                              <strong>{language === "vi" ? "Đề xuất sửa:" : "Correction:"}</strong> <em>"{corr.correction}"</em>
+                              <strong>{t("sh_correction")}</strong> <em>"{corr.correction}"</em>
                             </p>
                           )}
                           <p className="correction-explanation">
@@ -199,7 +196,7 @@ export default function SpeakingHistoryPage() {
                         </div>
                       ))
                     ) : (
-                      <p className="no-corrections-text">{language === "vi" ? "Không có lỗi sai nghiêm trọng nào được phát hiện." : "No critical mistakes detected."}</p>
+                      <p className="no-corrections-text">{t("sh_no_critical_mistakes")}</p>
                     )}
                   </div>
                 </div>
@@ -210,7 +207,7 @@ export default function SpeakingHistoryPage() {
                 <div className="sh-header-meta">
                   <div className="sh-tag-group">
                     <span className="sh-badge-new">
-                      {language === "vi" ? "LỊCH SỬ" : "HISTORY"}
+                      {t("sh_history_badge")}
                     </span>
                     <span className="sh-subtitle">
                       IELTS Speaking AI Practice History
@@ -222,18 +219,15 @@ export default function SpeakingHistoryPage() {
                 </div>
 
                 <h1 className="sh-title">
-                  {language === "vi" ? "Lịch Sử Luyện Nói Với AI" : "Speaking Practice History"}
+                  {t("sh_history_title")}
                 </h1>
                 <p className="sh-desc">
-                  {language === "vi"
-                    ? "Danh sách các cuộc gọi giả lập IELTS Speaking đã hoàn thành. Hãy bấm vào từng cuộc gọi để xem lại chi tiết bài làm của mình."
-                    : "Review your completed IELTS speaking simulator sessions. Click on any session to review your detailed feedback."
-                  }
+                  {t("sh_history_desc")}
                 </p>
 
                 {error && (
                   <div className="sh-error-card">
-                    ⚠️ {language === "vi" ? "Không thể tải lịch sử luyện nói. Vui lòng thử lại." : "Failed to load speaking history. Please retry."}
+                    ⚠️ {t("sh_load_error")}
                   </div>
                 )}
 
@@ -252,17 +246,15 @@ export default function SpeakingHistoryPage() {
                 ) : history && history.length === 0 ? (
                   <div className="sh-empty-state">
                     <div className="sh-empty-icon">📭</div>
-                    <h3>{language === "vi" ? "Chưa Có Lịch Sử Luyện Tập" : "No Practice History Yet"}</h3>
+                    <h3>{t("sh_empty_title")}</h3>
                     <p>
-                      {language === "vi" 
-                        ? "Bạn chưa thực hiện cuộc gọi nào với Giám khảo AI." 
-                        : "You haven't completed any sessions with the AI examiner."}
+                      {t("sh_empty_desc")}
                     </p>
                     <button
                       onClick={() => navigate("/practice-general/call-with-ai")}
                       className="btn-start-call-sh"
                     >
-                      <Phone size={16} /> {language === "vi" ? "Luyện Nói Ngay" : "Start Practice Now"}
+                      <Phone size={16} /> {t("sh_start_practice")}
                     </button>
                   </div>
                 ) : (
@@ -275,7 +267,7 @@ export default function SpeakingHistoryPage() {
                             <div className="item-avatar">{voice.avatar}</div>
                             <div>
                               <h3 className="item-examiner-name">
-                                {language === "vi" ? `Giám khảo ${voice.name}` : `Examiner ${voice.name}`}
+                                {t("sh_examiner")} {voice.name}
                               </h3>
                               <span className="item-date">
                                 <Calendar size={12} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />
@@ -293,7 +285,7 @@ export default function SpeakingHistoryPage() {
                               onClick={() => setSelectedSessionId(session.id)}
                               className="btn-view-details"
                             >
-                              {language === "vi" ? "Xem chi tiết" : "View details"}
+                              {t("sh_view_details")}
                             </button>
                           </div>
                         </div>

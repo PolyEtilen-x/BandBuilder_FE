@@ -30,7 +30,7 @@ export default function UpgradePage() {
       const res = await paymentApi.initiatePayment(pkg.id)
       setPaymentData(res.data)
     } catch (error) {
-      alert(language === "vi" ? "Không thể khởi tạo thanh toán. Vui lòng thử lại." : "Failed to initiate payment. Please try again.")
+      alert(t("upgrade_err_init"))
     }
   }
 
@@ -59,7 +59,7 @@ export default function UpgradePage() {
 
   const copyToClipboard = (text: string) => {
     navigator.clipboard.writeText(text)
-    alert(language === "vi" ? "Đã sao chép vào bộ nhớ tạm!" : "Copied to clipboard!")
+    alert(t("upgrade_copied"))
   }
 
   return (
@@ -77,7 +77,7 @@ export default function UpgradePage() {
             <div className="packages-grid">
               {packages.map((pkg) => (
                 <div key={pkg.id} className={`package-card ${pkg.name.includes("Pro") ? "popular" : ""}`}>
-                  {pkg.name.includes("Pro") && <div className="popular-badge">{language === "vi" ? "PHỔ BIẾN" : "POPULAR"}</div>}
+                  {pkg.name.includes("Pro") && <div className="popular-badge">{t("upgrade_popular")}</div>}
                   <h3 className="package-name">{pkg.name}</h3>
                   <div className="package-price">
                     <span className="price-amount">{pkg.priceVnd?.toLocaleString() ?? "0"}</span>

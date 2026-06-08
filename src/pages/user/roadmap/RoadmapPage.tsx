@@ -111,7 +111,7 @@ export default function RoadmapPage() {
   const [selectedNode, setSelectedNode] = useState<any>(null)
 
   // i18n & Theme Stores
-  const { t, theme } = useUIStore()
+  const { t, theme, language } = useUIStore()
 
   // 1. TanStack Query integration
   const { data: serverRoadmap, isLoading, error } = useRoadmap(id || "")
