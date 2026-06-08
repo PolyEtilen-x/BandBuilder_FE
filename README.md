@@ -77,8 +77,7 @@
 | Platform | URL | Status |
 |----------|-----|--------|
 | **Main App** | [bandbuilder.site](https://bandbuilder.site) | ✅ Live |
-| **Admin Dashboard** | [admin.bandbuilder.site](https://admin.bandbuilder.site) | ✅ Live |
-| **API** | [api.bandbuilder.site](https://api.bandbuilder.site) | ✅ Live |
+
 
 </div>
 
