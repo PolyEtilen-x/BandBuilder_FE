@@ -283,31 +283,6 @@ The application is deployed on:
 - **CI/CD:** Automated deployment via GitHub Actions
 
 ---
-
-## 🗺️ Roadmap
-
-### **Completed ✅**
-- [x] IELTS Practice System (Reading, Listening, Writing)
-- [x] User Authentication & Authorization
-- [x] AI Speaking Module with examiner simulation
-- [x] Administrative Dashboard
-- [x] Progress Analytics & Reporting
-- [x] Real-time feedback system
-
-### **In Progress 🚀**
-- [ ] Mobile Application (React Native + Expo)
-- [ ] AI Writing Evaluation Engine
-- [ ] Personalized Learning Paths
-- [ ] Advanced Learning Analytics
-
-### **Planned 📅**
-- [ ] Gamification System
-- [ ] Community Features
-- [ ] Offline Mode Support
-- [ ] Multiple Language Support
-
----
-
 ## 🤝 Contributing
 
 We welcome contributions from the community! Here's how you can help:
