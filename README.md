@@ -386,9 +386,8 @@ We are grateful to the open-source community and all the amazing projects that m
 
 ## 📞 Support & Contact
 
-- 📧 **Email:** support@bandbuilder.site
+- 📧 **Email:** polyetilen.vn@gmail.com
 - 💬 **GitHub Issues:** [Report a bug](https://github.com/PolyEtilen-x/BandBuilder_FE/issues)
-- 🐦 **Twitter:** [@BandBuilderApp](https://twitter.com/BandBuilderApp)
 - 💡 **Discussions:** [Ask a question](https://github.com/PolyEtilen-x/BandBuilder_FE/discussions)
 
 ---
